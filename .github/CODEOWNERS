@@ -1,0 +1,15 @@
+# CODEOWNERS
+# All changes require review by the maintainer.
+# Replace 'your-github-username' with your actual GitHub username.
+
+# Global owner — covers everything not matched below
+* @OliEder
+
+# Schema is critical — explicit ownership
+schema/  @OliEder
+
+# Specification document
+docs/    @OliEder
+
+# RFC process — all proposals require maintainer sign-off
+rfcs/    @OliEder

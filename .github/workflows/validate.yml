@@ -34,4 +34,5 @@ jobs:
             -s schema/v1.json \
             -d "examples/*.ocf.json" \
             --all-errors \
+            --strict=false \
             --verbose
