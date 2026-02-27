@@ -1,0 +1,135 @@
+{
+  "$schema": "https://opencoachingformat.org/schema/v1.json",
+  "meta": {
+    "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "title": "Basic Pick & Roll",
+    "description": "Ball handler uses a ball screen at the top of the key. Screener rolls to the basket. Classic 2-man game.",
+    "author": "OCF Examples",
+    "tags": ["pick-and-roll", "offense", "half-court", "2-player", "beginner"],
+    "difficulty": "beginner",
+    "created": "2025-02-27T10:00:00Z",
+    "source_format": "open"
+  },
+  "court": {
+    "ruleset": "fiba",
+    "type": "half_court",
+    "drill_focus": "offense"
+  },
+  "entities": [
+    { "type": "offense", "nr": 1, "x":  0.0,  "y": 5.68 },
+    { "type": "offense", "nr": 4, "x": -2.45, "y": 8.20 },
+    { "type": "defense", "nr": 1, "x":  0.5,  "y": 5.20 },
+    { "type": "defense", "nr": 4, "x": -2.80, "y": 7.80 },
+    { "type": "ball",             "x":  0.0,  "y": 5.68  }
+  ],
+  "frames": [
+    {
+      "id": "frame_1",
+      "label": "Step 1 — Screen",
+      "description": "offense_4 moves up from the left elbow to set a ball screen for offense_1 at the top of the key.",
+      "duration_ms": 1500,
+      "entity_states": {
+        "offense_4": { "x": -0.5, "y": 6.2 }
+      },
+      "lines": [
+        {
+          "type": "movement",
+          "curved": true,
+          "color": "black",
+          "from_entity": "offense_4",
+          "coords": [
+            { "named": "left_elbow" },
+            { "x": -0.5, "y": 6.2 }
+          ]
+        },
+        {
+          "type": "screen",
+          "color": "black",
+          "from_entity": "offense_4",
+          "to_entity": "defense_1",
+          "coords": [
+            { "x": -0.5, "y": 6.2 },
+            { "x": -0.5, "y": 6.7 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "frame_2",
+      "label": "Step 2 — Ball Handler Attacks",
+      "description": "offense_1 uses the screen and dribbles hard left toward the left elbow. offense_4 rolls to the right block.",
+      "duration_ms": 2000,
+      "entity_states": {
+        "offense_1": { "x": -2.45, "y": 8.20 },
+        "offense_4": { "x":  2.45, "y": 11.00 },
+        "ball":      { "x": -2.45, "y": 8.20  }
+      },
+      "lines": [
+        {
+          "type": "dribbling",
+          "curved": true,
+          "color": "black",
+          "from_entity": "offense_1",
+          "coords": [
+            { "named": "top_of_the_key" },
+            { "x": -1.5, "y": 7.2 },
+            { "named": "left_elbow" }
+          ]
+        },
+        {
+          "type": "movement",
+          "curved": true,
+          "color": "black",
+          "from_entity": "offense_4",
+          "coords": [
+            { "x": -0.5, "y": 6.2 },
+            { "x":  0.5, "y": 8.5 },
+            { "named": "right_block" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "frame_3",
+      "label": "Step 3 — Finish",
+      "description": "offense_1 passes to the rolling offense_4 at the right block for the finish.",
+      "duration_ms": 1500,
+      "entity_states": {
+        "ball": { "x": 2.45, "y": 11.00 }
+      },
+      "lines": [
+        {
+          "type": "passing",
+          "curved": false,
+          "color": "black",
+          "from_entity": "offense_1",
+          "to_entity": "offense_4",
+          "coords": [
+            { "named": "left_elbow" },
+            { "named": "right_block" }
+          ]
+        }
+      ]
+    }
+  ],
+  "areas": [
+    {
+      "form": "rectangle",
+      "color": "yellow",
+      "opacity": 0.2,
+      "x": 0.0,
+      "y": 10.5,
+      "width": 4.9,
+      "height": 4.0,
+      "rotation": 0
+    }
+  ],
+  "labels": [
+    {
+      "text": "Roll!",
+      "x": 3.2,
+      "y": 9.5,
+      "color": "black"
+    }
+  ]
+}

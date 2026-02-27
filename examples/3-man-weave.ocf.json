@@ -1,0 +1,182 @@
+{
+  "$schema": "https://opencoachingformat.org/schema/v1.json",
+  "meta": {
+    "id": "a3c2e1d0-9b8f-4a7e-b6c5-1d2e3f4a5b6c",
+    "title": "3-Man Weave",
+    "description": "Classic 3-player weave drill from full court. Players pass and follow their pass, weaving across the court to finish at the basket.",
+    "author": "OCF Examples",
+    "tags": ["passing", "transition", "full-court", "3-player", "beginner", "conditioning"],
+    "difficulty": "beginner",
+    "created": "2025-02-27T10:00:00Z",
+    "source_format": "open"
+  },
+  "court": {
+    "ruleset": "fiba",
+    "type": "full_court",
+    "drill_focus": "offense"
+  },
+  "entities": [
+    { "type": "offense", "nr": 1, "x":  0.0,  "y": -14.0 },
+    { "type": "offense", "nr": 2, "x": -5.0,  "y": -14.0 },
+    { "type": "offense", "nr": 3, "x":  5.0,  "y": -14.0 },
+    { "type": "ball",             "x":  0.0,  "y": -14.0  }
+  ],
+  "frames": [
+    {
+      "id": "frame_1",
+      "label": "Start",
+      "description": "offense_1 starts at backcourt.baseline_center with the ball. offense_2 is left, offense_3 is right. offense_1 passes to offense_2 and follows the pass, cutting behind offense_2.",
+      "duration_ms": 1500,
+      "entity_states": {
+        "ball": { "x": -5.0, "y": -14.0 }
+      },
+      "lines": [
+        {
+          "type": "passing",
+          "curved": false,
+          "color": "black",
+          "from_entity": "offense_1",
+          "to_entity": "offense_2",
+          "coords": [
+            { "x":  0.0, "y": -14.0 },
+            { "x": -5.0, "y": -14.0 }
+          ]
+        },
+        {
+          "type": "movement",
+          "curved": true,
+          "color": "black",
+          "from_entity": "offense_1",
+          "coords": [
+            { "x":  0.0,  "y": -14.0 },
+            { "x": -3.0,  "y": -11.0 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "frame_2",
+      "label": "First Exchange",
+      "description": "offense_2 dribbles to center. offense_1 fills the left lane. offense_3 stays wide right. offense_2 passes to offense_3.",
+      "duration_ms": 2000,
+      "entity_states": {
+        "offense_1": { "x": -5.0, "y": -8.0  },
+        "offense_2": { "x":  0.0, "y": -8.0  },
+        "offense_3": { "x":  5.0, "y": -8.0  },
+        "ball":      { "x":  5.0, "y": -8.0  }
+      },
+      "lines": [
+        {
+          "type": "dribbling",
+          "curved": true,
+          "color": "black",
+          "from_entity": "offense_2",
+          "coords": [
+            { "x": -5.0, "y": -14.0 },
+            { "x":  0.0, "y":  -8.0 }
+          ]
+        },
+        {
+          "type": "passing",
+          "curved": false,
+          "color": "black",
+          "from_entity": "offense_2",
+          "to_entity": "offense_3",
+          "coords": [
+            { "x":  0.0, "y": -8.0 },
+            { "x":  5.0, "y": -8.0 }
+          ]
+        },
+        {
+          "type": "movement",
+          "curved": true,
+          "color": "black",
+          "from_entity": "offense_2",
+          "coords": [
+            { "x":  0.0, "y": -8.0 },
+            { "x":  3.5, "y": -4.0 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "frame_3",
+      "label": "Second Exchange",
+      "description": "offense_3 dribbles toward center. offense_1 and offense_2 fill their lanes. offense_3 passes to offense_1 cutting from the left.",
+      "duration_ms": 2000,
+      "entity_states": {
+        "offense_1": { "x": -5.0, "y":  0.0  },
+        "offense_2": { "x":  5.0, "y":  0.0  },
+        "offense_3": { "x":  0.0, "y":  0.0  },
+        "ball":      { "x": -5.0, "y":  0.0  }
+      },
+      "lines": [
+        {
+          "type": "dribbling",
+          "curved": true,
+          "color": "black",
+          "from_entity": "offense_3",
+          "coords": [
+            { "x":  5.0, "y": -8.0 },
+            { "x":  0.0, "y":  0.0 }
+          ]
+        },
+        {
+          "type": "passing",
+          "curved": false,
+          "color": "black",
+          "from_entity": "offense_3",
+          "to_entity": "offense_1",
+          "coords": [
+            { "x":  0.0, "y":  0.0 },
+            { "x": -5.0, "y":  0.0 }
+          ]
+        },
+        {
+          "type": "movement",
+          "curved": true,
+          "color": "black",
+          "from_entity": "offense_3",
+          "coords": [
+            { "x":  0.0, "y":  0.0 },
+            { "x": -3.0, "y":  5.0 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "frame_4",
+      "label": "Finish",
+      "description": "offense_1 attacks the basket. offense_2 fills the right corner. offense_3 trails center for the kick-out option.",
+      "duration_ms": 2000,
+      "entity_states": {
+        "offense_1": { "x":  0.0, "y": 12.0 },
+        "offense_2": { "x":  5.0, "y":  8.0 },
+        "ball":      { "x":  0.0, "y": 12.0 }
+      },
+      "lines": [
+        {
+          "type": "dribbling",
+          "curved": true,
+          "color": "black",
+          "from_entity": "offense_1",
+          "coords": [
+            { "x": -5.0, "y":  0.0  },
+            { "x":  0.0, "y":  7.0  },
+            { "named": "basket"      }
+          ]
+        },
+        {
+          "type": "movement",
+          "curved": true,
+          "color": "black",
+          "from_entity": "offense_2",
+          "coords": [
+            { "x":  5.0, "y":  0.0 },
+            { "named": "right_wing"  }
+          ]
+        }
+      ]
+    }
+  ]
+}

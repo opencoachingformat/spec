@@ -1,0 +1,38 @@
+name: Feature Request
+description: Request a new feature or ruleset extension.
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: type
+    attributes:
+      label: Request type
+      options:
+        - New entity type
+        - New line type
+        - New ruleset
+        - New named positions
+        - Animation / frame model
+        - Other schema change
+    validations:
+      required: true
+
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Coaching use case
+      description: Describe the coaching scenario that requires this feature.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: How should this be represented in the schema?
+
+  - type: checkboxes
+    id: rfc
+    attributes:
+      label: RFC required?
+      options:
+        - label: I believe this requires an RFC (breaking or significantly additive change)

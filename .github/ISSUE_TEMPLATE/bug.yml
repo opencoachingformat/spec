@@ -1,0 +1,41 @@
+name: Bug Report / Clarification
+description: Something in the schema or spec is unclear, incorrect, or inconsistent.
+labels: ["bug"]
+body:
+  - type: input
+    id: schema_version
+    attributes:
+      label: Schema version
+      placeholder: "v1.0.0"
+    validations:
+      required: true
+
+  - type: input
+    id: section
+    attributes:
+      label: Affected section or field
+      placeholder: "e.g. frames[].entity_states, named position: left_wing"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What is unclear, incorrect, or inconsistent?
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true

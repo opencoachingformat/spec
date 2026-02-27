@@ -1,0 +1,1335 @@
+= Open Coaching Format — Open Standard for Basketball Drill Diagrams
+:version: 1.0.0
+:doctype: book
+:toc: left
+:toc-title: Table of Contents
+:toclevels: 3
+:sectnums:
+:sectnumlevels: 3
+:icons: font
+:source-highlighter: rouge
+:rouge-style: github
+:experimental:
+:imagesdir: images
+:stem: latexmath
+
+// Custom attributes
+:odf: Open Coaching Format
+:schema-url: https://opencoachingformat.org/schema/v1.json
+:fiba-coord-width: 15.0
+:fiba-coord-half-depth: 14.0
+
+[abstract]
+== Abstract
+
+*{ocf} v{version}* is an open, ruleset-aware JSON schema for representing basketball drill diagrams and multi-step animations.
+It defines a court coordinate system based on real-world units (meters or feet), a registry of named court positions per ruleset,
+a semantic entity model, and a frame-based animation structure.
+
+The format is designed to be:
+
+* *Human-readable* — coaching terminology maps directly to named positions
+* *LLM-friendly* — structured enough for text-to-diagram generation
+* *Renderer-agnostic* — SVG, Canvas, PDF, mobile
+* *Ruleset-aware* — FIBA, NBA, NCAA, NFHS, custom
+* *FIBA-compatible* — import/export path for existing FIBA Europe diagrams
+
+---
+
+== Introduction
+
+=== Motivation
+
+No open standard exists for basketball drill diagrams.
+All major tools (FIBA Europe Coaching App, FastDraw, Sportplan.net) use proprietary formats with image-only export.
+This prevents programmatic drill creation, LLM-assisted coaching tools, and cross-platform interoperability.
+
+{ocf} addresses this gap by providing:
+
+. A well-defined JSON Schema (Draft-7)
+. A coordinate system grounded in real-world units
+. A named position registry aligned with official ruleset geometry
+. A frame model for multi-step animated drills
+. A clear import path from the FIBA Europe internal format
+
+=== Design Principles
+
+[cols="1,3", options="header"]
+|===
+| Principle | Decision
+
+| *Court units = real units*
+| Coordinates in meters (FIBA) or feet (NBA/NCAA). No arbitrary pixel grids.
+
+| *Origin = midcourt center*
+| Positive y = frontcourt (offense). Negative y = backcourt (defense). Zero = midline.
+
+| *Viewer perspective*
+| "Left" and "right" are always from the viewer's top-down perspective.
+
+| *Named positions over raw coordinates*
+| Standard court landmarks (e.g. `top_of_the_key`) are first-class citizens.
+
+| *Entity keys = team + number*
+| `offense_1`, `defense_3`. No synthetic IDs for player entities.
+
+| *Frames are additive*
+| Frames carry only delta entity positions. Unchanged entities inherit previous frame.
+
+| *Colors are semantic roles*
+| `"offense"`, `"defense"`, `"black"`. Hex values are configured per document.
+
+| *Registry over fixed enum*
+| Named positions use a known-good standard catalog + user-extensible custom block.
+|===
+
+---
+
+== Coordinate System
+
+=== Overview
+
+The {ocf} coordinate system places the origin at the center of the court (midcourt center circle).
+
+[source]
+----
+                    viewer's left         viewer's right
+                         |                     |
+    defense basket  ─────┼─────────────────────┼─────  y = -max
+    (backcourt)          │                     │
+                         │    BACKCOURT        │
+                         │    y < 0            │
+                    ─────┼─────────────────────┼─────  y = 0  (midline / origin)
+                    x=-max         x=0        x=+max
+                         │    FRONTCOURT       │
+                         │    y > 0            │
+    offense basket  ─────┼─────────────────────┼─────  y = +max
+    (frontcourt)         │                     │
+----
+
+[cols="1,2", options="header"]
+|===
+| Axis | Definition
+
+| x
+| Horizontal. `0` = court center line. Negative = viewer's left. Positive = viewer's right.
+
+| y
+| Vertical. `0` = midline. Positive = toward offense basket (frontcourt). Negative = toward defense basket (backcourt).
+|===
+
+=== Coordinate Ranges per Ruleset
+
+[cols="1,1,2,2", options="header"]
+|===
+| Ruleset | Unit | x range | y range (half / full)
+
+| `fiba`  | m  | −7.5 … +7.5 | 0 … +14.0 / −14.0 … +14.0
+| `nba`   | ft | −25.0 … +25.0 | 0 … +47.0 / −47.0 … +47.0
+| `ncaa`  | ft | −25.0 … +25.0 | 0 … +47.0 / −47.0 … +47.0
+| `nfhs`  | ft | −25.0 … +25.0 | 0 … +42.0 / −42.0 … +42.0
+|===
+
+NOTE: For half court diagrams, only the frontcourt (`y ≥ 0`) is rendered.
+Entities placed at negative y coordinates in a half_court document are outside the visible area.
+
+=== Field Dimensions Reference
+
+[source]
+----
+FIBA Half Court — values in meters, origin at midline center
+┌─────────────────────────────────────────────────────────┐  y = 0.0
+│                         x=0                             │
+│              midcourt.left  midcourt.center  midcourt.right
+│           (-7.5,0)          (0,0)             (7.5,0)  │
+│                                                         │
+│                     TOP OF THE KEY                      │
+│                      (0.0, 5.68)                        │
+│       left_wing                          right_wing     │
+│      (-6.75, 8.60)                    (6.75, 8.60)      │
+│                                                         │
+│   left_corner   ─ ─ FREE THROW LINE ─ ─  right_corner  │
+│                        (0, 8.20)                        │
+│  left_elbow                              right_elbow    │
+│  (-2.45, 8.20)                          (2.45, 8.20)   │
+│                 ┌───────────────────┐                   │
+│                 │   PAINT AREA      │                   │
+│   left_block    │                   │   right_block     │
+│  (-2.45, 11.00) │   paint_center    │  (2.45, 11.00)   │
+│                 │    (0, 10.50)     │                   │
+│                 └───────────────────┘                   │
+│  left_corner                            right_corner    │
+│  (-7.5, 13.98)       basket          (7.5, 13.98)       │
+│                     (0, 12.43)                          │
+└─────────────────────────────────────────────────────────┘  y = +14.0
+----
+
+=== Coordinate Types
+
+A coordinate in {ocf} can be one of three forms:
+
+==== Absolute
+
+[source,json]
+----
+{ "x": 2.45, "y": 8.20 }
+----
+
+A fixed point in court units. Always valid.
+
+==== Named
+
+[source,json]
+----
+{ "named": "left_elbow" }
+----
+
+References a standard named position. Resolved to absolute coordinates at render time using the document's `ruleset`.
+Custom positions use the `custom.` prefix:
+
+[source,json]
+----
+{ "named": "custom.dunker_spot" }
+----
+
+==== Relative
+
+[source,json]
+----
+{
+  "relative_to": "left_elbow",
+  "dx": 1.0,
+  "dy": -0.5
+}
+----
+
+An offset from a named position.
+`dx` and `dy` are in the document's court unit.
+Positive `dx` = viewer's right. Positive `dy` = toward offense basket.
+
+---
+
+== Named Court Positions
+
+=== Standard Positions (FIBA)
+
+All coordinates in meters (m). Backcourt positions are the exact y-negation of their frontcourt counterparts.
+
+[cols="2,1,1,3", options="header"]
+|===
+| Name | x (m) | y (m) | Description
+
+4+| *Paint / Near Basket*
+
+| `basket`              |  0.000 | 12.425 | Center of basket ring
+| `left_block`          | -2.450 | 11.000 | Low post, left side
+| `right_block`         |  2.450 | 11.000 | Low post, right side
+| `paint_center`        |  0.000 | 10.500 | Center of the lane
+| `left_short_corner`   | -7.500 | 11.500 | Baseline region, outside paint left
+| `right_short_corner`  |  7.500 | 11.500 | Baseline region, outside paint right
+
+4+| *Mid-Range / Elbow*
+
+| `left_elbow`          | -2.450 |  8.200 | Junction of free throw line and paint, left
+| `right_elbow`         |  2.450 |  8.200 | Junction of free throw line and paint, right
+| `free_throw_line`     |  0.000 |  8.200 | Center of free throw line
+| `high_post_left`      | -2.450 |  7.000 | Above the elbow, left side
+| `high_post_right`     |  2.450 |  7.000 | Above the elbow, right side
+
+4+| *3-Point Area*
+
+| `top_of_the_key`      |  0.000 |  5.680 | Apex of 3-point arc
+| `left_wing`           | -6.750 |  8.600 | 3-point line, ~45° left
+| `right_wing`          |  6.750 |  8.600 | 3-point line, ~45° right
+| `left_corner`         | -7.500 | 13.980 | Corner 3, left
+| `right_corner`        |  7.500 | 13.980 | Corner 3, right
+
+4+| *Midcourt*
+
+| `midcourt.center`     |  0.000 |  0.000 | Center circle, origin
+| `midcourt.left`       | -7.500 |  0.000 | Left sideline at midline
+| `midcourt.right`      |  7.500 |  0.000 | Right sideline at midline
+
+4+| *Backcourt (Full Court)*
+
+| `backcourt.basket`    |  0.000 | -12.425 | Defense basket
+| `backcourt.left_block`| -2.450 | -11.000 | Defense left block
+| `backcourt.right_block`|  2.450 | -11.000 | Defense right block
+| `backcourt.left_elbow`| -2.450 |  -8.200 | Defense left elbow
+| `backcourt.right_elbow`|  2.450 |  -8.200 | Defense right elbow
+| `backcourt.free_throw_line` | 0.000 | -8.200 | Defense free throw line
+| `backcourt.top_of_the_key` | 0.000 | -5.680 | Defense top of the key
+| `backcourt.left_wing` | -6.750 |  -8.600 | Defense left wing
+| `backcourt.right_wing`|  6.750 |  -8.600 | Defense right wing
+| `backcourt.left_corner`| -7.500 | -13.980 | Defense left corner
+| `backcourt.right_corner`|  7.500 | -13.980 | Defense right corner
+
+4+| *Inbound Positions*
+
+| `inbound.baseline_left`   | -3.000 | 14.000 | Baseline inbound, left of basket
+| `inbound.baseline_right`  |  3.000 | 14.000 | Baseline inbound, right of basket
+| `inbound.baseline_center` |  0.000 | 14.000 | Baseline inbound, center
+| `inbound.sideline_left_fc`| -7.500 |  8.200 | Sideline inbound, frontcourt left
+| `inbound.sideline_right_fc`|  7.500 |  8.200 | Sideline inbound, frontcourt right
+| `inbound.sideline_left_mid`| -7.500 |  0.000 | Sideline inbound, at midline left
+| `inbound.sideline_right_mid`| 7.500 |  0.000 | Sideline inbound, at midline right
+| `inbound.sideline_left_bc`| -7.500 | -8.200 | Sideline inbound, backcourt left
+| `inbound.sideline_right_bc`|  7.500 | -8.200 | Sideline inbound, backcourt right
+|===
+
+=== Ruleset Differences
+
+Key position differences across rulesets (all values in respective unit):
+
+[cols="2,1,1,1,1", options="header"]
+|===
+| Position | FIBA (m) | NBA (ft) | NCAA (ft) | NFHS (ft)
+
+| `top_of_the_key` y  | 5.68  | 20.75 | 20.75 | 19.75
+| `left_wing` x       | ±6.75 | ±22.15| ±20.75| ±19.75
+| `left_corner` x     | ±7.50 | ±25.0 | ±25.0 | ±25.0
+| `left_corner` y     | 13.98 | 46.58 | 46.58 | 41.58
+| `free_throw_line` y | 8.20  | 19.00 | 19.00 | 19.00
+| `left_elbow` x      | ±2.45 |  ±8.0 |  ±6.0 |  ±6.0
+|===
+
+NOTE: NBA corners are defined by a straight sideline section, not an arc.
+The `left_corner` and `right_corner` positions mark the junction point where the straight section meets the arc.
+
+=== Custom Positions (Registry)
+
+User-defined named positions are stored in the `named_positions.custom` block:
+
+[source,json]
+----
+"named_positions": {
+  "custom": {
+    "dunker_spot": {
+      "x": 1.5,
+      "y": 12.8,
+      "description": "Dunker spot, weak side baseline"
+    },
+    "nail": {
+      "x": 0.0,
+      "y": 8.5,
+      "description": "Free throw line extended, center"
+    },
+    "short_roll": {
+      "x": -2.0,
+      "y": 9.5
+    }
+  }
+}
+----
+
+Reference them in coordinates with the `custom.` prefix:
+
+[source,json]
+----
+{ "named": "custom.dunker_spot" }
+----
+
+TIP: Custom positions use the same unit as the document ruleset.
+No separate unit declaration is needed.
+
+---
+
+== Entities
+
+Entities represent all objects that appear on the court.
+Their initial position is defined in the top-level `entities` array.
+Frame-by-frame movement is defined via `entity_states` deltas in each frame.
+
+=== Entity Reference Keys
+
+Each entity is uniquely identified by a natural key string:
+
+[cols="2,3", options="header"]
+|===
+| Entity | Key Format
+
+| Offensive player nr. 1  | `"offense_1"`
+| Defensive player nr. 3  | `"defense_3"`
+| Ball                    | `"ball"`
+| Coach                   | `"coach"`
+| Cone nr. 2              | `"cone_2"`
+| Station nr. 4           | `"station_4"`
+|===
+
+NOTE: `offense_1` and `defense_1` are distinct entities. In transition drills, both can appear simultaneously.
+
+=== Entity Types
+
+==== Offensive Player
+
+[source,json]
+----
+{
+  "type": "offense",
+  "nr": 1,
+  "x": 0.0,
+  "y": 5.68,
+  "rotation": 0,
+  "color": "offense"
+}
+----
+
+Rendered as a filled circle with player number.
+`rotation` is typically `0` for offense (not rendered).
+`color` defaults to `"offense"` (resolved via `color_scheme.offense_fill`).
+
+==== Defensive Player
+
+[source,json]
+----
+{
+  "type": "defense",
+  "nr": 1,
+  "x": 0.5,
+  "y": 5.5,
+  "rotation": 45,
+  "color": "defense"
+}
+----
+
+Rendered as a filled shape (arc outline + inner circle) with player number.
+`rotation` indicates the direction the defender is facing.
+
+==== Ball
+
+[source,json]
+----
+{
+  "type": "ball",
+  "x": 0.0,
+  "y": 5.68
+}
+----
+
+Rendered as an orange circle with seam lines. At most one ball per diagram.
+
+==== Coach
+
+[source,json]
+----
+{
+  "type": "coach",
+  "x": -7.5,
+  "y": 6.0
+}
+----
+
+Rendered as a circle labeled "C".
+
+==== Cone
+
+[source,json]
+----
+{
+  "type": "cone",
+  "nr": 1,
+  "x": 2.0,
+  "y": 7.0
+}
+----
+
+Rendered as a small triangle. Used as training markers or obstacles.
+
+==== Station
+
+[source,json]
+----
+{
+  "type": "station",
+  "nr": 3,
+  "label": "Rebound jumps",
+  "x": -4.0,
+  "y": 11.0
+}
+----
+
+Rendered as a numbered marker with optional description. Used for circuit training drills.
+
+---
+
+== Lines
+
+Lines represent movement, passing, dribbling, screens, and other path-based actions.
+
+=== Line Types
+
+[source]
+----
+movement  ──────────────────────►  Cut or run without ball (solid, arrow)
+passing   ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ►  Pass (dashed, arrow)
+dribbling  ~~~~~~~~~~~~~~~~~~~~~►  Dribble (wave, arrow)
+screen    ──────────────────────┤  Screen / pick (solid, crossbar end)
+line      ────────────────────────  Free line (no marker)
+free      ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─   Freehand (Douglas-Peucker simplified)
+----
+
+=== Line Properties
+
+[cols="1,1,3", options="header"]
+|===
+| Property | Type | Description
+
+| `type`        | enum   | One of: `movement`, `passing`, `dribbling`, `screen`, `line`, `free`
+| `curved`      | bool   | Waypoints interpolated as quadratic bezier curves. Default: `true`
+| `color`       | role   | Color role. Default: `"black"`
+| `from_entity` | string | Optional entity key of the line's origin
+| `to_entity`   | string | Optional entity key of the line's target
+| `coords`      | array  | Ordered waypoints. Minimum 2. Each may be absolute, named, or relative.
+|===
+
+=== Curve Algorithm
+
+When `curved: true` and there are more than 2 waypoints, the renderer applies quadratic bezier interpolation (FIBA CurvedPathMaths algorithm):
+
+[source]
+----
+Input waypoints:   P0 ──── P1 ──── P2 ──── P3
+
+Bezier curve:      P0 ── Q── P1 ──Q── P2 ──Q── P3
+
+Control point Q between Pn and Pn+1 is placed at the angle bisector
+of the incoming and outgoing vectors at each intermediate point.
+----
+
+When `curved: false` or there are exactly 2 waypoints, the path is rendered as straight line segments.
+
+=== Dribbling Wave Algorithm
+
+For `type: "dribbling"`, the path is rendered as a sinusoidal wave:
+
+* Wave length: 5 units (FIBA equivalent)
+* Control points offset perpendicular to direction of travel
+* Amplitude alternates left/right
+
+=== Line Examples
+
+[source,json]
+----
+{
+  "type": "passing",
+  "curved": false,
+  "color": "black",
+  "from_entity": "offense_1",
+  "to_entity": "offense_2",
+  "coords": [
+    { "named": "top_of_the_key" },
+    { "named": "left_wing" }
+  ]
+}
+----
+
+[source,json]
+----
+{
+  "type": "dribbling",
+  "curved": true,
+  "from_entity": "offense_1",
+  "coords": [
+    { "named": "top_of_the_key" },
+    { "x": -1.5, "y": 9.0 },
+    { "named": "left_elbow" }
+  ]
+}
+----
+
+[source,json]
+----
+{
+  "type": "screen",
+  "from_entity": "offense_4",
+  "to_entity": "defense_1",
+  "coords": [
+    { "relative_to": "left_elbow", "dx": 0.5, "dy": -0.5 },
+    { "relative_to": "left_elbow", "dx": 0.5, "dy":  0.0 }
+  ]
+}
+----
+
+---
+
+== Frames
+
+Frames define the temporal structure of a drill.
+A static diagram has exactly one frame.
+Multi-step drills have multiple frames.
+
+=== Frame Model
+
+[plantuml, frame-model, svg]
+....
+@startuml
+skinparam backgroundColor white
+skinparam defaultFontName Helvetica
+
+rectangle "Drill" {
+  rectangle "entities[]" as E #lightblue {
+    note right: Initial positions\n(frame 0 baseline)
+  }
+  rectangle "frames[0]" as F0 #lightyellow {
+    note right: entity_states = {}\n(all entities at initial pos)\nlines = [...]
+  }
+  rectangle "frames[1]" as F1 #lightyellow {
+    note right: entity_states:\n  offense_1: {x,y}\n  defense_2: {x,y}\nlines = [...]
+  }
+  rectangle "frames[2]" as F2 #lightyellow {
+    note right: entity_states:\n  offense_1: {x,y}\nlines = [...]
+  }
+
+  E -down-> F0 : baseline
+  F0 -down-> F1 : delta
+  F1 -down-> F2 : delta
+}
+@enduml
+....
+
+=== Entity State Resolution
+
+For each entity at each frame:
+
+[source]
+----
+Position(entity, frame_n) =
+  IF entity_states[frame_n][entity_key] EXISTS
+    → use frame_n value
+  ELSE
+    → inherit Position(entity, frame_n - 1)
+----
+
+This means only moving entities need to be listed in `entity_states`.
+Static entities (cones, coach on sideline) never appear in `entity_states`.
+
+=== Frame Properties
+
+[cols="1,1,3", options="header"]
+|===
+| Property | Type | Description
+
+| `id`            | string  | Unique frame identifier within the drill.
+| `label`         | string  | Short display label (e.g. `"Step 1"`, `"Phase A"`).
+| `description`   | string  | Full coaching instruction for this step. Suitable for LLM generation.
+| `duration_ms`   | integer | Suggested animation duration in milliseconds.
+| `entity_states` | object  | Delta positions keyed by entity_ref. Only moving entities.
+| `lines`         | array   | All movement lines active in this frame.
+|===
+
+=== Frame Example
+
+[source,json]
+----
+{
+  "id": "frame_1",
+  "label": "Step 1",
+  "description": "offense_1 passes to offense_2 at the left wing. offense_3 cuts baseline.",
+  "duration_ms": 1500,
+  "entity_states": {},
+  "lines": [
+    {
+      "type": "passing",
+      "curved": false,
+      "from_entity": "offense_1",
+      "to_entity": "offense_2",
+      "coords": [
+        { "named": "top_of_the_key" },
+        { "named": "left_wing" }
+      ]
+    },
+    {
+      "type": "movement",
+      "curved": true,
+      "from_entity": "offense_3",
+      "coords": [
+        { "named": "right_block" },
+        { "named": "left_corner" }
+      ]
+    }
+  ]
+},
+{
+  "id": "frame_2",
+  "label": "Step 2",
+  "description": "offense_2 drives baseline. offense_1 relocates to right wing.",
+  "duration_ms": 2000,
+  "entity_states": {
+    "offense_2": { "x": -7.5, "y": 11.0 },
+    "offense_1": { "x": 6.75, "y": 8.60 }
+  },
+  "lines": [
+    {
+      "type": "dribbling",
+      "from_entity": "offense_2",
+      "coords": [
+        { "named": "left_wing" },
+        { "x": -7.0, "y": 12.0 },
+        { "named": "left_corner" }
+      ]
+    },
+    {
+      "type": "movement",
+      "from_entity": "offense_1",
+      "coords": [
+        { "named": "top_of_the_key" },
+        { "named": "right_wing" }
+      ]
+    }
+  ]
+}
+----
+
+---
+
+== Areas and Labels
+
+=== Areas
+
+Highlighted zones for marking training areas, defensive zones, or emphasis regions.
+
+[source,json]
+----
+{
+  "form": "rectangle",
+  "color": "yellow",
+  "opacity": 0.4,
+  "x": 0.0,
+  "y": 10.0,
+  "width": 4.9,
+  "height": 4.0
+}
+----
+
+[source,json]
+----
+{
+  "form": "ellipse",
+  "color": "green",
+  "opacity": 0.3,
+  "x": 0.0,
+  "y": 8.2,
+  "width": 5.0,
+  "height": 3.0
+}
+----
+
+[source,json]
+----
+{
+  "form": "triangle",
+  "color": "red",
+  "opacity": 0.25,
+  "x": 0,
+  "y": 0,
+  "coords": [
+    { "named": "left_block" },
+    { "named": "right_block" },
+    { "named": "basket" }
+  ]
+}
+----
+
+=== Labels
+
+Free text annotations on the court:
+
+[source,json]
+----
+{
+  "text": "Pick & Roll",
+  "x": -7.0,
+  "y": 3.0,
+  "color": "black"
+}
+----
+
+---
+
+== Color Scheme
+
+=== Design
+
+Colors are defined as semantic roles, not as direct hex values in entities or lines.
+This allows editors to customize the appearance globally without modifying individual elements.
+
+[cols="1,2,2", options="header"]
+|===
+| Role | FIBA Default | Usage
+
+| `offense_fill`   | `#003366` | Offensive player symbol fill
+| `offense_stroke` | `#ffffff` | Offensive player symbol outline + number
+| `defense_fill`   | `#58001d` | Defensive player symbol fill
+| `defense_stroke` | `#ffffff` | Defensive player symbol outline + number
+| `black`          | `#000000` | Lines, cones, text (default)
+| `grey`           | `#7f7f7f` | Subtle highlights, background areas
+| `yellow`         | `#ffff00` | Highlighted zones
+| `green`          | `#7ce86a` | Secondary highlights
+| `red`            | `#ff0000` | Warning zones, alternative team color
+| `blue`           | `#5dd5ff` | Alternative team color
+| `white`          | `#ffffff` | Backgrounds, inverted labels
+|===
+
+=== WCAG Accessibility
+
+[IMPORTANT]
+====
+All color combinations used for rendered symbols must meet at minimum *WCAG AA (4.5:1 contrast ratio)*.
+*WCAG AAA (7:1)* is recommended for printed materials.
+
+Validators should emit a warning when `color_scheme` values produce contrast below 4.5:1
+against the court background used by the target renderer.
+====
+
+FIBA default — contrast analysis:
+
+[cols="2,1,1,1,1", options="header"]
+|===
+| Combination | Foreground | Background | Ratio | WCAG
+
+| Offense number on fill  | `#ffffff` | `#003366` | 12.6:1 | ✅ AAA
+| Defense number on fill  | `#ffffff` | `#58001d` | 11.2:1 | ✅ AAA
+| Black line on court     | `#000000` | `#0089cf` |  4.6:1 | ✅ AA
+| Offense fill on court   | `#003366` | `#0089cf` |  3.8:1 | ⚠️ Fail (use stroke)
+| Defense fill on court   | `#58001d` | `#0089cf` |  3.1:1 | ⚠️ Fail (use stroke)
+|===
+
+NOTE: Renderers should apply a `2px white` stroke around player symbols to compensate
+for the low contrast between symbol fill and court background.
+This matches the FIBA SVG renderer behavior.
+
+=== Overriding Colors
+
+[source,json]
+----
+"color_scheme": {
+  "offense_fill": "#1a4f8a",
+  "offense_stroke": "#ffffff",
+  "defense_fill": "#8a1a1a",
+  "defense_stroke": "#ffffff"
+}
+----
+
+Only fields that differ from the FIBA defaults need to be included.
+
+---
+
+== Court Configuration
+
+=== Supported Rulesets
+
+[cols="1,1,2,2", options="header"]
+|===
+| `ruleset` | `unit` | Court (L × W) | Notes
+
+| `fiba`  | `m`  | 28.0 × 15.0 | International standard
+| `nba`   | `ft` | 94.0 × 50.0 | NBA-specific 3-point geometry (straight corners)
+| `ncaa`  | `ft` | 94.0 × 50.0 | Shorter 3-point line than NBA
+| `nfhs`  | `ft` | 84.0 × 50.0 | US high school, shorter court
+| `custom`| *    | defined      | Requires `custom_dimensions` block
+|===
+
+=== Half Court vs Full Court
+
+[cols="1,3", options="header"]
+|===
+| `type` | Rendered region
+
+| `half_court` | y = 0 to +max. Offense basket at top. Midline forms the baseline.
+| `full_court` | y = -max to +max. Both baskets rendered.
+|===
+
+=== Drill Focus
+
+[cols="1,3", options="header"]
+|===
+| `drill_focus` | Meaning
+
+| `offense`    | Offensive drill. Positive y = direction of attack. Default.
+| `defense`    | Defensive drill. Positive y = basket being defended.
+| `transition` | Full court drill with directional change. Implies `full_court`.
+| `neutral`    | No directional focus (e.g. conditioning drill, station circuit).
+|===
+
+=== Custom Ruleset
+
+[source,json]
+----
+"court": {
+  "ruleset": "custom",
+  "type": "half_court",
+  "drill_focus": "offense",
+  "custom_dimensions": {
+    "unit": "m",
+    "length": 24.0,
+    "width": 13.0,
+    "basket_from_baseline": 1.575,
+    "three_point_distance": 5.77,
+    "paint_width": 3.6,
+    "paint_depth": 5.8,
+    "free_throw_distance": 5.8
+  }
+}
+----
+
+---
+
+== Ruleset Conversion
+
+Converting a drill between rulesets is an explicit, lossless operation for *named positions*
+and a best-effort proportional mapping for *free coordinates*.
+
+=== Named Position Conversion
+
+Named positions are looked up independently in each ruleset's coordinate table.
+The semantic meaning is preserved exactly.
+
+[source]
+----
+"left_wing" in FIBA  →  (-6.75m, 8.60m)
+"left_wing" in NBA   →  (-22.15ft, 28.5ft)   ← independent lookup, no math
+----
+
+=== Free Coordinate Conversion
+
+Free absolute coordinates are converted proportionally:
+
+[source]
+----
+x_target = x_source / (source.half_width)  * target.half_width
+y_target = y_source / (source.half_depth)  * target.half_depth
+----
+
+[WARNING]
+====
+Proportional conversion of free coordinates may place entities
+at positions that are semantically incorrect (e.g. inside or outside the 3-point line)
+relative to the target ruleset's geometry.
+
+Editors should surface a warning: _"X free coordinates were proportionally scaled.
+Please verify their positions against the target ruleset."_
+====
+
+=== FIBA Legacy Import
+
+Existing FIBA Europe diagrams use a proprietary pixel coordinate system (384 × 540).
+Conversion to {ocf} FIBA coordinates:
+
+[source]
+----
+x_m = (fiba_x - 192) / 192.0 * 7.5
+y_m = (270 - fiba_y) / 270.0 * 14.0
+----
+
+NOTE: The FIBA coordinate origin is at the top-left of the SVG canvas.
+The y-axis is inverted (y increases downward in FIBA, upward in {ocf}).
+
+---
+
+== Complete Example
+
+=== Pick & Roll — Half Court, FIBA
+
+[source,json]
+----
+{
+  "$schema": "https://opencoachingformat.org/schema/v1.json",
+
+  "meta": {
+    "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "title": "Basic Pick & Roll",
+    "description": "Ball handler uses a ball screen at the top. Screener rolls to the basket.",
+    "author": "Trainer Muster",
+    "tags": ["pick-and-roll", "offense", "half-court", "2-player"],
+    "difficulty": "intermediate",
+    "created": "2025-02-27T10:00:00Z",
+    "source_format": "open"
+  },
+
+  "court": {
+    "ruleset": "fiba",
+    "type": "half_court",
+    "drill_focus": "offense"
+  },
+
+  "named_positions": {
+    "custom": {
+      "pnr_spot": {
+        "x": -1.0,
+        "y": 6.5,
+        "description": "Where the screen is set, just left of top of key"
+      }
+    }
+  },
+
+  "entities": [
+    { "type": "offense", "nr": 1, "x":  0.0, "y": 5.68 },
+    { "type": "offense", "nr": 4, "x": -1.0, "y": 8.20 },
+    { "type": "defense", "nr": 1, "x":  0.5, "y": 5.20 },
+    { "type": "defense", "nr": 4, "x": -1.5, "y": 8.00 },
+    { "type": "ball",             "x":  0.0, "y": 5.68  }
+  ],
+
+  "frames": [
+    {
+      "id": "frame_1",
+      "label": "Step 1 — Screen",
+      "description": "offense_4 moves up to set a screen for offense_1 at the custom.pnr_spot.",
+      "duration_ms": 1500,
+      "entity_states": {
+        "offense_4": { "x": -1.0, "y": 6.5 }
+      },
+      "lines": [
+        {
+          "type": "movement",
+          "curved": true,
+          "from_entity": "offense_4",
+          "coords": [
+            { "named": "left_elbow" },
+            { "named": "custom.pnr_spot" }
+          ]
+        },
+        {
+          "type": "screen",
+          "from_entity": "offense_4",
+          "to_entity": "defense_1",
+          "coords": [
+            { "named": "custom.pnr_spot" },
+            { "relative_to": "custom.pnr_spot", "dx": 0.0, "dy": 0.5 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "frame_2",
+      "label": "Step 2 — Ball Handler Uses Screen",
+      "description": "offense_1 dribbles off the screen toward the left elbow. offense_4 rolls to the basket.",
+      "duration_ms": 2000,
+      "entity_states": {
+        "offense_1": { "x": -2.0, "y": 8.0  },
+        "offense_4": { "x":  0.5, "y": 11.5 },
+        "ball":      { "x": -2.0, "y": 8.0  }
+      },
+      "lines": [
+        {
+          "type": "dribbling",
+          "curved": true,
+          "from_entity": "offense_1",
+          "coords": [
+            { "named": "top_of_the_key" },
+            { "relative_to": "custom.pnr_spot", "dx": -0.5, "dy": 0.5 },
+            { "named": "left_elbow" }
+          ]
+        },
+        {
+          "type": "movement",
+          "curved": true,
+          "from_entity": "offense_4",
+          "coords": [
+            { "named": "custom.pnr_spot" },
+            { "x": -0.5, "y": 9.5 },
+            { "named": "right_block" }
+          ]
+        }
+      ]
+    }
+  ],
+
+  "areas": [
+    {
+      "form": "rectangle",
+      "color": "yellow",
+      "opacity": 0.25,
+      "x": 0.0,
+      "y": 10.5,
+      "width": 4.9,
+      "height": 4.0
+    }
+  ],
+
+  "labels": [
+    {
+      "text": "Roll to basket!",
+      "x": 2.5,
+      "y": 10.0,
+      "color": "black"
+    }
+  ]
+}
+----
+
+---
+
+== Schema Reference
+
+=== Top-Level Structure
+
+[plantuml, schema-overview, svg]
+....
+@startuml
+skinparam backgroundColor white
+skinparam defaultFontName Helvetica
+skinparam classBackgroundColor #f8f8f8
+skinparam classBorderColor #aaaaaa
+
+class Drill {
+  +meta: Meta
+  +court: Court
+  +entities: Entity[]
+  +frames: Frame[]
+  --
+  +color_scheme: ColorScheme?
+  +named_positions: NamedPositions?
+  +areas: Area[]?
+  +labels: Label[]?
+}
+
+class Meta {
+  +id: uuid
+  +title: string
+  --
+  +description: string?
+  +author: string?
+  +tags: string[]?
+  +difficulty: enum?
+  +created: datetime?
+  +source_format: enum?
+}
+
+class Court {
+  +ruleset: enum
+  +type: enum
+  --
+  +drill_focus: enum
+  +wheelchair: boolean
+  +custom_dimensions: CustomDimensions?
+}
+
+class Entity {
+  +type: enum
+  +x: number
+  +y: number
+  --
+  +nr: integer?
+  +rotation: number?
+  +color: ColorRole?
+  +label: string?
+}
+
+class Frame {
+  +id: string
+  +lines: Line[]
+  --
+  +label: string?
+  +description: string?
+  +duration_ms: integer?
+  +entity_states: map?
+}
+
+class Line {
+  +type: enum
+  +coords: Coordinate[]
+  --
+  +curved: boolean
+  +color: ColorRole
+  +from_entity: EntityRef?
+  +to_entity: EntityRef?
+}
+
+class Coordinate {
+  <<oneOf>>
+  FreeCoordinate
+  NamedCoordinate
+  RelativeCoordinate
+}
+
+Drill *-- Meta
+Drill *-- Court
+Drill *-- Entity
+Drill *-- Frame
+Frame *-- Line
+Line *-- Coordinate
+@enduml
+....
+
+=== Coordinate oneOf
+
+[plantuml, coordinate-types, svg]
+....
+@startuml
+skinparam backgroundColor white
+skinparam defaultFontName Helvetica
+
+abstract class Coordinate <<oneOf>>
+
+class FreeCoordinate {
+  +x: number
+  +y: number
+}
+
+class NamedCoordinate {
+  +named: string
+}
+
+class RelativeCoordinate {
+  +relative_to: string
+  +dx: number
+  +dy: number
+}
+
+Coordinate <|-- FreeCoordinate
+Coordinate <|-- NamedCoordinate
+Coordinate <|-- RelativeCoordinate
+@enduml
+....
+
+=== Enums Summary
+
+[cols="1,3", options="header"]
+|===
+| Enum | Values
+
+| `ruleset`       | `fiba`, `nba`, `ncaa`, `nfhs`, `custom`
+| `court.type`    | `half_court`, `full_court`
+| `drill_focus`   | `offense`, `defense`, `transition`, `neutral`
+| `difficulty`    | `beginner`, `intermediate`, `advanced`
+| `source_format` | `fiba`, `fastdraw`, `open`, `custom`
+| `entity.type`   | `offense`, `defense`, `ball`, `coach`, `cone`, `station`
+| `line.type`     | `movement`, `passing`, `dribbling`, `screen`, `line`, `free`
+| `area.form`     | `rectangle`, `ellipse`, `triangle`
+| `color_role`    | `offense`, `defense`, `black`, `grey`, `yellow`, `green`, `red`, `blue`, `white`
+| `unit`          | `m`, `ft`
+|===
+
+---
+
+== LLM Generation Guide
+
+=== Prompt Pattern
+
+{ocf} is designed so that LLMs can generate valid drill JSON from natural language descriptions.
+The key is the named position vocabulary — it grounds spatial references in a controlled set of terms.
+
+Example prompt structure:
+
+[source]
+----
+Generate an Open Coaching Format v1 JSON for the following drill:
+
+Ruleset: FIBA, Half Court, Offense
+Title: "3-Man Weave"
+
+Description:
+offense_1 starts at midcourt.center with the ball.
+offense_2 starts at inbound.sideline_left_mid.
+offense_3 starts at inbound.sideline_right_mid.
+
+Step 1: offense_1 passes to offense_2, cuts behind toward the right sideline.
+Step 2: offense_2 passes to offense_3 who has filled the center lane.
+Step 3: offense_3 finishes at the basket.
+
+Output only valid JSON matching https://opencoachingformat.org/schema/v1.json
+----
+
+=== LLM Output Tips
+
+* Prefer `named` coordinates wherever a standard position name applies
+* Use `relative_to` for positions defined as offsets ("2 meters right of the elbow")
+* Use `from_entity` / `to_entity` on all lines where the entity is clear from context
+* `entity_states` should only list entities that actually move in that frame
+* Frame `description` should mirror the coaching instruction in natural language
+
+=== Validation
+
+After LLM generation, validate against the JSON Schema:
+
+[source,bash]
+----
+npx ajv-cli validate \
+  -s opencoachingformat-v1.schema.json \
+  -d my_drill.json
+----
+
+---
+
+[appendix]
+== FIBA Import Mapping
+
+[cols="1,1,2", options="header"]
+|===
+| FIBA Field | OCF Field | Notes
+
+| `id` (GUID)           | `meta.id`                     | GUID → UUID
+| `fullCourt`           | `court.type`                  | `true` → `full_court`
+| `wheelchair`          | `court.wheelchair`            | Direct
+| `dynamicElement.type` | `entity.type`                 | See type map below
+| `dynamicElement.nr`   | `entity.nr`                   | Direct
+| `dynamicElement.color`| `entity.color`                | See color map below
+| `dynamicElement.x`    | `entity.x`                    | `(fiba_x - 192) / 192 * 7.5`
+| `dynamicElement.y`    | `entity.y`                    | `(270 - fiba_y) / 270 * 14.0`
+| `lineElement.type`    | `frame.lines[].type`          | See type map below
+| `lineElement.curved`  | `frame.lines[].curved`        | Direct
+| `lineElement.coords`  | `frame.lines[].coords[]`      | Coordinate conversion each point
+| `staticElement (area)`| `areas[]`                     | form, color, position
+| `staticElement (text)`| `labels[]`                    | text, position
+|===
+
+=== FIBA Dynamic Element Type Map
+
+[cols="1,1", options="header"]
+|===
+| FIBA `type` | OCF `entity.type`
+
+| 0 (offence)  | `offense`
+| 1 (defence)  | `defense`
+| 2 (ball)     | `ball`
+| 3 (coach)    | `coach`
+| 4 (cone)     | `cone`
+| 5 (shooting) | — (render as `movement` line to basket)
+| 6 (handoff)  | — (render as `screen` line variant)
+|===
+
+=== FIBA Line Type Map
+
+[cols="1,1", options="header"]
+|===
+| FIBA `type` | OCF `line.type`
+
+| 0 (movement)  | `movement`
+| 1 (passing)   | `passing`
+| 2 (dribbling) | `dribbling`
+| 3 (screen)    | `screen`
+| 4 (line)      | `line`
+| 5 (free)      | `free`
+|===
+
+=== FIBA Color Map
+
+[cols="1,1,1", options="header"]
+|===
+| FIBA `color` | FIBA name | OCF `color_role`
+
+| -1 | unknown | `black`
+|  0 | yellow  | `yellow`
+|  1 | green   | `green`
+|  2 | red     | `red`
+|  3 | grey    | `grey`
+|  4 | black   | `black`
+|  5 | blue    | `blue`
+|  6 | offence | `offense`
+|  7 | defence | `defense`
+|===
+
+[appendix]
+== Changelog
+
+=== v1.0.0 (2025-02-27)
+
+* Initial release
+* FIBA-compatible entity model
+* Normalized coordinate system (meters/feet, origin at midcourt)
+* Named position registry (FIBA, NBA, NCAA, NFHS)
+* Frame-based animation model with entity delta states
+* Registry approach for custom named positions
+* Semantic color roles with WCAG guidance
+* FIBA legacy import coordinate mapping

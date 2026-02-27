@@ -1,0 +1,135 @@
+{
+  "$schema": "https://opencoachingformat.org/schema/v1.json",
+  "meta": {
+    "id": "c9d8e7f6-5a4b-3c2d-1e0f-9a8b7c6d5e4f",
+    "title": "3v2 Transition",
+    "description": "Three offensive players attack two defenders in transition. Offense must create a quality shot through ball movement and spacing.",
+    "author": "OCF Examples",
+    "tags": ["transition", "3v2", "full-court", "offense", "intermediate"],
+    "difficulty": "intermediate",
+    "created": "2025-02-27T10:00:00Z",
+    "source_format": "open"
+  },
+  "court": {
+    "ruleset": "fiba",
+    "type": "full_court",
+    "drill_focus": "transition"
+  },
+  "entities": [
+    { "type": "offense", "nr": 1, "x":  0.0,  "y": -12.0 },
+    { "type": "offense", "nr": 2, "x": -4.0,  "y": -10.0 },
+    { "type": "offense", "nr": 3, "x":  4.0,  "y": -10.0 },
+    { "type": "defense", "nr": 1, "x": -2.0,  "y":   2.0 },
+    { "type": "defense", "nr": 2, "x":  2.0,  "y":   2.0 },
+    { "type": "ball",             "x":  0.0,  "y": -12.0  }
+  ],
+  "frames": [
+    {
+      "id": "frame_1",
+      "label": "Push",
+      "description": "offense_1 pushes the ball up the middle. offense_2 and offense_3 fill the wings at full speed.",
+      "duration_ms": 2000,
+      "entity_states": {
+        "offense_1": { "x":  0.0, "y": -2.0 },
+        "offense_2": { "x": -5.5, "y":  0.0 },
+        "offense_3": { "x":  5.5, "y":  0.0 },
+        "ball":      { "x":  0.0, "y": -2.0 }
+      },
+      "lines": [
+        {
+          "type": "dribbling",
+          "curved": false,
+          "color": "black",
+          "from_entity": "offense_1",
+          "coords": [
+            { "x":  0.0, "y": -12.0 },
+            { "x":  0.0, "y":  -2.0 }
+          ]
+        },
+        {
+          "type": "movement",
+          "curved": false,
+          "color": "black",
+          "from_entity": "offense_2",
+          "coords": [
+            { "x": -4.0, "y": -10.0 },
+            { "named": "midcourt.left" }
+          ]
+        },
+        {
+          "type": "movement",
+          "curved": false,
+          "color": "black",
+          "from_entity": "offense_3",
+          "coords": [
+            { "x":  4.0, "y": -10.0 },
+            { "named": "midcourt.right" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "frame_2",
+      "label": "Attack",
+      "description": "Defense must choose: stop the ball or protect the paint. offense_1 reads the defense — here defense_1 steps up, so offense_1 passes to offense_2 for the lay-up.",
+      "duration_ms": 1500,
+      "entity_states": {
+        "offense_2": { "x": -5.5, "y": 10.0 },
+        "ball":      { "x": -5.5, "y":  5.0 }
+      },
+      "lines": [
+        {
+          "type": "passing",
+          "curved": false,
+          "color": "black",
+          "from_entity": "offense_1",
+          "to_entity": "offense_2",
+          "coords": [
+            { "x":  0.0, "y": -2.0 },
+            { "x": -5.5, "y":  5.0 }
+          ]
+        },
+        {
+          "type": "movement",
+          "curved": true,
+          "color": "black",
+          "from_entity": "offense_2",
+          "coords": [
+            { "named": "midcourt.left" },
+            { "named": "left_wing"     },
+            { "named": "basket"        }
+          ]
+        },
+        {
+          "type": "movement",
+          "curved": false,
+          "color": "black",
+          "from_entity": "offense_3",
+          "coords": [
+            { "named": "midcourt.right" },
+            { "named": "right_wing"     }
+          ]
+        }
+      ]
+    }
+  ],
+  "areas": [
+    {
+      "form": "ellipse",
+      "color": "red",
+      "opacity": 0.15,
+      "x": 0.0,
+      "y": 1.0,
+      "width": 6.0,
+      "height": 4.0
+    }
+  ],
+  "labels": [
+    {
+      "text": "Decision point",
+      "x": 2.0,
+      "y": -1.0,
+      "color": "black"
+    }
+  ]
+}
