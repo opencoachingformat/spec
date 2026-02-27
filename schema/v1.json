@@ -348,6 +348,11 @@
 
   "properties": {
 
+    "$schema": {
+      "type": "string",
+      "description": "URI reference to the OCF JSON Schema version used."
+    },
+
     "meta": {
       "type": "object",
       "description": "Drill metadata.",
