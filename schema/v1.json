@@ -355,7 +355,6 @@
       "properties": {
         "id": {
           "type": "string",
-          "format": "uuid",
           "description": "Universally unique identifier for this drill."
         },
         "title":       { "type": "string", "description": "Display name of the drill." },
@@ -481,11 +480,14 @@
   "additionalProperties": false,
 
   "if": {
-    "properties": { "court": { "properties": { "ruleset": { "const": "custom" } } } }
+    "type": "object",
+    "properties": { "court": { "type": "object", "properties": { "ruleset": { "const": "custom" } } } }
   },
   "then": {
+    "type": "object",
     "properties": {
       "court": {
+        "type": "object",
         "required": ["custom_dimensions"]
       }
     }
