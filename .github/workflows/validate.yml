@@ -17,7 +17,7 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    name: Validate examples (valid pass, invalid rejected)
+    name: Validate examples against schema
     steps:
       - name: Checkout
         uses: actions/checkout@v4
