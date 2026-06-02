@@ -73,8 +73,8 @@ This prevents programmatic drill creation, LLM-assisted coaching tools, and cros
 | *Entity keys = team + number*
 | `offense_1`, `defense_3`. No synthetic IDs for player entities.
 
-| *Frames are additive*
-| Frames carry only delta entity positions. Unchanged entities inherit previous frame.
+| *Frames are anchored*
+| Each frame carries explicit `start_state`/`end_state` anchors plus semantic actions. Any frame can render as a still without simulating history.
 
 | *Colors are semantic roles*
 | `"offense"`, `"defense"`, `"black"`. Hex values are configured per document.
@@ -336,9 +336,9 @@ No separate unit declaration is needed.
 
 == Entities
 
-Entities represent all objects that appear on the court.
+Entities represent all non-ball objects that appear on the court.
 Their initial position is defined in the top-level `entities` array.
-Frame-by-frame movement is defined via `entity_states` deltas in each frame.
+Balls are stored separately in the top-level `balls` array (see <<Balls>>).
 
 === Entity Reference Keys
 
@@ -350,7 +350,6 @@ Each entity is uniquely identified by a natural key string:
 
 | Offensive player nr. 1  | `"offense_1"`
 | Defensive player nr. 3  | `"defense_3"`
-| Ball                    | `"ball"`
 | Coach                   | `"coach"`
 | Cone nr. 2              | `"cone_2"`
 | Station nr. 4           | `"station_4"`
@@ -395,18 +394,31 @@ Rendered as a filled circle with player number.
 Rendered as a filled shape (arc outline + inner circle) with player number.
 `rotation` indicates the direction the defender is facing.
 
-==== Ball
+==== Balls
+
+Balls are no longer entities. They live in the top-level `balls` array and each
+holds exactly one lifecycle state:
+
+[cols="1,3", options="header"]
+|===
+| State | Meaning
+| `carried_by` | An entity ref (player or `coach`) currently holding the ball.
+| `at` | A coordinate where the ball rests (floor, rim after a miss). Still in play — can be `pickup` or `rebound`.
+| `dead` | `true`. Out of play (made basket with no rebound, or out of bounds).
+|===
 
 [source,json]
 ----
-{
-  "type": "ball",
-  "x": 0.0,
-  "y": 5.68
-}
+"balls": [
+  { "id": "ball_1", "carried_by": "offense_1" },
+  { "id": "ball_2", "carried_by": "coach" },
+  { "id": "ball_3", "at": { "named": "right_corner" } }
+]
 ----
 
-Rendered as an orange circle with seam lines. At most one ball per diagram.
+Ball possession moves automatically: `pass`, `shoot`, `pickup` and `rebound`
+actions transfer the ball. After a `shoot` with no following `rebound`/`pickup`
+on the same ball, the ball becomes `dead`.
 
 ==== Coach
 
@@ -452,232 +464,118 @@ Rendered as a numbered marker with optional description. Used for circuit traini
 
 ---
 
-== Lines
+== Actions
 
-Lines represent movement, passing, dribbling, screens, and other path-based actions.
+Movement and ball events are expressed as semantic *actions*, not geometric
+lines. A renderer derives the drawn arrows/paths from the actions. Every action
+has a required `player` and `type`; everything else is optional, so a coach can
+sketch quickly or annotate in full detail.
 
-=== Line Types
+=== Action Types
 
-[source]
-----
-movement  ──────────────────────►  Cut or run without ball (solid, arrow)
-passing   ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ►  Pass (dashed, arrow)
-dribbling  ~~~~~~~~~~~~~~~~~~~~~►  Dribble (wave, arrow)
-screen    ──────────────────────┤  Screen / pick (solid, crossbar end)
-line      ────────────────────────  Free line (no marker)
-free      ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─   Freehand (Douglas-Peucker simplified)
-----
-
-=== Line Properties
-
-[cols="1,1,3", options="header"]
+[cols="1,1,2,3", options="header"]
 |===
-| Property | Type | Description
-
-| `type`        | enum   | One of: `movement`, `passing`, `dribbling`, `screen`, `line`, `free`
-| `curved`      | bool   | Waypoints interpolated as quadratic bezier curves. Default: `true`
-| `color`       | role   | Color role. Default: `"black"`
-| `from_entity` | string | Optional entity key of the line's origin
-| `to_entity`   | string | Optional entity key of the line's target
-| `coords`      | array  | Ordered waypoints. Minimum 2. Each may be absolute, named, or relative.
+| Type | Ball? | Required | Optional (variant enum / references)
+| `move` | no | `moves[]` | —
+| `cut` | no | `moves[]` | `variant` (backdoor, give_and_go, flash, v_cut, l_cut, curl, flare, fade, basket); per-move `around_player`, `off_screen_by`
+| `screen` | no | `for_player` | `on_player`, `at`, `variant` (ball_screen, back_screen, down_screen, flare_screen, cross_screen, pin_down)
+| `defend` | no | `guards_player` | `variant` (on_ball, deny, help, hedge, switch, box_out)
+| `dribble` | yes | `moves[]` | `ball_id`, `variant` (speed, hesitation, crossover, behind_back, between_legs, spin, retreat)
+| `pass` | yes | `to_player` | `ball_id`, `variant` (chest, bounce, overhead, lob, baseball, hand_off, outlet)
+| `shoot` | yes | `player` | `ball_id`, `variant` (jumper, three, layup, floater, dunk, hook, free_throw), `result` (make/miss)
+| `rebound` | becomes carrier | `player` | `ball_id`, `variant` (offensive, defensive)
+| `pickup` | becomes carrier | `ball_id` | —
 |===
 
-=== Curve Algorithm
+Any action may also carry a free `tags` array (e.g. `eurostep`, `reverse`,
+`left_handed`). Curated `variant` values are what a renderer can distinguish
+visually; tags are open coaching metadata that need no schema change.
 
-When `curved: true` and there are more than 2 waypoints, the renderer applies quadratic bezier interpolation (FIBA CurvedPathMaths algorithm):
+=== Movement Sequences
 
-[source]
-----
-Input waypoints:   P0 ──── P1 ──── P2 ──── P3
-
-Bezier curve:      P0 ── Q── P1 ──Q── P2 ──Q── P3
-
-Control point Q between Pn and Pn+1 is placed at the angle bisector
-of the incoming and outgoing vectors at each intermediate point.
-----
-
-When `curved: false` or there are exactly 2 waypoints, the path is rendered as straight line segments.
-
-=== Dribbling Wave Algorithm
-
-For `type: "dribbling"`, the path is rendered as a sinusoidal wave:
-
-* Wave length: 5 units (FIBA equivalent)
-* Control points offset perpendicular to direction of travel
-* Amplitude alternates left/right
-
-=== Line Examples
+`move`, `cut` and `dribble` carry a `moves[]` sequence. A move *without* `to` is
+a move on the spot (ball handling / fake); a move *with* `to` carries the player
+(and ball, for `dribble`) to a waypoint. The final `to` must match the player's
+position in the frame `end_state`. Reference fields (`around_player`,
+`off_screen_by`) may sit on an individual move and override the action level.
 
 [source,json]
 ----
 {
-  "type": "passing",
-  "curved": false,
-  "color": "black",
-  "from_entity": "offense_1",
-  "to_entity": "offense_2",
-  "coords": [
-    { "named": "top_of_the_key" },
-    { "named": "left_wing" }
+  "player": "offense_1",
+  "type": "dribble",
+  "ball_id": "ball_1",
+  "moves": [
+    { "variant": "crossover" },
+    { "variant": "speed", "to": { "named": "basket" }, "around_player": "defense_1" }
   ]
 }
 ----
 
-[source,json]
-----
-{
-  "type": "dribbling",
-  "curved": true,
-  "from_entity": "offense_1",
-  "coords": [
-    { "named": "top_of_the_key" },
-    { "x": -1.5, "y": 9.0 },
-    { "named": "left_elbow" }
-  ]
-}
-----
+=== Timing
 
-[source,json]
-----
-{
-  "type": "screen",
-  "from_entity": "offense_4",
-  "to_entity": "defense_1",
-  "coords": [
-    { "relative_to": "left_elbow", "dx": 0.5, "dy": -0.5 },
-    { "relative_to": "left_elbow", "dx": 0.5, "dy":  0.0 }
-  ]
-}
-----
+Actions express ordering semantically, not in seconds (omitted = at frame
+start):
+
+[cols="1,3", options="header"]
+|===
+| Field | Meaning
+| `after` | `"<player>.<type>"` — starts after the referenced action begins.
+| `with` | `"<player>.<type>"` — simultaneous with the referenced action.
+| `on_catch` | `true` — straight out of the catch (catch-and-shoot).
+|===
 
 ---
 
 == Frames
 
-Frames define the temporal structure of a drill.
-A static diagram has exactly one frame.
-Multi-step drills have multiple frames.
+A frame is a coaching phase. It combines explicit anchors with semantic actions.
 
 === Frame Model
 
-[plantuml, frame-model, svg]
-....
-@startuml
-skinparam backgroundColor white
-skinparam defaultFontName Helvetica
-
-rectangle "Drill" {
-  rectangle "entities[]" as E #lightblue {
-    note right: Initial positions\n(frame 0 baseline)
-  }
-  rectangle "frames[0]" as F0 #lightyellow {
-    note right: entity_states = {}\n(all entities at initial pos)\nlines = [...]
-  }
-  rectangle "frames[1]" as F1 #lightyellow {
-    note right: entity_states:\n  offense_1: {x,y}\n  defense_2: {x,y}\nlines = [...]
-  }
-  rectangle "frames[2]" as F2 #lightyellow {
-    note right: entity_states:\n  offense_1: {x,y}\nlines = [...]
-  }
-
-  E -down-> F0 : baseline
-  F0 -down-> F1 : delta
-  F1 -down-> F2 : delta
-}
-@enduml
-....
-
-=== Entity State Resolution
-
-For each entity at each frame:
-
-[source]
-----
-Position(entity, frame_n) =
-  IF entity_states[frame_n][entity_key] EXISTS
-    → use frame_n value
-  ELSE
-    → inherit Position(entity, frame_n - 1)
-----
-
-This means only moving entities need to be listed in `entity_states`.
-Static entities (cones, coach on sideline) never appear in `entity_states`.
-
-=== Frame Properties
-
 [cols="1,1,3", options="header"]
 |===
-| Property | Type | Description
-
-| `id`            | string  | Unique frame identifier within the drill.
-| `label`         | string  | Short display label (e.g. `"Step 1"`, `"Phase A"`).
-| `description`   | string  | Full coaching instruction for this step. Suitable for LLM generation.
-| `duration_ms`   | integer | Suggested animation duration in milliseconds.
-| `entity_states` | object  | Delta positions keyed by entity_ref. Only moving entities.
-| `lines`         | array   | All movement lines active in this frame.
+| Field | Required | Meaning
+| `id` | yes | Unique frame id within the drill.
+| `label` | no | Short display label.
+| `description` | no | Coaching instruction. LLMs should generate this.
+| `duration_ms` | no | Suggested animation duration for the phase.
+| `start_state` | no | Positional + ball anchor at phase start. Defaults to the previous frame's `end_state`.
+| `actions` | yes | Semantic actions in this phase. May be empty.
+| `end_state` | yes | Positional + ball anchor at phase end.
+| `branches` | no | Outcome -> target frame id.
 |===
 
-=== Frame Example
+=== States
+
+`start_state` and `end_state` map entity refs to coordinates, plus an optional
+`balls` map of ball ref -> ball state. Because each frame carries an explicit
+anchor, any frame can be rendered as a still without simulating history — which
+is what enables PDF export, editor scrubbing and video overlay.
+
+`start_state` is optional and inherits the previous frame's `end_state`. Set it
+explicitly only at jumps, steals, rebounds or continuum resets.
 
 [source,json]
 ----
-{
-  "id": "frame_1",
-  "label": "Step 1",
-  "description": "offense_1 passes to offense_2 at the left wing. offense_3 cuts baseline.",
-  "duration_ms": 1500,
-  "entity_states": {},
-  "lines": [
-    {
-      "type": "passing",
-      "curved": false,
-      "from_entity": "offense_1",
-      "to_entity": "offense_2",
-      "coords": [
-        { "named": "top_of_the_key" },
-        { "named": "left_wing" }
-      ]
-    },
-    {
-      "type": "movement",
-      "curved": true,
-      "from_entity": "offense_3",
-      "coords": [
-        { "named": "right_block" },
-        { "named": "left_corner" }
-      ]
-    }
-  ]
-},
-{
-  "id": "frame_2",
-  "label": "Step 2",
-  "description": "offense_2 drives baseline. offense_1 relocates to right wing.",
-  "duration_ms": 2000,
-  "entity_states": {
-    "offense_2": { "x": -7.5, "y": 11.0 },
-    "offense_1": { "x": 6.75, "y": 8.60 }
-  },
-  "lines": [
-    {
-      "type": "dribbling",
-      "from_entity": "offense_2",
-      "coords": [
-        { "named": "left_wing" },
-        { "x": -7.0, "y": 12.0 },
-        { "named": "left_corner" }
-      ]
-    },
-    {
-      "type": "movement",
-      "from_entity": "offense_1",
-      "coords": [
-        { "named": "top_of_the_key" },
-        { "named": "right_wing" }
-      ]
-    }
-  ]
+"end_state": {
+  "offense_1": { "x": -1.0, "y": 9.0 },
+  "offense_4": { "named": "right_block" },
+  "balls": { "ball_1": { "carried_by": "offense_4" } }
 }
+----
+
+=== Branches
+
+Without `branches`, the next frame in the array follows. With `branches`, the
+outcome selects the next frame. Outcomes are `make`, `miss`, `turnover`,
+`steal`, `foul`. A branch may point at an earlier frame to build a continuum
+loop. For a single set play, omit `branches` and let the final frame set the
+ball `dead`.
+
+[source,json]
+----
+"branches": { "make": "frame_reset", "miss": "frame_oreb" }
 ----
 
 ---
@@ -934,127 +832,82 @@ The y-axis is inverted (y increases downward in FIBA, upward in {ocf}).
 ----
 {
   "$schema": "https://opencoachingformat.org/schema/v1.json",
-
   "meta": {
     "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
     "title": "Basic Pick & Roll",
-    "description": "Ball handler uses a ball screen at the top. Screener rolls to the basket.",
-    "author": "Trainer Muster",
-    "tags": ["pick-and-roll", "offense", "half-court", "2-player"],
-    "difficulty": "intermediate",
+    "description": "Ball handler uses a ball screen at the top of the key. Screener rolls to the basket for the finish.",
+    "author": "OCF Examples",
+    "tags": ["pick-and-roll", "offense", "half-court", "2-player", "beginner"],
+    "difficulty": "beginner",
     "created": "2025-02-27T10:00:00Z",
     "source_format": "open"
   },
-
-  "court": {
-    "ruleset": "fiba",
-    "type": "half_court",
-    "drill_focus": "offense"
-  },
-
-  "named_positions": {
-    "custom": {
-      "pnr_spot": {
-        "x": -1.0,
-        "y": 6.5,
-        "description": "Where the screen is set, just left of top of key"
-      }
-    }
-  },
-
+  "court": { "ruleset": "fiba", "type": "half_court", "drill_focus": "offense" },
   "entities": [
-    { "type": "offense", "nr": 1, "x":  0.0, "y": 5.68 },
-    { "type": "offense", "nr": 4, "x": -1.0, "y": 8.20 },
-    { "type": "defense", "nr": 1, "x":  0.5, "y": 5.20 },
-    { "type": "defense", "nr": 4, "x": -1.5, "y": 8.00 },
-    { "type": "ball",             "x":  0.0, "y": 5.68  }
+    { "type": "offense", "nr": 1, "x": 0.0, "y": 5.68 },
+    { "type": "offense", "nr": 4, "x": -2.45, "y": 8.20 },
+    { "type": "defense", "nr": 1, "x": 0.5, "y": 5.20 },
+    { "type": "defense", "nr": 4, "x": -2.80, "y": 7.80 }
   ],
-
+  "balls": [ { "id": "ball_1", "carried_by": "offense_1" } ],
   "frames": [
     {
       "id": "frame_1",
       "label": "Step 1 — Screen",
-      "description": "offense_4 moves up to set a screen for offense_1 at the custom.pnr_spot.",
+      "description": "offense_4 moves up from the left elbow to set a ball screen for offense_1 at the top of the key.",
       "duration_ms": 1500,
-      "entity_states": {
-        "offense_4": { "x": -1.0, "y": 6.5 }
-      },
-      "lines": [
-        {
-          "type": "movement",
-          "curved": true,
-          "from_entity": "offense_4",
-          "coords": [
-            { "named": "left_elbow" },
-            { "named": "custom.pnr_spot" }
-          ]
-        },
-        {
-          "type": "screen",
-          "from_entity": "offense_4",
-          "to_entity": "defense_1",
-          "coords": [
-            { "named": "custom.pnr_spot" },
-            { "relative_to": "custom.pnr_spot", "dx": 0.0, "dy": 0.5 }
-          ]
-        }
-      ]
+      "actions": [
+        { "player": "offense_4", "type": "screen", "for_player": "offense_1", "on_player": "defense_1", "variant": "ball_screen", "at": { "x": -0.5, "y": 6.7 } }
+      ],
+      "end_state": {
+        "offense_1": { "named": "top_of_the_key" },
+        "offense_4": { "x": -0.5, "y": 6.2 },
+        "balls": { "ball_1": { "carried_by": "offense_1" } }
+      }
     },
     {
       "id": "frame_2",
-      "label": "Step 2 — Ball Handler Uses Screen",
-      "description": "offense_1 dribbles off the screen toward the left elbow. offense_4 rolls to the basket.",
+      "label": "Step 2 — Attack",
+      "description": "offense_1 uses the screen and dribbles hard left toward the elbow; offense_4 rolls to the right block.",
       "duration_ms": 2000,
-      "entity_states": {
-        "offense_1": { "x": -2.0, "y": 8.0  },
-        "offense_4": { "x":  0.5, "y": 11.5 },
-        "ball":      { "x": -2.0, "y": 8.0  }
-      },
-      "lines": [
+      "actions": [
         {
-          "type": "dribbling",
-          "curved": true,
-          "from_entity": "offense_1",
-          "coords": [
-            { "named": "top_of_the_key" },
-            { "relative_to": "custom.pnr_spot", "dx": -0.5, "dy": 0.5 },
-            { "named": "left_elbow" }
+          "player": "offense_1",
+          "type": "dribble",
+          "ball_id": "ball_1",
+          "moves": [
+            { "variant": "hesitation" },
+            { "variant": "speed", "to": { "named": "left_elbow" }, "around_player": "defense_1" }
           ]
         },
-        {
-          "type": "movement",
-          "curved": true,
-          "from_entity": "offense_4",
-          "coords": [
-            { "named": "custom.pnr_spot" },
-            { "x": -0.5, "y": 9.5 },
-            { "named": "right_block" }
-          ]
-        }
-      ]
+        { "player": "offense_4", "type": "cut", "variant": "basket", "moves": [ { "to": { "named": "right_block" } } ], "tags": ["roll"] }
+      ],
+      "end_state": {
+        "offense_1": { "named": "left_elbow" },
+        "offense_4": { "named": "right_block" },
+        "balls": { "ball_1": { "carried_by": "offense_1" } }
+      }
+    },
+    {
+      "id": "frame_3",
+      "label": "Step 3 — Finish",
+      "description": "offense_1 throws a bounce pass to the rolling offense_4, who finishes with a layup.",
+      "duration_ms": 1500,
+      "actions": [
+        { "player": "offense_1", "type": "pass", "to_player": "offense_4", "ball_id": "ball_1", "variant": "bounce" },
+        { "player": "offense_4", "type": "shoot", "ball_id": "ball_1", "variant": "layup", "result": "make", "on_catch": true }
+      ],
+      "end_state": {
+        "offense_1": { "named": "left_elbow" },
+        "offense_4": { "named": "right_block" },
+        "balls": { "ball_1": { "dead": true } }
+      }
     }
   ],
-
   "areas": [
-    {
-      "form": "rectangle",
-      "color": "yellow",
-      "opacity": 0.25,
-      "x": 0.0,
-      "y": 10.5,
-      "width": 4.9,
-      "height": 4.0
-    }
+    { "form": "rectangle", "color": "yellow", "opacity": 0.2, "x": 0.0, "y": 10.5, "width": 4.9, "height": 4.0, "rotation": 0 }
   ],
-
-  "labels": [
-    {
-      "text": "Roll to basket!",
-      "x": 2.5,
-      "y": 10.0,
-      "color": "black"
-    }
-  ]
+  "labels": [ { "text": "Roll!", "x": 3.2, "y": 9.5, "color": "black" } ]
 }
 ----
 
@@ -1076,6 +929,7 @@ class Drill {
   +meta: Meta
   +court: Court
   +entities: Entity[]
+  +balls: Ball[]
   +frames: Frame[]
   --
   +color_scheme: ColorScheme?
@@ -1118,22 +972,24 @@ class Entity {
 
 class Frame {
   +id: string
-  +lines: Line[]
+  +actions: Action[]
+  +end_state: State
   --
   +label: string?
   +description: string?
   +duration_ms: integer?
-  +entity_states: map?
+  +start_state: State?
+  +branches: map?
 }
 
-class Line {
+class Action {
+  +player: EntityRef
   +type: enum
-  +coords: Coordinate[]
   --
-  +curved: boolean
-  +color: ColorRole
-  +from_entity: EntityRef?
-  +to_entity: EntityRef?
+  +ball_id: string?
+  +moves: Move[]?
+  +variant: string?
+  +tags: string[]?
 }
 
 class Coordinate {
@@ -1147,10 +1003,27 @@ Drill *-- Meta
 Drill *-- Court
 Drill *-- Entity
 Drill *-- Frame
-Frame *-- Line
-Line *-- Coordinate
+Frame *-- Action
+Action *-- Coordinate
 @enduml
 ....
+
+==== Top-Level Fields
+
+[cols="1,1,3", options="header"]
+|===
+| Field | Required | Description
+
+| `meta`            | yes | Drill metadata (id, title, author, tags, etc.).
+| `court`           | yes | Ruleset, court type, drill focus.
+| `entities`        | yes | Non-ball entities: offense, defense, coach, cones, stations.
+| `balls`           | yes | Array of balls; each ball has `id` + one of `carried_by`, `at`, or `dead`.
+| `frames`          | yes | Ordered coaching phases; each carries `actions` and `end_state`.
+| `color_scheme`    | no  | Override FIBA default color roles.
+| `named_positions` | no  | Custom named court positions.
+| `areas`           | no  | Highlighted zones on the court.
+| `labels`          | no  | Free text annotations on the court.
+|===
 
 === Coordinate oneOf
 
@@ -1194,11 +1067,19 @@ Coordinate <|-- RelativeCoordinate
 | `drill_focus`   | `offense`, `defense`, `transition`, `neutral`
 | `difficulty`    | `beginner`, `intermediate`, `advanced`
 | `source_format` | `fiba`, `fastdraw`, `open`, `custom`
-| `entity.type`   | `offense`, `defense`, `ball`, `coach`, `cone`, `station`
-| `line.type`     | `movement`, `passing`, `dribbling`, `screen`, `line`, `free`
+| `entity.type`   | `offense`, `defense`, `coach`, `cone`, `station`
 | `area.form`     | `rectangle`, `ellipse`, `triangle`
 | `color_role`    | `offense`, `defense`, `black`, `grey`, `yellow`, `green`, `red`, `blue`, `white`
 | `unit`          | `m`, `ft`
+| Action `type` | move, cut, screen, defend, dribble, pass, shoot, rebound, pickup
+| Cut `variant` | backdoor, give_and_go, flash, v_cut, l_cut, curl, flare, fade, basket
+| Screen `variant` | ball_screen, back_screen, down_screen, flare_screen, cross_screen, pin_down
+| Defend `variant` | on_ball, deny, help, hedge, switch, box_out
+| Dribble `variant` | speed, hesitation, crossover, behind_back, between_legs, spin, retreat
+| Pass `variant` | chest, bounce, overhead, lob, baseball, hand_off, outlet
+| Shoot `variant` | jumper, three, layup, floater, dunk, hook, free_throw
+| Rebound `variant` | offensive, defensive
+| Frame `outcome` | make, miss, turnover, steal, foul
 |===
 
 ---
@@ -1233,11 +1114,13 @@ Output only valid JSON matching https://opencoachingformat.org/schema/v1.json
 
 === LLM Output Tips
 
-* Prefer `named` coordinates wherever a standard position name applies
+* Actions express *intent*, not geometry — prefer named positions in `end_state` over raw coordinates wherever a standard name applies
+* Leave optional action fields out when the description is vague; add `variant`, `ball_id`, and timing only when the description implies them
 * Use `relative_to` for positions defined as offsets ("2 meters right of the elbow")
-* Use `from_entity` / `to_entity` on all lines where the entity is clear from context
-* `entity_states` should only list entities that actually move in that frame
-* Frame `description` should mirror the coaching instruction in natural language
+* Every frame requires an `end_state`; list only the entities whose positions change in that frame (others inherit)
+* Ball state in `end_state.balls` must reflect the result of the actions: use `carried_by` after a pass/pickup, `dead` after a made shot with no rebound
+* Set the ball `dead` in `end_state.balls` after a `shoot` with `result: "make"` if no `rebound` or `pickup` follows in that frame or the next
+* Frame `description` should mirror the coaching instruction in natural language — LLMs should always generate this field
 
 === Validation
 
@@ -1267,9 +1150,9 @@ npx ajv-cli validate \
 | `dynamicElement.color`| `entity.color`                | See color map below
 | `dynamicElement.x`    | `entity.x`                    | `(fiba_x - 192) / 192 * 7.5`
 | `dynamicElement.y`    | `entity.y`                    | `(270 - fiba_y) / 270 * 14.0`
-| `lineElement.type`    | `frame.lines[].type`          | See type map below
-| `lineElement.curved`  | `frame.lines[].curved`        | Direct
-| `lineElement.coords`  | `frame.lines[].coords[]`      | Coordinate conversion each point
+| `lineElement.type`    | `frame.actions[].type`        | See action type map below
+| `lineElement.curved`  | — (derived from action type)  | Renderer infers path style
+| `lineElement.coords`  | `frame.actions[].moves[].to`  | Coordinate conversion each point
 | `staticElement (area)`| `areas[]`                     | form, color, position
 | `staticElement (text)`| `labels[]`                    | text, position
 |===
@@ -1282,25 +1165,25 @@ npx ajv-cli validate \
 
 | 0 (offence)  | `offense`
 | 1 (defence)  | `defense`
-| 2 (ball)     | `ball`
+| 2 (ball)     | — (map to `balls[]` entry with `carried_by` or `at`)
 | 3 (coach)    | `coach`
 | 4 (cone)     | `cone`
-| 5 (shooting) | — (render as `movement` line to basket)
-| 6 (handoff)  | — (render as `screen` line variant)
+| 5 (shooting) | — (map to `shoot` action)
+| 6 (handoff)  | — (map to `pass` action with `variant: "hand_off"`)
 |===
 
 === FIBA Line Type Map
 
 [cols="1,1", options="header"]
 |===
-| FIBA `type` | OCF `line.type`
+| FIBA `type` | OCF action `type`
 
-| 0 (movement)  | `movement`
-| 1 (passing)   | `passing`
-| 2 (dribbling) | `dribbling`
+| 0 (movement)  | `move` or `cut`
+| 1 (passing)   | `pass`
+| 2 (dribbling) | `dribble`
 | 3 (screen)    | `screen`
-| 4 (line)      | `line`
-| 5 (free)      | `free`
+| 4 (line)      | — (annotate with `tags`)
+| 5 (free)      | — (annotate with `tags`)
 |===
 
 === FIBA Color Map
@@ -1322,6 +1205,15 @@ npx ajv-cli validate \
 
 [appendix]
 == Changelog
+
+=== v2.0.0
+
+Semantic action model. Replaces line-based frames with per-player actions
+(move, cut, screen, defend, dribble, pass, shoot, rebound, pickup). The ball
+entity is replaced by a top-level `balls` array with a carried_by/at/dead
+lifecycle and automatic possession transfer. Frames gain explicit
+`start_state`/`end_state` anchors and outcome `branches`. The `lines` array and
+`entity_states` are removed.
 
 === v1.0.0 (2025-02-27)
 
