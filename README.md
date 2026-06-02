@@ -3,7 +3,7 @@
 **An open standard for representing sports coaching diagrams, drill animations, and playbooks as structured data.**
 
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
-[![Schema Version](https://img.shields.io/badge/schema-v1.0.0-blue)](schema/v1.json)
+[![Schema Version](https://img.shields.io/badge/schema-v2.0.0-blue)](schema/v1.json)
 [![Status: Draft](https://img.shields.io/badge/status-draft-yellow)]()
 
 ---
@@ -68,7 +68,12 @@ opencoachingformat/
 ├── examples/
 │   ├── pick-and-roll.ocf.json
 │   ├── 3-man-weave.ocf.json
-│   └── transition-3v2.ocf.json
+│   ├── transition-3v2.ocf.json
+│   ├── quick-mode.ocf.json      # Minimal/quick-mode example
+│   └── invalid/                 # Negative test fixtures (schema-invalid)
+├── scripts/
+│   └── check-invalid.mjs        # Test harness for negative fixtures
+├── package.json                 # Dev dependencies and test scripts
 ├── rfcs/
 │   └── 0001-initial-standard.md
 └── .github/

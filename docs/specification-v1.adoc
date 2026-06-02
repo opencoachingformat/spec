@@ -480,7 +480,7 @@ sketch quickly or annotate in full detail.
 | `cut` | no | `moves[]` | `variant` (backdoor, give_and_go, flash, v_cut, l_cut, curl, flare, fade, basket); per-move `around_player`, `off_screen_by`
 | `screen` | no | `for_player` | `on_player`, `at`, `variant` (ball_screen, back_screen, down_screen, flare_screen, cross_screen, pin_down)
 | `defend` | no | `guards_player` | `variant` (on_ball, deny, help, hedge, switch, box_out)
-| `dribble` | yes | `moves[]` | `ball_id`, `variant` (speed, hesitation, crossover, behind_back, between_legs, spin, retreat)
+| `dribble` | yes | `moves[]` | `ball_id`; per-move `variant` (speed, hesitation, crossover, behind_back, between_legs, spin, retreat)
 | `pass` | yes | `to_player` | `ball_id`, `variant` (chest, bounce, overhead, lob, baseball, hand_off, outlet)
 | `shoot` | yes | `player` | `ball_id`, `variant` (jumper, three, layup, floater, dunk, hook, free_throw), `result` (make/miss)
 | `rebound` | becomes carrier | `player` | `ball_id`, `variant` (offensive, defensive)
@@ -498,6 +498,8 @@ a move on the spot (ball handling / fake); a move *with* `to` carries the player
 (and ball, for `dribble`) to a waypoint. The final `to` must match the player's
 position in the frame `end_state`. Reference fields (`around_player`,
 `off_screen_by`) may sit on an individual move and override the action level.
+
+For `dribble` (and `move`), each move's `variant` describes that step's character — a single dribble action can chain e.g. `crossover` then `speed` — whereas `cut` also has an action-level `variant` for the overall cut type (e.g. `backdoor`).
 
 [source,json]
 ----
@@ -1075,12 +1077,14 @@ Coordinate <|-- RelativeCoordinate
 | Cut `variant` | backdoor, give_and_go, flash, v_cut, l_cut, curl, flare, fade, basket
 | Screen `variant` | ball_screen, back_screen, down_screen, flare_screen, cross_screen, pin_down
 | Defend `variant` | on_ball, deny, help, hedge, switch, box_out
-| Dribble `variant` | speed, hesitation, crossover, behind_back, between_legs, spin, retreat
+| Dribble per-move `variant` | speed, hesitation, crossover, behind_back, between_legs, spin, retreat
 | Pass `variant` | chest, bounce, overhead, lob, baseball, hand_off, outlet
 | Shoot `variant` | jumper, three, layup, floater, dunk, hook, free_throw
 | Rebound `variant` | offensive, defensive
 | Frame `outcome` | make, miss, turnover, steal, foul
 |===
+
+NOTE: Per-move `variant` values are recommended vocabulary; the schema accepts any string for a move's `variant` so renderers can fall back gracefully.
 
 ---
 
