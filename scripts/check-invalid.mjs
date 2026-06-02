@@ -3,6 +3,7 @@ import { execFileSync } from "node:child_process";
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
 
+// Paths are relative to the repo root; npm sets cwd accordingly for `npm run test:invalid`.
 const dir = "examples/invalid";
 const files = readdirSync(dir).filter((f) => f.endsWith(".json"));
 
@@ -13,23 +14,29 @@ if (files.length === 0) {
 
 let failures = 0;
 for (const file of files) {
-  const path = join(dir, file);
+  const filePath = join(dir, file);
   let validated = false;
   try {
     execFileSync(
       "npx",
-      ["ajv", "validate", "--spec=draft7", "-s", "schema/v1.json", "-d", path, "-c", "ajv-formats"],
+      ["ajv", "validate", "--spec=draft7", "-s", "schema/v1.json", "-d", filePath, "-c", "ajv-formats"],
       { stdio: "pipe" }
     );
     validated = true; // ajv exited 0 => it accepted the bad fixture
-  } catch {
-    // ajv exited non-zero => correctly rejected
+  } catch (err) {
+    // AJV exits non-zero when validation fails — that is the expected outcome here.
+    // A spawn failure (e.g. ajv-cli not installed) has no numeric status; surface it
+    // so a broken environment never masquerades as a passing test run.
+    if (typeof err.status !== "number") {
+      throw err;
+    }
+    // non-zero exit from ajv => fixture correctly rejected
   }
   if (validated) {
-    console.error(`FAIL: ${path} was accepted by the schema but should be invalid.`);
+    console.error(`FAIL: ${filePath} was accepted by the schema but should be invalid.`);
     failures++;
   } else {
-    console.log(`ok: ${path} correctly rejected.`);
+    console.log(`ok: ${filePath} correctly rejected.`);
   }
 }
 
