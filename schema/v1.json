@@ -207,6 +207,187 @@
       "additionalProperties": false
     },
 
+    "action_ref": {
+      "type": "string",
+      "description": "Reference to another action in the same frame: '<entity_ref>.<action_type>'.",
+      "pattern": "^((offense|defense)_[1-9]|coach|(cone|station)_[1-9][0-9]*)\\.(move|cut|screen|defend|dribble|pass|shoot|rebound|pickup)$"
+    },
+
+    "move_step": {
+      "type": "object",
+      "description": "One step in a movement sequence. Without 'to' = a move on the spot. Reference fields override the action-level ones.",
+      "properties": {
+        "variant": { "type": "string" },
+        "to": { "$ref": "#/definitions/coordinate" },
+        "around_player": { "$ref": "#/definitions/entity_ref" },
+        "off_screen_by": { "$ref": "#/definitions/entity_ref" }
+      },
+      "additionalProperties": false
+    },
+
+    "action_move": {
+      "type": "object",
+      "required": ["player", "type", "moves"],
+      "properties": {
+        "player": { "$ref": "#/definitions/entity_ref" },
+        "type": { "const": "move" },
+        "moves": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/move_step" } },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "after": { "$ref": "#/definitions/action_ref" },
+        "with": { "$ref": "#/definitions/action_ref" },
+        "on_catch": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+
+    "action_cut": {
+      "type": "object",
+      "required": ["player", "type", "moves"],
+      "properties": {
+        "player": { "$ref": "#/definitions/entity_ref" },
+        "type": { "const": "cut" },
+        "moves": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/move_step" } },
+        "variant": { "type": "string", "enum": ["backdoor", "give_and_go", "flash", "v_cut", "l_cut", "curl", "flare", "fade", "basket"] },
+        "around_player": { "$ref": "#/definitions/entity_ref" },
+        "off_screen_by": { "$ref": "#/definitions/entity_ref" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "after": { "$ref": "#/definitions/action_ref" },
+        "with": { "$ref": "#/definitions/action_ref" },
+        "on_catch": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+
+    "action_screen": {
+      "type": "object",
+      "required": ["player", "type", "for_player"],
+      "properties": {
+        "player": { "$ref": "#/definitions/entity_ref" },
+        "type": { "const": "screen" },
+        "for_player": { "$ref": "#/definitions/entity_ref" },
+        "on_player": { "$ref": "#/definitions/entity_ref" },
+        "at": { "$ref": "#/definitions/coordinate" },
+        "variant": { "type": "string", "enum": ["ball_screen", "back_screen", "down_screen", "flare_screen", "cross_screen", "pin_down"] },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "after": { "$ref": "#/definitions/action_ref" },
+        "with": { "$ref": "#/definitions/action_ref" },
+        "on_catch": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+
+    "action_defend": {
+      "type": "object",
+      "required": ["player", "type", "guards_player"],
+      "properties": {
+        "player": { "$ref": "#/definitions/entity_ref" },
+        "type": { "const": "defend" },
+        "guards_player": { "$ref": "#/definitions/entity_ref" },
+        "variant": { "type": "string", "enum": ["on_ball", "deny", "help", "hedge", "switch", "box_out"] },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "after": { "$ref": "#/definitions/action_ref" },
+        "with": { "$ref": "#/definitions/action_ref" },
+        "on_catch": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+
+    "action_dribble": {
+      "type": "object",
+      "required": ["player", "type", "moves"],
+      "properties": {
+        "player": { "$ref": "#/definitions/entity_ref" },
+        "type": { "const": "dribble" },
+        "moves": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/move_step" } },
+        "ball_id": { "$ref": "#/definitions/ball_ref" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "after": { "$ref": "#/definitions/action_ref" },
+        "with": { "$ref": "#/definitions/action_ref" },
+        "on_catch": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+
+    "action_pass": {
+      "type": "object",
+      "required": ["player", "type", "to_player"],
+      "properties": {
+        "player": { "$ref": "#/definitions/entity_ref" },
+        "type": { "const": "pass" },
+        "to_player": { "$ref": "#/definitions/entity_ref" },
+        "ball_id": { "$ref": "#/definitions/ball_ref" },
+        "variant": { "type": "string", "enum": ["chest", "bounce", "overhead", "lob", "baseball", "hand_off", "outlet"] },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "after": { "$ref": "#/definitions/action_ref" },
+        "with": { "$ref": "#/definitions/action_ref" },
+        "on_catch": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+
+    "action_shoot": {
+      "type": "object",
+      "required": ["player", "type"],
+      "properties": {
+        "player": { "$ref": "#/definitions/entity_ref" },
+        "type": { "const": "shoot" },
+        "ball_id": { "$ref": "#/definitions/ball_ref" },
+        "variant": { "type": "string", "enum": ["jumper", "three", "layup", "floater", "dunk", "hook", "free_throw"] },
+        "result": { "type": "string", "enum": ["make", "miss"] },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "after": { "$ref": "#/definitions/action_ref" },
+        "with": { "$ref": "#/definitions/action_ref" },
+        "on_catch": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+
+    "action_rebound": {
+      "type": "object",
+      "required": ["player", "type"],
+      "properties": {
+        "player": { "$ref": "#/definitions/entity_ref" },
+        "type": { "const": "rebound" },
+        "ball_id": { "$ref": "#/definitions/ball_ref" },
+        "variant": { "type": "string", "enum": ["offensive", "defensive"] },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "after": { "$ref": "#/definitions/action_ref" },
+        "with": { "$ref": "#/definitions/action_ref" },
+        "on_catch": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+
+    "action_pickup": {
+      "type": "object",
+      "required": ["player", "type", "ball_id"],
+      "properties": {
+        "player": { "$ref": "#/definitions/entity_ref" },
+        "type": { "const": "pickup" },
+        "ball_id": { "$ref": "#/definitions/ball_ref" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "after": { "$ref": "#/definitions/action_ref" },
+        "with": { "$ref": "#/definitions/action_ref" },
+        "on_catch": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+
+    "action": {
+      "description": "Any action. Discriminated by 'type'.",
+      "oneOf": [
+        { "$ref": "#/definitions/action_move" },
+        { "$ref": "#/definitions/action_cut" },
+        { "$ref": "#/definitions/action_screen" },
+        { "$ref": "#/definitions/action_defend" },
+        { "$ref": "#/definitions/action_dribble" },
+        { "$ref": "#/definitions/action_pass" },
+        { "$ref": "#/definitions/action_shoot" },
+        { "$ref": "#/definitions/action_rebound" },
+        { "$ref": "#/definitions/action_pickup" }
+      ]
+    },
+
     "custom_position": {
       "type": "object",
       "required": ["x", "y"],
@@ -276,7 +457,7 @@
         "description": { "type": "string" },
         "duration_ms": { "type": "integer", "minimum": 0 },
         "start_state": { "$ref": "#/definitions/state" },
-        "actions": { "type": "array" },
+        "actions": { "type": "array", "items": { "$ref": "#/definitions/action" } },
         "end_state": { "$ref": "#/definitions/state" },
         "branches": { "type": "object" }
       },
