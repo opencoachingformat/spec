@@ -175,6 +175,38 @@
       ]
     },
 
+    "ball_state": {
+      "type": "object",
+      "description": "A ball's lifecycle state inside a frame state, keyed by ball ref. Exactly one of carried_by/at/dead.",
+      "properties": {
+        "carried_by": { "$ref": "#/definitions/entity_ref" },
+        "at": { "$ref": "#/definitions/coordinate" },
+        "dead": { "type": "boolean", "const": true }
+      },
+      "additionalProperties": false,
+      "oneOf": [
+        { "required": ["carried_by"], "not": { "anyOf": [ { "required": ["at"] }, { "required": ["dead"] } ] } },
+        { "required": ["at"], "not": { "anyOf": [ { "required": ["carried_by"] }, { "required": ["dead"] } ] } },
+        { "required": ["dead"], "not": { "anyOf": [ { "required": ["carried_by"] }, { "required": ["at"] } ] } }
+      ]
+    },
+
+    "state": {
+      "type": "object",
+      "description": "Positional + ball anchor. Entity refs map to a coordinate; the optional 'balls' map keys ball refs to ball states.",
+      "properties": {
+        "balls": {
+          "type": "object",
+          "propertyNames": { "$ref": "#/definitions/ball_ref" },
+          "additionalProperties": { "$ref": "#/definitions/ball_state" }
+        }
+      },
+      "patternProperties": {
+        "^(offense|defense)_[1-9]$|^coach$|^(cone|station)_[1-9][0-9]*$": { "$ref": "#/definitions/coordinate" }
+      },
+      "additionalProperties": false
+    },
+
     "custom_position": {
       "type": "object",
       "required": ["x", "y"],
@@ -243,9 +275,9 @@
         "label": { "type": "string" },
         "description": { "type": "string" },
         "duration_ms": { "type": "integer", "minimum": 0 },
-        "start_state": { "type": "object" },
+        "start_state": { "$ref": "#/definitions/state" },
         "actions": { "type": "array" },
-        "end_state": { "type": "object" },
+        "end_state": { "$ref": "#/definitions/state" },
         "branches": { "type": "object" }
       },
       "additionalProperties": false
