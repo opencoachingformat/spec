@@ -3,7 +3,7 @@
 **An open standard for representing sports coaching diagrams, drill animations, and playbooks as structured data.**
 
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
-[![Schema Version](https://img.shields.io/badge/schema-v1.0.0-blue)](schema/v1.json)
+[![Schema Version](https://img.shields.io/badge/schema-v2.0.0-blue)](schema/v1.json)
 [![Status: Draft](https://img.shields.io/badge/status-draft-yellow)]()
 
 ---
@@ -19,7 +19,10 @@ The Open Coaching Format is a JSON-based standard for encoding sports coaching c
 - 🏀 **Basketball-first, sport-agnostic by design** — v1 covers basketball (FIBA, NBA, NCAA, NFHS); the architecture supports extension to other sports
 - 📐 **Real-world coordinates** — meters (FIBA) or feet (NBA/NCAA), origin at midcourt center
 - 🗺️ **Named court positions** — `top_of_the_key`, `left_elbow`, `inbound.baseline_left` — grounded in official ruleset geometry
-- 🎬 **Frame-based animation** — multi-step drills with delta entity states
+- 🎬 **Semantic actions** — frames describe what players *do* (`move`, `cut`, `screen`, `defend`, `dribble`, `pass`, `shoot`, `rebound`, `pickup`) rather than raw geometric lines
+- 🏐 **Automatic ball possession** — a top-level `balls[]` array (`carried_by` / `at` / `dead`) supports multiple balls; possession transfers are inferred from `pass` and `pickup` actions
+- 🔀 **Hybrid frames** — explicit `start_state` / `end_state` anchors combined with action sequences; outcome branches (`make` / `miss` / …) model continuum drills
+- ✏️ **Progressive detail** — only `player` + `type` are required per action; variants, tags, and timing are all optional, so coaches can sketch quickly or annotate fully
 - 🤖 **LLM-friendly** — structured enough for text-to-diagram generation
 - ♿ **Accessibility** — color scheme with WCAG guidance
 - 🔄 **FIBA import path** — coordinate mapping from the FIBA Europe internal format
@@ -30,39 +33,23 @@ The Open Coaching Format is a JSON-based standard for encoding sports coaching c
 
 ```json
 {
-  "$schema": "https://opencoachingformat.org/schema/v1.json",
-  "meta": {
-    "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-    "title": "Basic Pick & Roll",
-    "tags": ["pick-and-roll", "offense", "half-court"],
-    "difficulty": "intermediate"
-  },
-  "court": {
-    "ruleset": "fiba",
-    "type": "half_court",
-    "drill_focus": "offense"
-  },
+  "court": { "ruleset": "fiba", "type": "half_court" },
   "entities": [
-    { "type": "offense", "nr": 1, "x":  0.0, "y": 5.68 },
-    { "type": "offense", "nr": 4, "x": -2.45, "y": 8.20 },
-    { "type": "defense", "nr": 1, "x":  0.5,  "y": 5.20 },
-    { "type": "ball",             "x":  0.0,  "y": 5.68 }
+    { "type": "offense", "nr": 1, "x": -3.0, "y": 6.0 },
+    { "type": "offense", "nr": 2, "x": 3.0, "y": 6.0 }
   ],
+  "balls": [ { "id": "ball_1", "carried_by": "offense_1" } ],
   "frames": [
     {
       "id": "frame_1",
-      "label": "Screen",
-      "description": "offense_4 sets a screen for offense_1 at the top of the key.",
-      "lines": [
-        {
-          "type": "movement",
-          "from_entity": "offense_4",
-          "coords": [
-            { "named": "left_elbow" },
-            { "named": "top_of_the_key" }
-          ]
-        }
-      ]
+      "actions": [
+        { "player": "offense_1", "type": "pass", "to_player": "offense_2" },
+        { "player": "offense_1", "type": "cut", "moves": [ { "to": { "named": "basket" } } ] }
+      ],
+      "end_state": {
+        "offense_1": { "named": "basket" },
+        "balls": { "ball_1": { "carried_by": "offense_2" } }
+      }
     }
   ]
 }
@@ -81,7 +68,12 @@ opencoachingformat/
 ├── examples/
 │   ├── pick-and-roll.ocf.json
 │   ├── 3-man-weave.ocf.json
-│   └── transition-3v2.ocf.json
+│   ├── transition-3v2.ocf.json
+│   ├── quick-mode.ocf.json      # Minimal/quick-mode example
+│   └── invalid/                 # Negative test fixtures (schema-invalid)
+├── scripts/
+│   └── check-invalid.mjs        # Test harness for negative fixtures
+├── package.json                 # Dev dependencies and test scripts
 ├── rfcs/
 │   └── 0001-initial-standard.md
 └── .github/
@@ -129,14 +121,18 @@ Units are real-world: **meters** for FIBA, **feet** for NBA/NCAA/NFHS.
 
 ## Roadmap
 
-- [x] v1.0 Schema — basketball (FIBA, NBA, NCAA, NFHS)
-- [x] Named position registry
-- [x] Frame-based animation model
-- [ ] Reference renderer (JSON → SVG)
-- [ ] Web editor (drag & drop)
-- [ ] FIBA Europe import tool
-- [ ] v1.1 — additional sports (football, handball, …)
-- [ ] Validator CLI tool
+This repository defines the **schema and standard**. Planned companion projects
+(separate repos):
+
+1. **Validator** — semantic rules JSON Schema can't express: ball-possession
+   consistency (only the carrier may `pass`/`shoot`/`dribble`), branch target
+   integrity, and `end_state` agreement with action endpoints.
+2. **Renderer** — draw drills and animate them from the JSON.
+3. **Editor** — visual authoring on top of the renderer.
+
+End goal: generate drills and set plays from natural language (LLM) and render
+them directly, plus video overlay for practice analysis and video → play
+extraction.
 
 ---
 

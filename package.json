@@ -1,0 +1,16 @@
+{
+  "name": "open-coaching-format",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Open standard for basketball drill diagrams and animations.",
+  "scripts": {
+    "validate": "ajv validate --spec=draft7 -s schema/v1.json -d \"examples/*.ocf.json\" --all-errors --verbose -c ajv-formats",
+    "test:invalid": "node scripts/check-invalid.mjs",
+    "test": "npm run validate && npm run test:invalid"
+  },
+  "devDependencies": {
+    "ajv-cli": "^5.0.0",
+    "ajv-formats": "^3.0.1"
+  }
+}

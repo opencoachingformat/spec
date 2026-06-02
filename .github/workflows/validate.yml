@@ -5,16 +5,19 @@ on:
     paths:
       - 'schema/**'
       - 'examples/**'
+      - 'scripts/**'
+      - 'package.json'
   pull_request:
     paths:
       - 'schema/**'
       - 'examples/**'
+      - 'scripts/**'
+      - 'package.json'
 
 jobs:
   validate:
     runs-on: ubuntu-latest
     name: Validate examples against schema
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,15 +27,8 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install AJV CLI
-        run: npm install -g ajv-cli ajv-formats
+      - name: Install dependencies
+        run: npm install
 
-      - name: Validate all example files
-        run: |
-          ajv validate \
-            --spec=draft7 \
-            -s schema/v1.json \
-            -d "examples/*.ocf.json" \
-            --all-errors \
-            --strict=false \
-            --verbose
+      - name: Run schema test suite
+        run: npm test
