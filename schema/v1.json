@@ -447,19 +447,41 @@
       "additionalProperties": false
     },
 
+    "outcome": {
+      "type": "string",
+      "enum": ["make", "miss", "turnover", "steal", "foul"],
+      "description": "Result that selects a branch target frame."
+    },
+
     "frame": {
       "type": "object",
-      "description": "PLACEHOLDER — replaced in Task 5. Permissive so documents parse during scaffolding.",
-      "required": ["id"],
+      "description": "A coaching phase: explicit anchors (start_state/end_state) plus semantic actions, with optional outcome branches.",
+      "required": ["id", "actions", "end_state"],
       "properties": {
-        "id": { "type": "string" },
+        "id": { "type": "string", "description": "Unique frame id within the drill." },
         "label": { "type": "string" },
-        "description": { "type": "string" },
+        "description": { "type": "string", "description": "Coaching instruction; LLMs should generate this." },
         "duration_ms": { "type": "integer", "minimum": 0 },
-        "start_state": { "$ref": "#/definitions/state" },
-        "actions": { "type": "array", "items": { "$ref": "#/definitions/action" } },
-        "end_state": { "$ref": "#/definitions/state" },
-        "branches": { "type": "object" }
+        "start_state": {
+          "$ref": "#/definitions/state",
+          "description": "Optional. Defaults to the previous frame's end_state."
+        },
+        "actions": {
+          "type": "array",
+          "description": "Semantic actions in this phase. May be empty.",
+          "items": { "$ref": "#/definitions/action" }
+        },
+        "end_state": {
+          "$ref": "#/definitions/state",
+          "description": "Explicit anchor at the end of the phase."
+        },
+        "branches": {
+          "type": "object",
+          "description": "Optional outcome -> target frame id. Without branches, the next frame in the array follows.",
+          "propertyNames": { "$ref": "#/definitions/outcome" },
+          "additionalProperties": { "type": "string" },
+          "minProperties": 1
+        }
       },
       "additionalProperties": false
     }
