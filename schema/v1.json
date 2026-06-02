@@ -205,6 +205,35 @@
       "additionalProperties": false
     },
 
+    "area": {
+      "type": "object",
+      "required": ["form", "x", "y"],
+      "properties": {
+        "form": { "type": "string", "enum": ["rectangle", "ellipse", "triangle"] },
+        "color": { "$ref": "#/definitions/color_role", "default": "yellow" },
+        "opacity": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.4 },
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "width": { "type": "number" },
+        "height": { "type": "number" },
+        "rotation": { "type": "number", "minimum": 0, "maximum": 360, "default": 0 },
+        "coords": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/definitions/coordinate" } }
+      },
+      "additionalProperties": false
+    },
+
+    "label": {
+      "type": "object",
+      "required": ["text", "x", "y"],
+      "properties": {
+        "text": { "type": "string" },
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "color": { "$ref": "#/definitions/color_role", "default": "black" }
+      },
+      "additionalProperties": false
+    },
+
     "frame": {
       "type": "object",
       "description": "PLACEHOLDER — replaced in Task 5. Permissive so documents parse during scaffolding.",
@@ -225,10 +254,7 @@
 
   "properties": {
 
-    "$schema": {
-      "type": "string",
-      "description": "URI reference to the OCF JSON Schema version used."
-    },
+    "$schema": { "type": "string", "format": "uri" },
 
     "meta": {
       "type": "object",
