@@ -357,6 +357,34 @@ Each entity is uniquely identified by a natural key string:
 
 NOTE: `offense_1` and `defense_1` are distinct entities. In transition drills, both can appear simultaneously.
 
+=== Distinct Positions
+
+Two distinct entities MUST NOT occupy the same position. Within any single state
+(the top-level `entities` array, or a frame's `start_state` / `end_state`), no
+two entities may share coordinates that resolve closer than a **minimum
+separation** to each other.
+
+The minimum separation is one **player diameter** in the document's court unit —
+the space a player symbol occupies — so that rendered symbols never overlap and
+each player remains individually identifiable:
+
+[cols="1,1", options="header"]
+|===
+| Ruleset | Minimum separation
+
+| `fiba`  | 0.5 m
+| `nba` / `ncaa` / `nfhs` | 1.6 ft
+|===
+
+A document that places two entities closer than this is **invalid**; a validator
+reports it. Two players genuinely "at the same spot" in a coach's mind (e.g. a
+hand-off) are still distinct bodies and must be given distinct coordinates a
+symbol-width apart.
+
+NOTE: A renderer SHOULD additionally apply a small visual nudge if symbols still
+touch after a valid layout (a rendering safety net), but this does not relax the
+data constraint above — the underlying coordinates remain the source of truth.
+
 === Entity Types
 
 ==== Offensive Player
