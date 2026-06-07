@@ -374,7 +374,9 @@ NOTE: `offense_1` and `defense_1` are distinct entities. In transition drills, b
 ----
 
 Rendered as a filled circle with player number.
-`rotation` is typically `0` for offense (not rendered).
+`rotation` is accepted for symmetry but is **not rendered** for offense (the
+filled circle has no facing direction); it is typically `0`. The field is
+meaningful for defenders — see the defender `rotation` convention below.
 `color` defaults to `"offense"` (resolved via `color_scheme.offense_fill`).
 
 ==== Defensive Player
@@ -391,8 +393,27 @@ Rendered as a filled circle with player number.
 }
 ----
 
-Rendered as a filled shape (arc outline + inner circle) with player number.
-`rotation` indicates the direction the defender is facing.
+Rendered as a filled shape (an arc — the defender's outstretched arms — above an
+inner circle carrying the player number). `rotation` indicates the direction the
+defender is facing, i.e. the direction the arms point.
+
+.Defender `rotation` convention
+[NOTE]
+====
+`rotation` is measured in degrees, clockwise on screen, from a defined zero:
+
+* **`0°` (default) — arms point in the `−y` direction**, i.e. *away from the
+  attacking basket*. This is the natural defensive stance: the defender's back is
+  toward their own basket and they face an attacker coming from `+y` (the
+  `direction of attack`).
+* Increasing values rotate the arms **clockwise** as seen on the rendered image:
+  `90°` → arms point `−x` (viewer's left), `180°` → `+y` (toward the attacking
+  basket), `270°` → `+x` (viewer's right).
+
+A renderer applies `rotation` exactly as given; it does not infer a facing
+direction from nearby players. When `rotation` is absent it defaults to `0°`
+(arms toward `−y`).
+====
 
 ==== Balls
 
