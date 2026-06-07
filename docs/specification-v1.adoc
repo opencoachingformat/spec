@@ -536,9 +536,35 @@ sketch quickly or annotate in full detail.
 | `pickup` | becomes carrier | `ball_id` | —
 |===
 
-Any action may also carry a free `tags` array (e.g. `eurostep`, `reverse`,
-`left_handed`). Curated `variant` values are what a renderer can distinguish
-visually; tags are open coaching metadata that need no schema change.
+Any action may also carry a free `tags` array (e.g. `eurostep`, `reverse`).
+Curated `variant` values are what a renderer can distinguish visually; most tags
+are open coaching metadata that need no schema change.
+
+.Curated tags: `left_handed` / `right_handed` (ball-handling side)
+[NOTE]
+====
+Two tags are **curated** because a renderer interprets them visually: on a
+ball-handling action (`dribble`, `pass`, `shoot`) the tags `left_handed` and
+`right_handed` state which hand handles the ball.
+
+This drives **where the ball is drawn relative to its carrier**:
+
+* A carried ball is drawn slightly **ahead of and to one side of** the carrier —
+  not on top of them — so the player's number stays visible and the handling
+  side is legible. "Ahead" is the direction of the ball-handling action
+  (`dribble` / `pass` / `shoot`) in that frame.
+* **Default (no tag, or `right_handed`):** the ball is on the **right** of the
+  direction of travel.
+* **`left_handed`:** the ball is on the **left**.
+
+These tags remain ordinary entries in the free `tags` array (no schema change);
+they are simply the agreed vocabulary for ball side. A renderer that does not
+model the ball side may ignore them. This convention also lets a future animated
+renderer show a **hand change** (e.g. a crossover, or dribble→shoot) correctly.
+
+A loose ball (`at:` a coordinate, not carried) is drawn **on its coordinate** and
+is not offset — the offset applies only to a **carried** ball.
+====
 
 === Movement Sequences
 
