@@ -1,0 +1,47 @@
+---
+import Base from '../../layouts/Base.astro';
+import Card from '../../components/Card.astro';
+---
+<Base
+  title="Docs"
+  description="Documentation hub for the Open Coaching Format: full specification, JSON Schema, key features, and supported rulesets."
+>
+  <h1>Documentation</h1>
+  <p>
+    Everything you need to read, write, and validate Open Coaching Format
+    files — the full specification, the canonical JSON Schema, an overview
+    of the format's key features, and the coordinate system and rulesets it
+    supports.
+  </p>
+  <div class="card-grid">
+    <Card
+      title="Specification"
+      description="The full normative specification: coordinate system, entities, actions, frames, and branches."
+      href="/docs/spec/"
+    />
+    <Card
+      title="JSON Schema"
+      description="The canonical, machine-readable JSON Schema (Draft-07) used to validate OCF files."
+      href="/docs/schema/"
+    />
+    <Card
+      title="Features"
+      description="What makes OCF different: semantic actions, automatic ball possession, hybrid frames, and more."
+      href="/docs/features/"
+    />
+    <Card
+      title="Rulesets"
+      description="The coordinate system and the FIBA/NBA/NCAA/NFHS rulesets OCF supports out of the box."
+      href="/docs/rulesets/"
+    />
+  </div>
+</Base>
+
+<style>
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+</style>

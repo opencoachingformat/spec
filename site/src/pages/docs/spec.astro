@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import specHtml from '../../generated/spec.html?raw';
+import toc from '../../generated/toc.json';
+---
+<Base
+  title="Specification"
+  description="Full specification for the Open Coaching Format JSON schema: coordinate system, entities, actions, frames, and rulesets."
+  wide
+>
+  <div class="spec-layout">
+    <nav class="mini-toc" aria-label="On this page">
+      <p class="mini-toc-title">On this page</p>
+      <ul>
+        {toc.map((entry) => (
+          <li><a href={`#${entry.id}`}>{entry.title}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <div class="spec-content">
+      <Fragment set:html={specHtml} />
+    </div>
+  </div>
+</Base>
+
+<style>
+  .spec-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+  .mini-toc {
+    position: sticky;
+    top: 1.5rem;
+    font-size: 0.9rem;
+  }
+  .mini-toc-title {
+    font-weight: 700;
+    color: var(--text-muted);
+    margin: 0 0 0.5rem;
+  }
+  .mini-toc ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .mini-toc a {
+    display: block;
+    padding: 0.25rem 0;
+  }
+  @media (max-width: 860px) {
+    .spec-layout {
+      grid-template-columns: 1fr;
+    }
+    .mini-toc {
+      position: static;
+    }
+  }
+</style>

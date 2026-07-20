@@ -5,4 +5,8 @@ export default defineConfig({
   site: 'https://opencoachingformat.org',
   outDir: './dist',
   integrations: [sitemap()],
+  redirects: {
+    '/spec': '/docs/spec',
+    '/schema': '/docs/schema',
+  },
 });
