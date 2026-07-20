@@ -33,7 +33,16 @@ jobs:
         run: npx astro preview --port 4321 &
 
       - name: Wait for preview server
-        run: sleep 3
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:4321/ -o /dev/null; then
+              echo "Preview server is up"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Preview server did not start in time" >&2
+          exit 1
 
       - name: Run axe against all routes
         working-directory: site
