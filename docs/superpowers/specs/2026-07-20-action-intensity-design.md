@@ -1,10 +1,11 @@
-# Open Coaching Format — Aktions-Tempo (`intensity`) (Design)
+# Open Coaching Format — Aktions-Tempo (`intensity`) & Körperlichkeit (`physicality`) (Design)
 
 **Datum:** 2026-07-20
 **Status:** Entwurf zur Review
 **Betrifft:** Additive Erweiterung des semantischen Aktionsmodells
-(`docs/superpowers/specs/2026-06-02-semantic-action-model-design.md`) um ein
-optionales Tempo-/Intensitäts-Feld je Aktion.
+(`docs/superpowers/specs/2026-06-02-semantic-action-model-design.md`) um zwei
+optionale, unabhängige Felder je Aktion: `intensity` (Tempo über Distanz) und
+`physicality` (Körperkontakt/Kollisionsstil für die Animationsauswahl).
 
 ---
 
@@ -80,14 +81,44 @@ Diese Aktionstypen haben kein `moves[]`/keine Distanz-über-Zeit-Semantik,
 für die `intensity` gedacht ist. Ein „harter Screen" oder „intensives
 Defending" ist im Kern kein *Geschwindigkeits*-Konzept, sondern eher
 physische Härte/Kollisionsverhalten (Animationsstil im Renderer) — eine
-andere Dimension als das hier definierte, distanz-basierte Zeit-Tempo.
+andere Dimension als das hier definierte, distanz-basierte Zeit-Tempo. Dafür
+gibt es das eigenständige Feld `physicality` (Abschnitt 3.4).
 
-> **Hinweis für später:** Sollte künftig doch der Wunsch nach „aggressivem
-> Screen" o. ä. aufkommen, sollte das **nicht** über `intensity`
-> (movement/ball) gelöst werden, sondern über ein separates, klar benanntes
-> Feld (z. B. `contact` oder `aggressiveness`), um die hier etablierte
-> Distanz→Zeit-Berechnungslogik nicht mit einer andersartigen Semantik zu
-> vermischen.
+### 3.4 Körperkontakt-Aktionen — `physicality`
+
+Optionales String-Enum-Feld, unabhängig von `intensity`. Beschreibt den
+Kollisions-/Kontaktstil einer Aktion und hilft einem 3D-Renderer, die
+passende Animation zu wählen (z. B. sauberer Screen vs. Moving-Screen-artige
+Rammung, sanftes Contesting vs. hartes Boxing-out). Hat **keinen** Einfluss
+auf Distanz- oder Zeitberechnung — das bleibt exklusiv `intensity`
+vorbehalten, damit beide Konzepte nicht vermischt werden.
+
+Gilt für `screen`, `defend`, `rebound`, `pickup` — die Aktionstypen mit
+tatsächlichem oder potenziellem Körperkontakt. Keiner dieser Typen hat
+`moves[]`, daher gilt `physicality` immer direkt und ungeteilt für die
+gesamte Aktion (keine Vererbungsregel wie bei `intensity`/`moves[]`
+nötig).
+
+| Wert | Bedeutung |
+|---|---|
+| `passive` | Kontaktvermeidend, gibt nach |
+| `normal` | Standard, regelkonform (Default) |
+| `aggressive` | Aktiv, druckvoll, sucht Kontakt |
+| `hard` | Kompromisslos, maximaler Kontakt |
+
+```json
+{ "player": "offense_4", "type": "screen", "for_player": "offense_1",
+  "on_player": "defense_1", "variant": "ball_screen", "physicality": "hard" }
+```
+
+```json
+{ "player": "defense_3", "type": "defend", "guards_player": "offense_2",
+  "variant": "box_out", "physicality": "aggressive" }
+```
+
+`variant` (Technik, z. B. `box_out`, `ball_screen`) und `physicality`
+(Kontaktstil) sind unabhängige, kombinierbare Achsen — kein Wert-Konflikt
+mit bestehenden `variant`-Enums von `screen`/`defend`/`rebound`/`pickup`.
 
 ---
 
@@ -152,7 +183,8 @@ Play-Files sollen `intensity` statt `duration_ms` verwenden.
 - **Renderer-seitige Tempo-Profile** (z. B. „nba_pro", „u14_youth" mit
   konkreten m/s-Werten). Reine Renderer-/Anwendungskonfiguration, kein
   Schema-Bestandteil.
-- **`intensity` bei `screen`/`defend`.** Siehe Abschnitt 3.3.
+- **`intensity` bei `screen`/`defend`/`rebound`/`pickup`.** Siehe Abschnitt
+  3.3 — dafür gibt es stattdessen `physicality` (Abschnitt 3.4).
 - **Playbook-Abfrage/Recommender** (z. B. „welches Play passt in 1.5s und
   endet mit einem Distanzwurf"). Spannende künftige Anwendung auf Basis von
   `intensity` + `meta.tags`, aber eine eigene Anwendungsebene, kein
@@ -168,7 +200,11 @@ Play-Files sollen `intensity` statt `duration_ms` verwenden.
 - `schema/v1.json`: neues Enum `ball_intensity`
   (`soft|normal|hard|bullet`), referenziert von `action_pass`,
   `action_shoot`.
+- `schema/v1.json`: neues Enum `physicality`
+  (`passive|normal|aggressive|hard`), referenziert von `action_screen`,
+  `action_defend`, `action_rebound`, `action_pickup`.
 - `docs/specification-v1.adoc`: `duration_ms` als deprecated dokumentieren;
   `intensity` je Aktionstyp dokumentieren (Enum, Default `normal`,
-  Vererbungsregel für `moves[]`).
-- Keine Breaking Changes — beide Enums sind rein additiv und optional.
+  Vererbungsregel für `moves[]`); `physicality` je Aktionstyp dokumentieren
+  (Enum, Default `normal`, keine Vererbungsregel nötig).
+- Keine Breaking Changes — alle drei Enums sind rein additiv und optional.
