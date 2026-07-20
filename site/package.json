@@ -1,0 +1,17 @@
+{
+  "name": "ocf-docs-site",
+  "private": true,
+  "type": "module",
+  "version": "0.0.0",
+  "scripts": {
+    "build:adoc": "node scripts/build-adoc.mjs",
+    "build": "npm run build:adoc && astro build",
+    "dev": "npm run build:adoc && astro dev"
+  },
+  "dependencies": {
+    "astro": "^7.1.2"
+  },
+  "devDependencies": {
+    "@asciidoctor/core": "^4.0.4"
+  }
+}
