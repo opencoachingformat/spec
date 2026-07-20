@@ -1,0 +1,61 @@
+name: Release Spec
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    name: Publish schema + docs site
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: site/package-lock.json
+
+      - name: Install site dependencies
+        working-directory: site
+        run: npm ci
+
+      - name: Build docs site (asciidoctor + astro)
+        working-directory: site
+        run: npm run build
+
+      - name: Assemble dist/
+        run: |
+          mkdir -p dist
+          cp -r site/dist/. dist/
+          echo "opencoachingformat.org" > dist/CNAME
+
+      - name: Publish versioned schema (Step A)
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          mkdir -p "dist/${VERSION}"
+          cp schema/v1.json "dist/${VERSION}/ocf-action-v1.json"
+          echo "Published schema/v1.json -> dist/${VERSION}/ocf-action-v1.json"
+
+      - name: Deploy to gh-pages (Step C)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          keep_files: true
+
+      - name: Notify ocf-validator (Step D)
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.OCF_VALIDATOR_DISPATCH_TOKEN }}
+          repository: opencoachingformat/ocf-validator
+          event-type: spec_released
+          client-payload: '{"tag": "${{ github.ref_name }}"}'
