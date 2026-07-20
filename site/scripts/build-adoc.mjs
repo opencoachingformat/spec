@@ -18,6 +18,7 @@ const doc = await load(adocSource, {
   attributes: {
     'source-highlighter': '',
     showtitle: true,
+    'toc!': '',
   },
 });
 const specHtml = await doc.convert();
