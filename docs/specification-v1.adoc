@@ -525,15 +525,15 @@ sketch quickly or annotate in full detail.
 [cols="1,1,2,3", options="header"]
 |===
 | Type | Ball? | Required | Optional (variant enum / references)
-| `move` | no | `moves[]` | —
-| `cut` | no | `moves[]` | `variant` (backdoor, give_and_go, flash, v_cut, l_cut, curl, flare, fade, basket); per-move `around_player`, `off_screen_by`
-| `screen` | no | `for_player` | `on_player`, `at`, `variant` (ball_screen, back_screen, down_screen, flare_screen, cross_screen, pin_down)
-| `defend` | no | `guards_player` | `variant` (on_ball, deny, help, hedge, switch, box_out)
-| `dribble` | yes | `moves[]` | `ball_id`; per-move `variant` (speed, hesitation, crossover, behind_back, between_legs, spin, retreat)
-| `pass` | yes | `to_player` | `ball_id`, `variant` (chest, bounce, overhead, lob, baseball, hand_off, outlet)
-| `shoot` | yes | `player` | `ball_id`, `variant` (jumper, three, layup, floater, dunk, hook, free_throw), `result` (make/miss)
-| `rebound` | becomes carrier | `player` | `ball_id`, `variant` (offensive, defensive)
-| `pickup` | becomes carrier | `ball_id` | —
+| `move` | no | `moves[]` | `intensity`; per-move `intensity`
+| `cut` | no | `moves[]` | `variant` (backdoor, give_and_go, flash, v_cut, l_cut, curl, flare, fade, basket); `intensity`; per-move `around_player`, `off_screen_by`, `intensity`
+| `screen` | no | `for_player` | `on_player`, `at`, `variant` (ball_screen, back_screen, down_screen, flare_screen, cross_screen, pin_down), `physicality`
+| `defend` | no | `guards_player` | `variant` (on_ball, deny, help, hedge, switch, box_out), `physicality`
+| `dribble` | yes | `moves[]` | `ball_id`, `intensity`; per-move `variant` (speed, hesitation, crossover, behind_back, between_legs, spin, retreat), `intensity`
+| `pass` | yes | `to_player` | `ball_id`, `variant` (chest, bounce, overhead, lob, baseball, hand_off, outlet), `intensity`
+| `shoot` | yes | `player` | `ball_id`, `variant` (jumper, three, layup, floater, dunk, hook, free_throw), `result` (make/miss), `intensity`
+| `rebound` | becomes carrier | `player` | `ball_id`, `variant` (offensive, defensive), `physicality`
+| `pickup` | becomes carrier | `ball_id` | `physicality`
 |===
 
 Any action may also carry a free `tags` array (e.g. `eurostep`, `reverse`).
@@ -589,6 +589,44 @@ For `dribble` (and `move`), each move's `variant` describes that step's characte
 }
 ----
 
+=== Intensity & Physicality
+
+Two optional, independent enums express relative execution style. Neither
+implies a concrete duration — a downstream application combines them with
+actual player/roster data to derive timing or pick renderer animations.
+
+[cols="1,2,3", options="header"]
+|===
+| Field | Applies to | Enum
+| `intensity` (`movement_intensity`) | `move`, `cut`, `dribble` (action-level and per-move, move overrides action) | `slow`, `normal` (default), `fast`, `explosive`
+| `intensity` (`ball_intensity`) | `pass`, `shoot` | `soft`, `normal` (default), `hard`, `bullet`
+| `physicality` | `screen`, `defend`, `rebound`, `pickup` | `passive`, `normal` (default), `aggressive`, `hard`
+|===
+
+`intensity` describes tempo over distance (how fast a player/ball moves).
+`physicality` describes contact/collision style and has no bearing on
+timing — it exists purely to help a renderer pick the right animation (e.g.
+a clean screen vs. a moving-screen-style rammed one). The two are
+deliberately separate so a distance→time calculation built on `intensity`
+never has to reason about `physicality` values.
+
+[source,json]
+----
+{
+  "player": "offense_1",
+  "type": "cut",
+  "intensity": "slow",
+  "moves": [
+    { "to": { "x": -2.0, "y": 4.5 } },
+    { "to": { "named": "basket" }, "intensity": "explosive" }
+  ]
+}
+----
+
+`duration_ms` (see <<Frame Model>>) is deprecated in favor of `intensity`.
+It remains valid for backward compatibility with existing play files, but
+new play files should express tempo via `intensity` instead.
+
 === Timing
 
 Actions express ordering semantically, not in seconds (omitted = at frame
@@ -616,7 +654,7 @@ A frame is a coaching phase. It combines explicit anchors with semantic actions.
 | `id` | yes | Unique frame id within the drill.
 | `label` | no | Short display label.
 | `description` | no | Coaching instruction. LLMs should generate this.
-| `duration_ms` | no | Suggested animation duration for the phase.
+| `duration_ms` | no | *Deprecated* — use per-action `intensity` instead. Suggested animation duration for the phase.
 | `start_state` | no | Positional + ball anchor at phase start. Defaults to the previous frame's `end_state`.
 | `actions` | yes | Semantic actions in this phase. May be empty.
 | `end_state` | yes | Positional + ball anchor at phase end.
@@ -1157,6 +1195,9 @@ Coordinate <|-- RelativeCoordinate
 | Shoot `variant` | jumper, three, layup, floater, dunk, hook, free_throw
 | Rebound `variant` | offensive, defensive
 | Frame `outcome` | make, miss, turnover, steal, foul
+| `movement_intensity` (move/cut/dribble `intensity`) | slow, normal, fast, explosive
+| `ball_intensity` (pass/shoot `intensity`) | soft, normal, hard, bullet
+| `physicality` (screen/defend/rebound/pickup) | passive, normal, aggressive, hard
 |===
 
 NOTE: Per-move `variant` values are recommended vocabulary; the schema accepts any string for a move's `variant` so renderers can fall back gracefully.
@@ -1284,6 +1325,13 @@ npx ajv-cli validate \
 
 [appendix]
 == Changelog
+
+=== v2.1.0
+
+Adds optional `intensity` (`movement_intensity` for move/cut/dribble,
+`ball_intensity` for pass/shoot) and `physicality` (screen/defend/rebound/
+pickup) enums. Deprecates frame-level `duration_ms` in favor of per-action
+`intensity`; `duration_ms` remains valid for backward compatibility.
 
 === v2.0.0
 
