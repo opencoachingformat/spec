@@ -1,0 +1,225 @@
+---
+const navItems = [
+  { href: '/', label: 'Home' },
+  { href: '/docs/', label: 'Docs' },
+  { href: '/examples/', label: 'Examples' },
+  { href: '/ecosystem/', label: 'Ecosystem' },
+];
+---
+<header class="site-header">
+  <div class="nav-bar">
+    <a class="brand" href="/">Open Coaching Format</a>
+    <button
+      id="nav-toggle"
+      class="nav-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="nav-drawer"
+      aria-label="Open navigation menu"
+    >
+      <span class="nav-toggle-icon" aria-hidden="true"></span>
+    </button>
+    <nav class="nav-inline" aria-label="Primary">
+      <ul>
+        {navItems.map((item) => (
+          <li><a href={item.href}>{item.label}</a></li>
+        ))}
+        <li><a href="https://github.com/opencoachingformat/spec">GitHub</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div id="nav-drawer" class="nav-drawer" role="dialog" aria-modal="true" aria-label="Primary navigation" hidden>
+    <div class="nav-drawer-header">
+      <span class="brand">Open Coaching Format</span>
+      <button id="nav-close" class="nav-close" type="button" aria-label="Close navigation menu">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <ul>
+      {navItems.map((item) => (
+        <li><a href={item.href}>{item.label}</a></li>
+      ))}
+      <li><a href="https://github.com/opencoachingformat/spec">GitHub</a></li>
+    </ul>
+  </div>
+  <div id="nav-backdrop" class="nav-backdrop" hidden></div>
+</header>
+
+<style>
+  .site-header {
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-bar {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.5rem;
+  }
+  .brand {
+    color: var(--text-primary);
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 1.05rem;
+  }
+  .nav-inline ul {
+    list-style: none;
+    display: flex;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+  }
+  .nav-inline a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 0.9rem;
+    color: var(--link);
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 4px;
+  }
+  .nav-inline a:hover {
+    text-decoration: underline;
+  }
+  .nav-toggle {
+    display: none;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+  }
+  .nav-toggle-icon,
+  .nav-toggle-icon::before,
+  .nav-toggle-icon::after {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--text-primary);
+    margin: 0 auto;
+  }
+  .nav-toggle-icon::before,
+  .nav-toggle-icon::after {
+    content: '';
+    position: relative;
+  }
+  .nav-toggle-icon::before { top: -6px; }
+  .nav-toggle-icon::after { top: 4px; }
+
+  .nav-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: min(320px, 85vw);
+    background: var(--bg-elevated);
+    border-left: 1px solid var(--border);
+    padding: 1rem 1.5rem;
+    z-index: 30;
+    overflow-y: auto;
+  }
+  .nav-drawer[hidden] { display: none; }
+  .nav-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .nav-drawer ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .nav-drawer a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 0.5rem;
+    color: var(--link);
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 4px;
+  }
+  .nav-close {
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .nav-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 15, 0.6);
+    z-index: 20;
+  }
+  .nav-backdrop[hidden] { display: none; }
+
+  @media (max-width: 720px) {
+    .nav-inline { display: none; }
+    .nav-toggle { display: block; }
+  }
+</style>
+
+<script>
+  const toggle = document.getElementById('nav-toggle');
+  const drawer = document.getElementById('nav-drawer');
+  const backdrop = document.getElementById('nav-backdrop');
+  const closeBtn = document.getElementById('nav-close');
+
+  if (toggle && drawer && backdrop && closeBtn) {
+    const focusableSelector = 'a[href], button:not([disabled])';
+
+    function openDrawer() {
+      drawer.hidden = false;
+      backdrop.hidden = false;
+      toggle.setAttribute('aria-expanded', 'true');
+      const first = drawer.querySelector(focusableSelector);
+      if (first instanceof HTMLElement) first.focus();
+      document.addEventListener('keydown', onKeydown);
+    }
+
+    function closeDrawer() {
+      drawer.hidden = true;
+      backdrop.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.focus();
+      document.removeEventListener('keydown', onKeydown);
+    }
+
+    function onKeydown(event) {
+      if (event.key === 'Escape') {
+        closeDrawer();
+        return;
+      }
+      if (event.key === 'Tab') {
+        const focusable = Array.from(drawer.querySelectorAll(focusableSelector));
+        if (focusable.length === 0) return;
+        const currentIndex = focusable.indexOf(document.activeElement);
+        if (event.shiftKey && currentIndex <= 0) {
+          event.preventDefault();
+          focusable[focusable.length - 1].focus();
+        } else if (!event.shiftKey && currentIndex === focusable.length - 1) {
+          event.preventDefault();
+          focusable[0].focus();
+        }
+      }
+    }
+
+    toggle.addEventListener('click', openDrawer);
+    closeBtn.addEventListener('click', closeDrawer);
+    backdrop.addEventListener('click', closeDrawer);
+  }
+</script>
