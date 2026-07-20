@@ -9,6 +9,7 @@
     "dev": "npm run build:adoc && astro dev"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
     "astro": "^7.1.2"
   },
   "devDependencies": {
