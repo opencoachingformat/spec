@@ -68,7 +68,7 @@
         "balls": { "ball_1": { "at": { "named": "basket" } } }
       },
       "actions": [
-        { "player": "offense_2", "type": "rebound", "ball_id": "ball_1", "variant": "offensive", "tags": ["put_back"] },
+        { "player": "offense_2", "type": "rebound", "ball_id": "ball_1", "variant": "offensive", "tags": ["put_back"], "physicality": "aggressive" },
         { "player": "offense_2", "type": "shoot", "ball_id": "ball_1", "variant": "layup", "result": "make", "after": "offense_2.rebound" }
       ],
       "end_state": {

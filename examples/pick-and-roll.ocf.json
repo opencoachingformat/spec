@@ -25,7 +25,7 @@
       "description": "offense_4 moves up from the left elbow to set a ball screen for offense_1 at the top of the key.",
       "duration_ms": 1500,
       "actions": [
-        { "player": "offense_4", "type": "screen", "for_player": "offense_1", "on_player": "defense_1", "variant": "ball_screen", "at": { "x": -0.5, "y": 6.7 } }
+        { "player": "offense_4", "type": "screen", "for_player": "offense_1", "on_player": "defense_1", "variant": "ball_screen", "at": { "x": -0.5, "y": 6.7 }, "physicality": "hard" }
       ],
       "end_state": {
         "offense_1": { "named": "top_of_the_key" },
@@ -43,12 +43,13 @@
           "player": "offense_1",
           "type": "dribble",
           "ball_id": "ball_1",
+          "intensity": "normal",
           "moves": [
             { "variant": "hesitation" },
-            { "variant": "speed", "to": { "named": "left_elbow" }, "around_player": "defense_1" }
+            { "variant": "speed", "to": { "named": "left_elbow" }, "around_player": "defense_1", "intensity": "explosive" }
           ]
         },
-        { "player": "offense_4", "type": "cut", "variant": "basket", "moves": [ { "to": { "named": "right_block" } } ], "tags": ["roll"] }
+        { "player": "offense_4", "type": "cut", "variant": "basket", "intensity": "fast", "moves": [ { "to": { "named": "right_block" } } ], "tags": ["roll"] }
       ],
       "end_state": {
         "offense_1": { "named": "left_elbow" },
@@ -62,8 +63,8 @@
       "description": "offense_1 throws a bounce pass to the rolling offense_4, who finishes with a layup.",
       "duration_ms": 1500,
       "actions": [
-        { "player": "offense_1", "type": "pass", "to_player": "offense_4", "ball_id": "ball_1", "variant": "bounce" },
-        { "player": "offense_4", "type": "shoot", "ball_id": "ball_1", "variant": "layup", "result": "make", "on_catch": true }
+        { "player": "offense_1", "type": "pass", "to_player": "offense_4", "ball_id": "ball_1", "variant": "bounce", "intensity": "hard" },
+        { "player": "offense_4", "type": "shoot", "ball_id": "ball_1", "variant": "layup", "result": "make", "on_catch": true, "intensity": "soft" }
       ],
       "end_state": {
         "offense_1": { "named": "left_elbow" },
