@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import examples from '../generated/examples.json';
+---
+<Base
+  title="Examples"
+  description="Worked examples of Open Coaching Format drills: pick and roll, 3-man weave, transition offense, and quick-mode sketches."
+>
+  <h1>Examples</h1>
+  <p>
+    Real OCF documents, from a fully-annotated set play to a minimal
+    quick-mode sketch. Each one validates against the current JSON Schema.
+  </p>
+  {examples.map((example) => (
+    <section class="example">
+      <h2 id={example.slug}>{example.title}</h2>
+      <p>{example.description}</p>
+      <pre><code>{example.json}</code></pre>
+    </section>
+  ))}
+</Base>
+
+<style>
+  .example {
+    margin-bottom: 2.5rem;
+  }
+</style>

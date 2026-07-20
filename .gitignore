@@ -6,3 +6,4 @@ dist/
 .worktrees/
 site/src/generated/
 .astro/
+.superpowers/

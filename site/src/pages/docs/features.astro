@@ -1,0 +1,94 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base
+  title="Features"
+  description="Key features of the Open Coaching Format: semantic actions, automatic ball possession, hybrid frames, and more."
+>
+  <h1>Features</h1>
+
+  <h2 id="basketball-first">Basketball-first, sport-agnostic by design</h2>
+  <p>
+    OCF v1 covers basketball across the FIBA, NBA, NCAA, and NFHS rulesets,
+    but the underlying architecture — entities, actions, frames, and named
+    positions resolved per ruleset — is not basketball-specific. Future
+    versions can extend the same model to other sports without breaking
+    existing documents.
+  </p>
+
+  <h2 id="real-world-coordinates">Real-world coordinates</h2>
+  <p>
+    Every position in an OCF file is expressed in real-world units — meters
+    for FIBA, feet for NBA, NCAA, and NFHS — with the origin at midcourt
+    center. This keeps diagrams grounded in actual court geometry instead of
+    an arbitrary pixel grid, so the same drill renders correctly at any
+    scale or aspect ratio.
+  </p>
+
+  <h2 id="named-positions">Named court positions</h2>
+  <p>
+    Rather than forcing every position to be a raw coordinate pair, OCF
+    defines a registry of named positions — <code>top_of_the_key</code>,
+    <code>left_elbow</code>, <code>inbound.baseline_left</code>, and more —
+    grounded in official ruleset geometry. Coaches can author drills by
+    naming positions instead of guessing coordinates.
+  </p>
+
+  <h2 id="semantic-actions">Semantic actions</h2>
+  <p>
+    Frames describe what players <em>do</em> — <code>move</code>,
+    <code>cut</code>, <code>screen</code>, <code>defend</code>,
+    <code>dribble</code>, <code>pass</code>, <code>shoot</code>,
+    <code>rebound</code>, <code>pickup</code> — rather than raw geometric
+    lines. This makes drills legible to both humans and machines, and is a
+    prerequisite for the LLM-driven generation OCF is designed toward.
+  </p>
+
+  <h2 id="ball-possession">Automatic ball possession</h2>
+  <p>
+    A top-level <code>balls[]</code> array (<code>carried_by</code> /
+    <code>at</code> / <code>dead</code>) supports multiple balls per drill.
+    Possession transfers are inferred automatically from <code>pass</code>
+    and <code>pickup</code> actions, so authors don't have to manually
+    track and restate who's holding the ball in every frame.
+  </p>
+
+  <h2 id="hybrid-frames">Hybrid frames</h2>
+  <p>
+    Frames combine explicit <code>start_state</code> /
+    <code>end_state</code> anchors with action sequences, and support
+    outcome branches (<code>make</code> / <code>miss</code> / …) to model
+    continuum drills where the next step depends on what happened in the
+    last one.
+  </p>
+
+  <h2 id="progressive-detail">Progressive detail</h2>
+  <p>
+    Only <code>player</code> and <code>type</code> are required per action —
+    variants, tags, and timing are all optional. Coaches can sketch a drill
+    quickly with minimal annotation, or go back and add full detail later,
+    without the schema forcing an all-or-nothing choice.
+  </p>
+
+  <h2 id="llm-friendly">LLM-friendly</h2>
+  <p>
+    The semantic action model is structured enough that a language model can
+    reliably generate valid OCF documents from a natural-language drill
+    description — a first step toward OCF's end goal of text-to-diagram
+    generation.
+  </p>
+
+  <h2 id="accessibility">Accessibility</h2>
+  <p>
+    OCF ships with WCAG-guided color scheme recommendations for rendered
+    diagrams, so tools built on the format start from an accessible default
+    instead of retrofitting contrast and color-blindness support later.
+  </p>
+
+  <h2 id="fiba-import">FIBA import path</h2>
+  <p>
+    OCF defines a coordinate mapping from the FIBA Europe Coaching internal
+    format, giving existing FIBA-authored content a path into the open
+    standard instead of starting from scratch.
+  </p>
+</Base>
