@@ -1,0 +1,124 @@
+---
+import Base from '../layouts/Base.astro';
+import Card from '../components/Card.astro';
+
+const toc = [
+  { id: 'validator', title: 'Validator' },
+  { id: 'renderer', title: 'Renderer' },
+  { id: 'editor', title: 'Editor' },
+  { id: 'roadmap', title: 'Roadmap' },
+];
+---
+<Base
+  title="Ecosystem"
+  description="Status of the Open Coaching Format ecosystem — Validator, Renderer, and Editor — and the roadmap toward LLM-driven drill generation."
+  wide
+>
+  <div class="ecosystem-layout">
+    <nav class="mini-toc" aria-label="On this page">
+      <p class="mini-toc-title">On this page</p>
+      <ul>
+        {toc.map((entry) => (
+          <li><a href={`#${entry.id}`}>{entry.title}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <div class="ecosystem-content">
+      <h1>Ecosystem</h1>
+      <p>
+        This repository defines the schema and standard. These are the
+        companion projects being built on top of it.
+      </p>
+
+      <div class="card-grid">
+        <div id="validator">
+          <Card
+            title="Validator"
+            description="Semantic rules JSON Schema can't express: ball-possession consistency, branch target integrity, and end_state agreement."
+            href="https://github.com/opencoachingformat/ocf-validator"
+            status="Available"
+          />
+        </div>
+        <div id="renderer">
+          <Card
+            title="Renderer"
+            description="Draws drills and animates them from OCF JSON."
+            href="https://github.com/opencoachingformat"
+            status="In development"
+          />
+        </div>
+        <div id="editor">
+          <Card
+            title="Editor"
+            description="Visual authoring on top of the renderer."
+            href="https://github.com/opencoachingformat/ocf-editor"
+            status="Planned"
+          />
+        </div>
+      </div>
+
+      <h2 id="roadmap">Roadmap</h2>
+      <ol>
+        <li>
+          <strong>Validator</strong> — semantic rules JSON Schema can't
+          express: ball-possession consistency (only the carrier may
+          <code>pass</code>/<code>shoot</code>/<code>dribble</code>), branch
+          target integrity, and <code>end_state</code> agreement with
+          action endpoints.
+        </li>
+        <li><strong>Renderer</strong> — draw drills and animate them from the JSON.</li>
+        <li><strong>Editor</strong> — visual authoring on top of the renderer.</li>
+      </ol>
+      <p>
+        End goal: generate drills and set plays from natural language (LLM)
+        and render them directly, plus video overlay for practice analysis
+        and video → play extraction.
+      </p>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .ecosystem-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+  .mini-toc {
+    position: sticky;
+    top: 1.5rem;
+    font-size: 0.9rem;
+  }
+  .mini-toc-title {
+    font-weight: 700;
+    color: var(--text-muted);
+    margin: 0 0 0.5rem;
+  }
+  .mini-toc ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .mini-toc a {
+    display: block;
+    padding: 0.25rem 0;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0 2.5rem;
+  }
+  @media (max-width: 860px) {
+    .ecosystem-layout {
+      grid-template-columns: 1fr;
+    }
+    .mini-toc {
+      position: static;
+    }
+  }
+</style>
