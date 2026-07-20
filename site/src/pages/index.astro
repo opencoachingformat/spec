@@ -1,18 +1,123 @@
 ---
 import Base from '../layouts/Base.astro';
+import Card from '../components/Card.astro';
+
+const quickExample = `{
+  "court": { "ruleset": "fiba", "type": "half_court" },
+  "entities": [
+    { "type": "offense", "nr": 1, "x": -3.0, "y": 6.0 },
+    { "type": "offense", "nr": 2, "x": 3.0, "y": 6.0 }
+  ],
+  "balls": [ { "id": "ball_1", "carried_by": "offense_1" } ],
+  "frames": [
+    {
+      "id": "frame_1",
+      "actions": [
+        { "player": "offense_1", "type": "pass", "to_player": "offense_2" },
+        { "player": "offense_1", "type": "cut", "moves": [ { "to": { "named": "basket" } } ] }
+      ],
+      "end_state": {
+        "offense_1": { "named": "basket" },
+        "balls": { "ball_1": { "carried_by": "offense_2" } }
+      }
+    }
+  ]
+}`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareSourceCode',
+  name: 'Open Coaching Format',
+  description:
+    'An open standard for representing sports coaching diagrams, drill animations, and playbooks as structured data.',
+  codeRepository: 'https://github.com/opencoachingformat/spec',
+  license: 'https://creativecommons.org/licenses/by/4.0/',
+  programmingLanguage: 'JSON Schema',
+};
 ---
 <Base
   title="Home"
   description="An open standard for representing sports coaching diagrams, drill animations, and playbooks as structured data."
 >
-  <h1>Open Coaching Format</h1>
-  <p>
-    An open standard for representing sports coaching diagrams, drill
-    animations, and playbooks as structured data.
-  </p>
-  <ul>
-    <li><a href="/spec/">Full Specification</a></li>
-    <li><a href="/schema/">JSON Schema (v1)</a></li>
-    <li><a href="https://github.com/opencoachingformat/spec">Source on GitHub</a></li>
-  </ul>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+
+  <section class="hero">
+    <h1>Open Coaching Format</h1>
+    <p class="tagline">
+      An open standard for representing sports coaching diagrams, drill
+      animations, and playbooks as structured data.
+    </p>
+    <p>
+      No open standard for this exists today — coaching tools like the FIBA
+      Europe Coaching App, FastDraw, and Sportplan.net all use proprietary,
+      image-only formats. OCF is a JSON-based alternative any tool can read,
+      write, and render.
+    </p>
+  </section>
+
+  <section>
+    <h2>Quick example</h2>
+    <p>A pass followed by a cut to the basket, in half-court FIBA coordinates:</p>
+    <pre><code>{quickExample}</code></pre>
+  </section>
+
+  <section>
+    <h2>Explore</h2>
+    <div class="card-grid">
+      <Card
+        title="Docs"
+        description="Full specification, JSON Schema, key features, and supported rulesets."
+        href="/docs/"
+      />
+      <Card
+        title="Examples"
+        description="Worked OCF drills: pick and roll, 3-man weave, transition offense, and more."
+        href="/examples/"
+      />
+      <Card
+        title="Ecosystem"
+        description="Validator, renderer, and editor projects built on top of OCF, plus the roadmap."
+        href="/ecosystem/"
+      />
+    </div>
+  </section>
+
+  <section>
+    <h2>Using the Validator</h2>
+    <p>
+      Try the reference validator instantly in the <a href="/playground/">browser
+      playground</a> — nothing is uploaded, validation runs client-side. Its
+      <a href="/errors/">error codes</a> are documented separately.
+    </p>
+    <p>
+      <a href="https://github.com/opencoachingformat/ocf-validator">ocf-validator</a>
+      is not yet published to npm or PyPI. Run it from source instead:
+    </p>
+    <pre><code>git clone https://github.com/opencoachingformat/ocf-validator
+cd ocf-validator/packages/ts
+npm install && npm run build
+node dist/cli.js path/to/your-file.ocf.json</code></pre>
+    <p>
+      A Python implementation with matching validation behavior is available
+      under <code>packages/py</code> in the same repository.
+    </p>
+  </section>
 </Base>
+
+<style>
+  .hero {
+    margin-bottom: 2.5rem;
+  }
+  .tagline {
+    font-size: 1.15rem;
+    color: var(--text-muted);
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+</style>
