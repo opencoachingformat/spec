@@ -41,4 +41,5 @@ This triggers the workflow, which:
    (this URL is permanent — never delete or overwrite a version folder).
 3. Deploys the docs site + versioned schema to the `gh-pages` branch.
 4. Sends a `repository_dispatch` (`spec_released`) to `opencoachingformat/ocf-validator`
-   with `{"tag": "v1.1.0"}` in the payload.
+   with `{"version": "v1.1.0"}` in the payload (the key must be `version` —
+   `ocf-validator`'s `sync-from-spec.yml` reads `client_payload.version`).

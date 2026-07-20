@@ -58,4 +58,4 @@ jobs:
           token: ${{ secrets.OCF_VALIDATOR_DISPATCH_TOKEN }}
           repository: opencoachingformat/ocf-validator
           event-type: spec_released
-          client-payload: '{"tag": "${{ github.ref_name }}"}'
+          client-payload: '{"version": "${{ github.ref_name }}"}'
