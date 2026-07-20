@@ -1,0 +1,49 @@
+name: Accessibility Check
+
+on:
+  pull_request:
+    paths:
+      - 'site/src/pages/**'
+      - 'site/src/layouts/**'
+      - 'site/src/components/**'
+      - 'site/public/**'
+
+jobs:
+  axe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: site/package-lock.json
+
+      - name: Install dependencies
+        working-directory: site
+        run: npm ci
+
+      - name: Build site
+        working-directory: site
+        run: npm run build
+
+      - name: Start preview server
+        working-directory: site
+        run: npx astro preview --port 4321 &
+
+      - name: Wait for preview server
+        run: sleep 3
+
+      - name: Run axe against all routes
+        working-directory: site
+        run: |
+          npx axe http://localhost:4321/ \
+            http://localhost:4321/docs/ \
+            http://localhost:4321/docs/spec/ \
+            http://localhost:4321/docs/schema/ \
+            http://localhost:4321/docs/features/ \
+            http://localhost:4321/docs/rulesets/ \
+            http://localhost:4321/examples/ \
+            http://localhost:4321/ecosystem/ \
+            --exit
