@@ -1,0 +1,2636 @@
+<!DOCTYPE html><html lang="en" data-astro-cid-hkbrpulz><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Specification — Open Coaching Format</title><style>:root{color-scheme:light dark;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif}body{max-width:860px;margin:0 auto;padding:2rem 1.5rem 4rem;line-height:1.6}nav[data-astro-cid-hkbrpulz]{border-bottom:1px solid #8884;gap:1.25rem;margin-bottom:2rem;padding-bottom:1rem;font-weight:600;display:flex}nav[data-astro-cid-hkbrpulz] a[data-astro-cid-hkbrpulz]{color:inherit;text-decoration:none}nav[data-astro-cid-hkbrpulz] a[data-astro-cid-hkbrpulz]:hover{text-decoration:underline}pre[data-astro-cid-hkbrpulz]{background:#8881;border-radius:6px;padding:1rem;overflow-x:auto}table[data-astro-cid-hkbrpulz]{border-collapse:collapse;width:100%}th[data-astro-cid-hkbrpulz],td[data-astro-cid-hkbrpulz]{text-align:left;border:1px solid #8884;padding:.4rem .6rem}
+</style></head><body data-astro-cid-hkbrpulz><nav data-astro-cid-hkbrpulz><a href="/" data-astro-cid-hkbrpulz>Home</a><a href="/spec/" data-astro-cid-hkbrpulz>Specification</a><a href="/schema/" data-astro-cid-hkbrpulz>Schema</a><a href="https://github.com/opencoachingformat/spec" data-astro-cid-hkbrpulz>GitHub</a></nav><h1>Open Coaching Format — Open Standard for Basketball Drill Diagrams</h1>
+<div class="sect1">
+<h2 id="_abstract">1. Abstract</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>{ocf} v1.0.0</strong> is an open, ruleset-aware JSON schema for representing basketball drill diagrams and multi-step animations.
+It defines a court coordinate system based on real-world units (meters or feet), a registry of named court positions per ruleset,
+a semantic entity model, and a frame-based animation structure.</p>
+</div>
+<div class="paragraph">
+<p>The format is designed to be:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Human-readable</strong> — coaching terminology maps directly to named positions</p>
+</li>
+<li>
+<p><strong>LLM-friendly</strong> — structured enough for text-to-diagram generation</p>
+</li>
+<li>
+<p><strong>Renderer-agnostic</strong> — SVG, Canvas, PDF, mobile</p>
+</li>
+<li>
+<p><strong>Ruleset-aware</strong> — FIBA, NBA, NCAA, NFHS, custom</p>
+</li>
+<li>
+<p><strong>FIBA-compatible</strong> — import/export path for existing FIBA Europe diagrams</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_introduction">2. Introduction</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_motivation">2.1. Motivation</h3>
+<div class="paragraph">
+<p>No open standard exists for basketball drill diagrams.
+All major tools (FIBA Europe Coaching App, FastDraw, Sportplan.net) use proprietary formats with image-only export.
+This prevents programmatic drill creation, LLM-assisted coaching tools, and cross-platform interoperability.</p>
+</div>
+<div class="paragraph">
+<p>{ocf} addresses this gap by providing:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>A well-defined JSON Schema (Draft-7)</p>
+</li>
+<li>
+<p>A coordinate system grounded in real-world units</p>
+</li>
+<li>
+<p>A named position registry aligned with official ruleset geometry</p>
+</li>
+<li>
+<p>A frame model for multi-step animated drills</p>
+</li>
+<li>
+<p>A clear import path from the FIBA Europe internal format</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_design_principles">2.2. Design Principles</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="25%">
+<col width="75%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Principle</th>
+<th class="tableblock halign-left valign-top">Decision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Court units = real units</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Coordinates in meters (FIBA) or feet (NBA/NCAA). No arbitrary pixel grids.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Origin = midcourt center</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Positive y = frontcourt (offense). Negative y = backcourt (defense). Zero = midline.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Viewer perspective</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">"Left" and "right" are always from the viewer&#8217;s top-down perspective.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Named positions over raw coordinates</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Standard court landmarks (e.g. <code>top_of_the_key</code>) are first-class citizens.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Entity keys = team + number</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>offense_1</code>, <code>defense_3</code>. No synthetic IDs for player entities.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Frames are anchored</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Each frame carries explicit <code>start_state</code>/<code>end_state</code> anchors plus semantic actions. Any frame can render as a still without simulating history.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Colors are semantic roles</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"offense"</code>, <code>"defense"</code>, <code>"black"</code>. Hex values are configured per document.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Registry over fixed enum</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Named positions use a known-good standard catalog + user-extensible custom block.</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_coordinate_system">3. Coordinate System</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_overview">3.1. Overview</h3>
+<div class="paragraph">
+<p>The {ocf} coordinate system places the origin at the center of the court (midcourt center circle).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>                    viewer's left         viewer's right
+                         |                     |
+    defense basket  ─────┼─────────────────────┼─────  y = -max
+    (backcourt)          │                     │
+                         │    BACKCOURT        │
+                         │    y &lt; 0            │
+                    ─────┼─────────────────────┼─────  y = 0  (midline / origin)
+                    x=-max         x=0        x=+max
+                         │    FRONTCOURT       │
+                         │    y &gt; 0            │
+    offense basket  ─────┼─────────────────────┼─────  y = +max
+    (frontcourt)         │                     │</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="33.3333%">
+<col width="66.6667%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Axis</th>
+<th class="tableblock halign-left valign-top">Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Horizontal. <code>0</code> = court center line. Negative = viewer&#8217;s left. Positive = viewer&#8217;s right.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">y</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vertical. <code>0</code> = midline. Positive = toward offense basket (frontcourt). Negative = toward defense basket (backcourt).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_coordinate_ranges_per_ruleset">3.2. Coordinate Ranges per Ruleset</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="16.6666%">
+<col width="16.6666%">
+<col width="33.3333%">
+<col width="33.3335%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Ruleset</th>
+<th class="tableblock halign-left valign-top">Unit</th>
+<th class="tableblock halign-left valign-top">x range</th>
+<th class="tableblock halign-left valign-top">y range (half / full)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>fiba</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">m</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">−7.5 … +7.5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0 … +14.0 / −14.0 … +14.0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>nba</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ft</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">−25.0 … +25.0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0 … +47.0 / −47.0 … +47.0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ncaa</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ft</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">−25.0 … +25.0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0 … +47.0 / −47.0 … +47.0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>nfhs</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ft</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">−25.0 … +25.0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0 … +42.0 / −42.0 … +42.0</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+For half court diagrams, only the frontcourt (<code>y ≥ 0</code>) is rendered.
+Entities placed at negative y coordinates in a half_court document are outside the visible area.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_field_dimensions_reference">3.3. Field Dimensions Reference</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>FIBA Half Court — values in meters, origin at midline center
+┌─────────────────────────────────────────────────────────┐  y = 0.0
+│                         x=0                             │
+│              midcourt.left  midcourt.center  midcourt.right
+│           (-7.5,0)          (0,0)             (7.5,0)  │
+│                                                         │
+│                     TOP OF THE KEY                      │
+│                      (0.0, 5.68)                        │
+│       left_wing                          right_wing     │
+│      (-6.75, 8.60)                    (6.75, 8.60)      │
+│                                                         │
+│   left_corner   ─ ─ FREE THROW LINE ─ ─  right_corner  │
+│                        (0, 8.20)                        │
+│  left_elbow                              right_elbow    │
+│  (-2.45, 8.20)                          (2.45, 8.20)   │
+│                 ┌───────────────────┐                   │
+│                 │   PAINT AREA      │                   │
+│   left_block    │                   │   right_block     │
+│  (-2.45, 11.00) │   paint_center    │  (2.45, 11.00)   │
+│                 │    (0, 10.50)     │                   │
+│                 └───────────────────┘                   │
+│  left_corner                            right_corner    │
+│  (-7.5, 13.98)       basket          (7.5, 13.98)       │
+│                     (0, 12.43)                          │
+└─────────────────────────────────────────────────────────┘  y = +14.0</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_coordinate_types">3.4. Coordinate Types</h3>
+<div class="paragraph">
+<p>A coordinate in {ocf} can be one of three forms:</p>
+</div>
+<div class="sect3">
+<h4 id="_absolute">3.4.1. Absolute</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{ "x": 2.45, "y": 8.20 }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A fixed point in court units. Always valid.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_named">3.4.2. Named</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{ "named": "left_elbow" }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>References a standard named position. Resolved to absolute coordinates at render time using the document&#8217;s <code>ruleset</code>.
+Custom positions use the <code>custom.</code> prefix:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{ "named": "custom.dunker_spot" }</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_relative">3.4.3. Relative</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "relative_to": "left_elbow",
+  "dx": 1.0,
+  "dy": -0.5
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>An offset from a named position.
+<code>dx</code> and <code>dy</code> are in the document&#8217;s court unit.
+Positive <code>dx</code> = viewer&#8217;s right. Positive <code>dy</code> = toward offense basket.</p>
+</div>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_named_court_positions">4. Named Court Positions</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_standard_positions_fiba">4.1. Standard Positions (FIBA)</h3>
+<div class="paragraph">
+<p>All coordinates in meters (m). Backcourt positions are the exact y-negation of their frontcourt counterparts.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="28.5714%">
+<col width="14.2857%">
+<col width="14.2857%">
+<col width="42.8572%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">x (m)</th>
+<th class="tableblock halign-left valign-top">y (m)</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top" colspan="4"><p class="tableblock"><strong>Paint / Near Basket</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>basket</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">12.425</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Center of basket ring</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>left_block</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-2.450</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">11.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Low post, left side</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>right_block</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2.450</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">11.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Low post, right side</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>paint_center</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10.500</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Center of the lane</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>left_short_corner</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-7.500</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">11.500</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Baseline region, outside paint left</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>right_short_corner</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7.500</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">11.500</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Baseline region, outside paint right</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" colspan="4"><p class="tableblock"><strong>Mid-Range / Elbow</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>left_elbow</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-2.450</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8.200</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Junction of free throw line and paint, left</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>right_elbow</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2.450</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8.200</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Junction of free throw line and paint, right</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>free_throw_line</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8.200</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Center of free throw line</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>high_post_left</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-2.450</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Above the elbow, left side</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>high_post_right</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2.450</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Above the elbow, right side</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" colspan="4"><p class="tableblock"><strong>3-Point Area</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>top_of_the_key</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5.680</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Apex of 3-point arc</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>left_wing</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-6.750</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8.600</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3-point line, ~45° left</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>right_wing</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6.750</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8.600</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3-point line, ~45° right</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>left_corner</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-7.500</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13.980</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Corner 3, left</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>right_corner</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7.500</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13.980</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Corner 3, right</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" colspan="4"><p class="tableblock"><strong>Midcourt</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>midcourt.center</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Center circle, origin</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>midcourt.left</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-7.500</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Left sideline at midline</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>midcourt.right</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7.500</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Right sideline at midline</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" colspan="4"><p class="tableblock"><strong>Backcourt (Full Court)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>backcourt.basket</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-12.425</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defense basket</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>backcourt.left_block</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-2.450</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-11.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defense left block</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>backcourt.right_block</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2.450</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-11.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defense right block</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>backcourt.left_elbow</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-2.450</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-8.200</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defense left elbow</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>backcourt.right_elbow</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2.450</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-8.200</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defense right elbow</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>backcourt.free_throw_line</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-8.200</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defense free throw line</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>backcourt.top_of_the_key</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-5.680</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defense top of the key</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>backcourt.left_wing</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-6.750</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-8.600</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defense left wing</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>backcourt.right_wing</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6.750</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-8.600</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defense right wing</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>backcourt.left_corner</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-7.500</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-13.980</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defense left corner</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>backcourt.right_corner</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7.500</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-13.980</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defense right corner</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" colspan="4"><p class="tableblock"><strong>Inbound Positions</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>inbound.baseline_left</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-3.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">14.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Baseline inbound, left of basket</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>inbound.baseline_right</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">14.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Baseline inbound, right of basket</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>inbound.baseline_center</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">14.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Baseline inbound, center</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>inbound.sideline_left_fc</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-7.500</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8.200</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sideline inbound, frontcourt left</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>inbound.sideline_right_fc</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7.500</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8.200</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sideline inbound, frontcourt right</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>inbound.sideline_left_mid</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-7.500</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sideline inbound, at midline left</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>inbound.sideline_right_mid</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7.500</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sideline inbound, at midline right</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>inbound.sideline_left_bc</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-7.500</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-8.200</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sideline inbound, backcourt left</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>inbound.sideline_right_bc</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7.500</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-8.200</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sideline inbound, backcourt right</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_ruleset_differences">4.2. Ruleset Differences</h3>
+<div class="paragraph">
+<p>Key position differences across rulesets (all values in respective unit):</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="33.3333%">
+<col width="16.6666%">
+<col width="16.6666%">
+<col width="16.6666%">
+<col width="16.6669%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Position</th>
+<th class="tableblock halign-left valign-top">FIBA (m)</th>
+<th class="tableblock halign-left valign-top">NBA (ft)</th>
+<th class="tableblock halign-left valign-top">NCAA (ft)</th>
+<th class="tableblock halign-left valign-top">NFHS (ft)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>top_of_the_key</code> y</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5.68</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">20.75</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">20.75</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">19.75</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>left_wing</code> x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±6.75</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±22.15</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±20.75</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±19.75</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>left_corner</code> x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±7.50</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±25.0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±25.0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±25.0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>left_corner</code> y</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13.98</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">46.58</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">46.58</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">41.58</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>free_throw_line</code> y</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8.20</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">19.00</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">19.00</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">19.00</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>left_elbow</code> x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±2.45</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±8.0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±6.0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">±6.0</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+NBA corners are defined by a straight sideline section, not an arc.
+The <code>left_corner</code> and <code>right_corner</code> positions mark the junction point where the straight section meets the arc.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_custom_positions_registry">4.3. Custom Positions (Registry)</h3>
+<div class="paragraph">
+<p>User-defined named positions are stored in the <code>named_positions.custom</code> block:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"named_positions": {
+  "custom": {
+    "dunker_spot": {
+      "x": 1.5,
+      "y": 12.8,
+      "description": "Dunker spot, weak side baseline"
+    },
+    "nail": {
+      "x": 0.0,
+      "y": 8.5,
+      "description": "Free throw line extended, center"
+    },
+    "short_roll": {
+      "x": -2.0,
+      "y": 9.5
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Reference them in coordinates with the <code>custom.</code> prefix:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{ "named": "custom.dunker_spot" }</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Custom positions use the same unit as the document ruleset.
+No separate unit declaration is needed.
+</td>
+</tr>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_entities">5. Entities</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Entities represent all non-ball objects that appear on the court.
+Their initial position is defined in the top-level <code>entities</code> array.
+Balls are stored separately in the top-level <code>balls</code> array (see <a href="#_balls">Balls</a>).</p>
+</div>
+<div class="sect2">
+<h3 id="_entity_reference_keys">5.1. Entity Reference Keys</h3>
+<div class="paragraph">
+<p>Each entity is uniquely identified by a natural key string:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="40%">
+<col width="60%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Entity</th>
+<th class="tableblock halign-left valign-top">Key Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Offensive player nr. 1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"offense_1"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defensive player nr. 3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"defense_3"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Coach</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"coach"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cone nr. 2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"cone_2"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Station nr. 4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"station_4"</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<code>offense_1</code> and <code>defense_1</code> are distinct entities. In transition drills, both can appear simultaneously.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_distinct_positions">5.2. Distinct Positions</h3>
+<div class="paragraph">
+<p>Two distinct entities MUST NOT occupy the same position. Within any single state
+(the top-level <code>entities</code> array, or a frame&#8217;s <code>start_state</code> / <code>end_state</code>), no
+two entities may share coordinates that resolve closer than a <strong>minimum
+separation</strong> to each other.</p>
+</div>
+<div class="paragraph">
+<p>The minimum separation is one <strong>player diameter</strong> in the document&#8217;s court unit —
+the space a player symbol occupies — so that rendered symbols never overlap and
+each player remains individually identifiable:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Ruleset</th>
+<th class="tableblock halign-left valign-top">Minimum separation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>fiba</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.5 m</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>nba</code> / <code>ncaa</code> / <code>nfhs</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.6 ft</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>A document that places two entities closer than this is <strong>invalid</strong>; a validator
+reports it. Two players genuinely "at the same spot" in a coach&#8217;s mind (e.g. a
+hand-off) are still distinct bodies and must be given distinct coordinates a
+symbol-width apart.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+A renderer SHOULD additionally apply a small visual nudge if symbols still
+touch after a valid layout (a rendering safety net), but this does not relax the
+data constraint above — the underlying coordinates remain the source of truth.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_entity_types">5.3. Entity Types</h3>
+<div class="sect3">
+<h4 id="_offensive_player">5.3.1. Offensive Player</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "type": "offense",
+  "nr": 1,
+  "x": 0.0,
+  "y": 5.68,
+  "rotation": 0,
+  "color": "offense"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Rendered as a filled circle with player number.
+<code>rotation</code> is accepted for symmetry but is <strong>not rendered</strong> for offense (the
+filled circle has no facing direction); it is typically <code>0</code>. The field is
+meaningful for defenders — see the defender <code>rotation</code> convention below.
+<code>color</code> defaults to <code>"offense"</code> (resolved via <code>color_scheme.offense_fill</code>).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_defensive_player">5.3.2. Defensive Player</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "type": "defense",
+  "nr": 1,
+  "x": 0.5,
+  "y": 5.5,
+  "rotation": 45,
+  "color": "defense"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Rendered as a filled shape (an arc — the defender&#8217;s outstretched arms — above an
+inner circle carrying the player number). <code>rotation</code> indicates the direction the
+defender is facing, i.e. the direction the arms point.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Defender <code>rotation</code> convention</div>
+<div class="paragraph">
+<p><code>rotation</code> is measured in degrees, clockwise on screen, from a defined zero:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong><code>0°</code> (default) — arms point in the <code>−y</code> direction</strong>, i.e. <strong>away from the
+attacking basket</strong>. This is the natural defensive stance: the defender&#8217;s back is
+toward their own basket and they face an attacker coming from <code>+y</code> (the
+<code>direction of attack</code>).</p>
+</li>
+<li>
+<p>Increasing values rotate the arms <strong>clockwise</strong> as seen on the rendered image:
+<code>90°</code> → arms point <code>−x</code> (viewer&#8217;s left), <code>180°</code> → <code>+y</code> (toward the attacking
+basket), <code>270°</code> → <code>+x</code> (viewer&#8217;s right).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>A renderer applies <code>rotation</code> exactly as given; it does not infer a facing
+direction from nearby players. When <code>rotation</code> is absent it defaults to <code>0°</code>
+(arms toward <code>−y</code>).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_balls">5.3.3. Balls</h4>
+<div class="paragraph">
+<p>Balls are no longer entities. They live in the top-level <code>balls</code> array and each
+holds exactly one lifecycle state:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="25%">
+<col width="75%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">State</th>
+<th class="tableblock halign-left valign-top">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>carried_by</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An entity ref (player or <code>coach</code>) currently holding the ball.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>at</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A coordinate where the ball rests (floor, rim after a miss). Still in play — can be <code>pickup</code> or <code>rebound</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dead</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code>. Out of play (made basket with no rebound, or out of bounds).</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"balls": [
+  { "id": "ball_1", "carried_by": "offense_1" },
+  { "id": "ball_2", "carried_by": "coach" },
+  { "id": "ball_3", "at": { "named": "right_corner" } }
+]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ball possession moves automatically: <code>pass</code>, <code>shoot</code>, <code>pickup</code> and <code>rebound</code>
+actions transfer the ball. After a <code>shoot</code> with no following <code>rebound</code>/<code>pickup</code>
+on the same ball, the ball becomes <code>dead</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_coach">5.3.4. Coach</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "type": "coach",
+  "x": -7.5,
+  "y": 6.0
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Rendered as a circle labeled "C".</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_cone">5.3.5. Cone</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "type": "cone",
+  "nr": 1,
+  "x": 2.0,
+  "y": 7.0
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Rendered as a small triangle. Used as training markers or obstacles.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_station">5.3.6. Station</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "type": "station",
+  "nr": 3,
+  "label": "Rebound jumps",
+  "x": -4.0,
+  "y": 11.0
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Rendered as a numbered marker with optional description. Used for circuit training drills.</p>
+</div>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_actions">6. Actions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Movement and ball events are expressed as semantic <strong>actions</strong>, not geometric
+lines. A renderer derives the drawn arrows/paths from the actions. Every action
+has a required <code>player</code> and <code>type</code>; everything else is optional, so a coach can
+sketch quickly or annotate in full detail.</p>
+</div>
+<div class="sect2">
+<h3 id="_action_types">6.1. Action Types</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="14.2857%">
+<col width="14.2857%">
+<col width="28.5714%">
+<col width="42.8572%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Ball?</th>
+<th class="tableblock halign-left valign-top">Required</th>
+<th class="tableblock halign-left valign-top">Optional (variant enum / references)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>move</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>moves[]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>intensity</code>; per-move <code>intensity</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cut</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>moves[]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>variant</code> (backdoor, give_and_go, flash, v_cut, l_cut, curl, flare, fade, basket); <code>intensity</code>; per-move <code>around_player</code>, <code>off_screen_by</code>, <code>intensity</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>screen</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>for_player</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>on_player</code>, <code>at</code>, <code>variant</code> (ball_screen, back_screen, down_screen, flare_screen, cross_screen, pin_down), <code>physicality</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>defend</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>guards_player</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>variant</code> (on_ball, deny, help, hedge, switch, box_out), <code>physicality</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dribble</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>moves[]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ball_id</code>, <code>intensity</code>; per-move <code>variant</code> (speed, hesitation, crossover, behind_back, between_legs, spin, retreat), <code>intensity</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pass</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>to_player</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ball_id</code>, <code>variant</code> (chest, bounce, overhead, lob, baseball, hand_off, outlet), <code>intensity</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>shoot</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>player</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ball_id</code>, <code>variant</code> (jumper, three, layup, floater, dunk, hook, free_throw), <code>result</code> (make/miss), <code>intensity</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rebound</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">becomes carrier</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>player</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ball_id</code>, <code>variant</code> (offensive, defensive), <code>physicality</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pickup</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">becomes carrier</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ball_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>physicality</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Any action may also carry a free <code>tags</code> array (e.g. <code>eurostep</code>, <code>reverse</code>).
+Curated <code>variant</code> values are what a renderer can distinguish visually; most tags
+are open coaching metadata that need no schema change.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Curated tags: <code>left_handed</code> / <code>right_handed</code> (ball-handling side)</div>
+<div class="paragraph">
+<p>Two tags are <strong>curated</strong> because a renderer interprets them visually: on a
+ball-handling action (<code>dribble</code>, <code>pass</code>, <code>shoot</code>) the tags <code>left_handed</code> and
+<code>right_handed</code> state which hand handles the ball.</p>
+</div>
+<div class="paragraph">
+<p>This drives <strong>where the ball is drawn relative to its carrier</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A carried ball is drawn slightly <strong>ahead of and to one side of</strong> the carrier —
+not on top of them — so the player&#8217;s number stays visible and the handling
+side is legible. "Ahead" is the direction of the ball-handling action
+(<code>dribble</code> / <code>pass</code> / <code>shoot</code>) in that frame.</p>
+</li>
+<li>
+<p><strong>Default (no tag, or <code>right_handed</code>):</strong> the ball is on the <strong>right</strong> of the
+direction of travel.</p>
+</li>
+<li>
+<p><strong><code>left_handed</code>:</strong> the ball is on the <strong>left</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>These tags remain ordinary entries in the free <code>tags</code> array (no schema change);
+they are simply the agreed vocabulary for ball side. A renderer that does not
+model the ball side may ignore them. This convention also lets a future animated
+renderer show a <strong>hand change</strong> (e.g. a crossover, or dribble→shoot) correctly.</p>
+</div>
+<div class="paragraph">
+<p>A loose ball (<code>at:</code> a coordinate, not carried) is drawn <strong>on its coordinate</strong> and
+is not offset — the offset applies only to a <strong>carried</strong> ball.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_movement_sequences">6.2. Movement Sequences</h3>
+<div class="paragraph">
+<p><code>move</code>, <code>cut</code> and <code>dribble</code> carry a <code>moves[]</code> sequence. A move <strong>without</strong> <code>to</code> is
+a move on the spot (ball handling / fake); a move <strong>with</strong> <code>to</code> carries the player
+(and ball, for <code>dribble</code>) to a waypoint. The final <code>to</code> must match the player&#8217;s
+position in the frame <code>end_state</code>. Reference fields (<code>around_player</code>,
+<code>off_screen_by</code>) may sit on an individual move and override the action level.</p>
+</div>
+<div class="paragraph">
+<p>For <code>dribble</code> (and <code>move</code>), each move&#8217;s <code>variant</code> describes that step&#8217;s character — a single dribble action can chain e.g. <code>crossover</code> then <code>speed</code> — whereas <code>cut</code> also has an action-level <code>variant</code> for the overall cut type (e.g. <code>backdoor</code>).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "player": "offense_1",
+  "type": "dribble",
+  "ball_id": "ball_1",
+  "moves": [
+    { "variant": "crossover" },
+    { "variant": "speed", "to": { "named": "basket" }, "around_player": "defense_1" }
+  ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_intensity_physicality">6.3. Intensity &amp; Physicality</h3>
+<div class="paragraph">
+<p>Two optional, independent enums express relative execution style. Neither
+implies a concrete duration — a downstream application combines them with
+actual player/roster data to derive timing or pick renderer animations.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="16.6666%">
+<col width="33.3333%">
+<col width="50.0001%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Applies to</th>
+<th class="tableblock halign-left valign-top">Enum</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>intensity</code> (<code>movement_intensity</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>move</code>, <code>cut</code>, <code>dribble</code> (action-level and per-move, move overrides action)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>slow</code>, <code>normal</code> (default), <code>fast</code>, <code>explosive</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>intensity</code> (<code>ball_intensity</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pass</code>, <code>shoot</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>soft</code>, <code>normal</code> (default), <code>hard</code>, <code>bullet</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>physicality</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>screen</code>, <code>defend</code>, <code>rebound</code>, <code>pickup</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>passive</code>, <code>normal</code> (default), <code>aggressive</code>, <code>hard</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>intensity</code> describes tempo over distance (how fast a player/ball moves).
+<code>physicality</code> describes contact/collision style and has no bearing on
+timing — it exists purely to help a renderer pick the right animation (e.g.
+a clean screen vs. a moving-screen-style rammed one). The two are
+deliberately separate so a distance→time calculation built on <code>intensity</code>
+never has to reason about <code>physicality</code> values.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "player": "offense_1",
+  "type": "cut",
+  "intensity": "slow",
+  "moves": [
+    { "to": { "x": -2.0, "y": 4.5 } },
+    { "to": { "named": "basket" }, "intensity": "explosive" }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>duration_ms</code> (see <a href="#_frame_model">Frame Model</a>) is deprecated in favor of <code>intensity</code>.
+It remains valid for backward compatibility with existing play files, but
+new play files should express tempo via <code>intensity</code> instead.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_timing">6.4. Timing</h3>
+<div class="paragraph">
+<p>Actions express ordering semantically, not in seconds (omitted = at frame
+start):</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="25%">
+<col width="75%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>after</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"&lt;player&gt;.&lt;type&gt;"</code> — starts after the referenced action begins.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>with</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"&lt;player&gt;.&lt;type&gt;"</code> — simultaneous with the referenced action.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>on_catch</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code> — straight out of the catch (catch-and-shoot).</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_frames">7. Frames</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A frame is a coaching phase. It combines explicit anchors with semantic actions.</p>
+</div>
+<div class="sect2">
+<h3 id="_frame_model">7.1. Frame Model</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="20%">
+<col width="20%">
+<col width="60%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Required</th>
+<th class="tableblock halign-left valign-top">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unique frame id within the drill.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>label</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Short display label.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Coaching instruction. LLMs should generate this.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>duration_ms</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Deprecated</strong> — use per-action <code>intensity</code> instead. Suggested animation duration for the phase.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>start_state</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Positional + ball anchor at phase start. Defaults to the previous frame&#8217;s <code>end_state</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>actions</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Semantic actions in this phase. May be empty.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>end_state</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Positional + ball anchor at phase end.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>branches</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Outcome &#8594; target frame id.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_states">7.2. States</h3>
+<div class="paragraph">
+<p><code>start_state</code> and <code>end_state</code> map entity refs to coordinates, plus an optional
+<code>balls</code> map of ball ref &#8594; ball state. Because each frame carries an explicit
+anchor, any frame can be rendered as a still without simulating history — which
+is what enables PDF export, editor scrubbing and video overlay.</p>
+</div>
+<div class="paragraph">
+<p><code>start_state</code> is optional and inherits the previous frame&#8217;s <code>end_state</code>. Set it
+explicitly only at jumps, steals, rebounds or continuum resets.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"end_state": {
+  "offense_1": { "x": -1.0, "y": 9.0 },
+  "offense_4": { "named": "right_block" },
+  "balls": { "ball_1": { "carried_by": "offense_4" } }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_branches">7.3. Branches</h3>
+<div class="paragraph">
+<p>Without <code>branches</code>, the next frame in the array follows. With <code>branches</code>, the
+outcome selects the next frame. Outcomes are <code>make</code>, <code>miss</code>, <code>turnover</code>,
+<code>steal</code>, <code>foul</code>. A branch may point at an earlier frame to build a continuum
+loop. For a single set play, omit <code>branches</code> and let the final frame set the
+ball <code>dead</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"branches": { "make": "frame_reset", "miss": "frame_oreb" }</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_areas_and_labels">8. Areas and Labels</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_areas">8.1. Areas</h3>
+<div class="paragraph">
+<p>Highlighted zones for marking training areas, defensive zones, or emphasis regions.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "form": "rectangle",
+  "color": "yellow",
+  "opacity": 0.4,
+  "x": 0.0,
+  "y": 10.0,
+  "width": 4.9,
+  "height": 4.0
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "form": "ellipse",
+  "color": "green",
+  "opacity": 0.3,
+  "x": 0.0,
+  "y": 8.2,
+  "width": 5.0,
+  "height": 3.0
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "form": "triangle",
+  "color": "red",
+  "opacity": 0.25,
+  "x": 0,
+  "y": 0,
+  "coords": [
+    { "named": "left_block" },
+    { "named": "right_block" },
+    { "named": "basket" }
+  ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_labels">8.2. Labels</h3>
+<div class="paragraph">
+<p>Free text annotations on the court:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "text": "Pick &amp; Roll",
+  "x": -7.0,
+  "y": 3.0,
+  "color": "black"
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_color_scheme">9. Color Scheme</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_design">9.1. Design</h3>
+<div class="paragraph">
+<p>Colors are defined as semantic roles, not as direct hex values in entities or lines.
+This allows editors to customize the appearance globally without modifying individual elements.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="20%">
+<col width="40%">
+<col width="40%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Role</th>
+<th class="tableblock halign-left valign-top">FIBA Default</th>
+<th class="tableblock halign-left valign-top">Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>offense_fill</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#003366</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Offensive player symbol fill</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>offense_stroke</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#ffffff</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Offensive player symbol outline + number</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>defense_fill</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#58001d</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defensive player symbol fill</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>defense_stroke</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#ffffff</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defensive player symbol outline + number</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>black</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#000000</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lines, cones, text (default)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grey</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#7f7f7f</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Subtle highlights, background areas</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>yellow</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#ffff00</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Highlighted zones</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>green</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#7ce86a</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Secondary highlights</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>red</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#ff0000</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Warning zones, alternative team color</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>blue</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#5dd5ff</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alternative team color</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>white</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#ffffff</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Backgrounds, inverted labels</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_wcag_accessibility">9.2. WCAG Accessibility</h3>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>All color combinations used for rendered symbols must meet at minimum <strong>WCAG AA (4.5:1 contrast ratio)</strong>.
+<strong>WCAG AAA (7:1)</strong> is recommended for printed materials.</p>
+</div>
+<div class="paragraph">
+<p>Validators should emit a warning when <code>color_scheme</code> values produce contrast below 4.5:1
+against the court background used by the target renderer.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>FIBA default — contrast analysis:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="33.3333%">
+<col width="16.6666%">
+<col width="16.6666%">
+<col width="16.6666%">
+<col width="16.6669%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Combination</th>
+<th class="tableblock halign-left valign-top">Foreground</th>
+<th class="tableblock halign-left valign-top">Background</th>
+<th class="tableblock halign-left valign-top">Ratio</th>
+<th class="tableblock halign-left valign-top">WCAG</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Offense number on fill</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#ffffff</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#003366</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">12.6:1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">✅ AAA</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defense number on fill</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#ffffff</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#58001d</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">11.2:1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">✅ AAA</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Black line on court</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#000000</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#0089cf</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4.6:1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">✅ AA</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Offense fill on court</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#003366</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#0089cf</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3.8:1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">⚠️ Fail (use stroke)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defense fill on court</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#58001d</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>#0089cf</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3.1:1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">⚠️ Fail (use stroke)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Renderers should apply a <code>2px white</code> stroke around player symbols to compensate
+for the low contrast between symbol fill and court background.
+This matches the FIBA SVG renderer behavior.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_overriding_colors">9.3. Overriding Colors</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"color_scheme": {
+  "offense_fill": "#1a4f8a",
+  "offense_stroke": "#ffffff",
+  "defense_fill": "#8a1a1a",
+  "defense_stroke": "#ffffff"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Only fields that differ from the FIBA defaults need to be included.</p>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_court_configuration">10. Court Configuration</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_supported_rulesets">10.1. Supported Rulesets</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="16.6666%">
+<col width="16.6666%">
+<col width="33.3333%">
+<col width="33.3335%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"><code>ruleset</code></th>
+<th class="tableblock halign-left valign-top"><code>unit</code></th>
+<th class="tableblock halign-left valign-top">Court (L × W)</th>
+<th class="tableblock halign-left valign-top">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>fiba</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>m</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">28.0 × 15.0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">International standard</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>nba</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ft</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">94.0 × 50.0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NBA-specific 3-point geometry (straight corners)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ncaa</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ft</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">94.0 × 50.0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Shorter 3-point line than NBA</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>nfhs</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ft</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">84.0 × 50.0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">US high school, shorter court</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>custom</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">defined</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Requires <code>custom_dimensions</code> block</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_half_court_vs_full_court">10.2. Half Court vs Full Court</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="25%">
+<col width="75%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"><code>type</code></th>
+<th class="tableblock halign-left valign-top">Rendered region</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>half_court</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">y = 0 to +max. Offense basket at top. Midline forms the baseline.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>full_court</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">y = -max to +max. Both baskets rendered.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_drill_focus">10.3. Drill Focus</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="25%">
+<col width="75%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"><code>drill_focus</code></th>
+<th class="tableblock halign-left valign-top">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>offense</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Offensive drill. Positive y = direction of attack. Default.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>defense</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defensive drill. Positive y = basket being defended.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>transition</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Full court drill with directional change. Implies <code>full_court</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>neutral</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No directional focus (e.g. conditioning drill, station circuit).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_custom_ruleset">10.4. Custom Ruleset</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"court": {
+  "ruleset": "custom",
+  "type": "half_court",
+  "drill_focus": "offense",
+  "custom_dimensions": {
+    "unit": "m",
+    "length": 24.0,
+    "width": 13.0,
+    "basket_from_baseline": 1.575,
+    "three_point_distance": 5.77,
+    "paint_width": 3.6,
+    "paint_depth": 5.8,
+    "free_throw_distance": 5.8
+  }
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ruleset_conversion">11. Ruleset Conversion</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Converting a drill between rulesets is an explicit, lossless operation for <strong>named positions</strong>
+and a best-effort proportional mapping for <strong>free coordinates</strong>.</p>
+</div>
+<div class="sect2">
+<h3 id="_named_position_conversion">11.1. Named Position Conversion</h3>
+<div class="paragraph">
+<p>Named positions are looked up independently in each ruleset&#8217;s coordinate table.
+The semantic meaning is preserved exactly.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>"left_wing" in FIBA  →  (-6.75m, 8.60m)
+"left_wing" in NBA   →  (-22.15ft, 28.5ft)   ← independent lookup, no math</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_free_coordinate_conversion">11.2. Free Coordinate Conversion</h3>
+<div class="paragraph">
+<p>Free absolute coordinates are converted proportionally:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>x_target = x_source / (source.half_width)  * target.half_width
+y_target = y_source / (source.half_depth)  * target.half_depth</code></pre>
+</div>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Proportional conversion of free coordinates may place entities
+at positions that are semantically incorrect (e.g. inside or outside the 3-point line)
+relative to the target ruleset&#8217;s geometry.</p>
+</div>
+<div class="paragraph">
+<p>Editors should surface a warning: <em>"X free coordinates were proportionally scaled.
+Please verify their positions against the target ruleset."</em></p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_fiba_legacy_import">11.3. FIBA Legacy Import</h3>
+<div class="paragraph">
+<p>Existing FIBA Europe diagrams use a proprietary pixel coordinate system (384 × 540).
+Conversion to {ocf} FIBA coordinates:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>x_m = (fiba_x - 192) / 192.0 * 7.5
+y_m = (270 - fiba_y) / 270.0 * 14.0</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The FIBA coordinate origin is at the top-left of the SVG canvas.
+The y-axis is inverted (y increases downward in FIBA, upward in {ocf}).
+</td>
+</tr>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_complete_example">12. Complete Example</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_pick_roll_half_court_fiba">12.1. Pick &amp; Roll — Half Court, FIBA</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "$schema": "https://opencoachingformat.org/schema/v1.json",
+  "meta": {
+    "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "title": "Basic Pick &amp; Roll",
+    "description": "Ball handler uses a ball screen at the top of the key. Screener rolls to the basket for the finish.",
+    "author": "OCF Examples",
+    "tags": ["pick-and-roll", "offense", "half-court", "2-player", "beginner"],
+    "difficulty": "beginner",
+    "created": "2025-02-27T10:00:00Z",
+    "source_format": "open"
+  },
+  "court": { "ruleset": "fiba", "type": "half_court", "drill_focus": "offense" },
+  "entities": [
+    { "type": "offense", "nr": 1, "x": 0.0, "y": 5.68 },
+    { "type": "offense", "nr": 4, "x": -2.45, "y": 8.20 },
+    { "type": "defense", "nr": 1, "x": 0.5, "y": 5.20 },
+    { "type": "defense", "nr": 4, "x": -2.80, "y": 7.80 }
+  ],
+  "balls": [ { "id": "ball_1", "carried_by": "offense_1" } ],
+  "frames": [
+    {
+      "id": "frame_1",
+      "label": "Step 1 — Screen",
+      "description": "offense_4 moves up from the left elbow to set a ball screen for offense_1 at the top of the key.",
+      "duration_ms": 1500,
+      "actions": [
+        { "player": "offense_4", "type": "screen", "for_player": "offense_1", "on_player": "defense_1", "variant": "ball_screen", "at": { "x": -0.5, "y": 6.7 } }
+      ],
+      "end_state": {
+        "offense_1": { "named": "top_of_the_key" },
+        "offense_4": { "x": -0.5, "y": 6.2 },
+        "balls": { "ball_1": { "carried_by": "offense_1" } }
+      }
+    },
+    {
+      "id": "frame_2",
+      "label": "Step 2 — Attack",
+      "description": "offense_1 uses the screen and dribbles hard left toward the elbow; offense_4 rolls to the right block.",
+      "duration_ms": 2000,
+      "actions": [
+        {
+          "player": "offense_1",
+          "type": "dribble",
+          "ball_id": "ball_1",
+          "moves": [
+            { "variant": "hesitation" },
+            { "variant": "speed", "to": { "named": "left_elbow" }, "around_player": "defense_1" }
+          ]
+        },
+        { "player": "offense_4", "type": "cut", "variant": "basket", "moves": [ { "to": { "named": "right_block" } } ], "tags": ["roll"] }
+      ],
+      "end_state": {
+        "offense_1": { "named": "left_elbow" },
+        "offense_4": { "named": "right_block" },
+        "balls": { "ball_1": { "carried_by": "offense_1" } }
+      }
+    },
+    {
+      "id": "frame_3",
+      "label": "Step 3 — Finish",
+      "description": "offense_1 throws a bounce pass to the rolling offense_4, who finishes with a layup.",
+      "duration_ms": 1500,
+      "actions": [
+        { "player": "offense_1", "type": "pass", "to_player": "offense_4", "ball_id": "ball_1", "variant": "bounce" },
+        { "player": "offense_4", "type": "shoot", "ball_id": "ball_1", "variant": "layup", "result": "make", "on_catch": true }
+      ],
+      "end_state": {
+        "offense_1": { "named": "left_elbow" },
+        "offense_4": { "named": "right_block" },
+        "balls": { "ball_1": { "dead": true } }
+      }
+    }
+  ],
+  "areas": [
+    { "form": "rectangle", "color": "yellow", "opacity": 0.2, "x": 0.0, "y": 10.5, "width": 4.9, "height": 4.0, "rotation": 0 }
+  ],
+  "labels": [ { "text": "Roll!", "x": 3.2, "y": 9.5, "color": "black" } ]
+}</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_schema_reference">13. Schema Reference</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_top_level_structure">13.1. Top-Level Structure</h3>
+<div class="literalblock">
+<div class="content">
+<pre>@startuml
+skinparam backgroundColor white
+skinparam defaultFontName Helvetica
+skinparam classBackgroundColor #f8f8f8
+skinparam classBorderColor #aaaaaa
+
+class Drill {
+  +meta: Meta
+  +court: Court
+  +entities: Entity[]
+  +balls: Ball[]
+  +frames: Frame[]
+  --
+  +color_scheme: ColorScheme?
+  +named_positions: NamedPositions?
+  +areas: Area[]?
+  +labels: Label[]?
+}
+
+class Meta {
+  +id: uuid
+  +title: string
+  --
+  +description: string?
+  +author: string?
+  +tags: string[]?
+  +difficulty: enum?
+  +created: datetime?
+  +source_format: enum?
+}
+
+class Court {
+  +ruleset: enum
+  +type: enum
+  --
+  +drill_focus: enum
+  +wheelchair: boolean
+  +custom_dimensions: CustomDimensions?
+}
+
+class Entity {
+  +type: enum
+  +x: number
+  +y: number
+  --
+  +nr: integer?
+  +rotation: number?
+  +color: ColorRole?
+  +label: string?
+}
+
+class Frame {
+  +id: string
+  +actions: Action[]
+  +end_state: State
+  --
+  +label: string?
+  +description: string?
+  +duration_ms: integer?
+  +start_state: State?
+  +branches: map?
+}
+
+class Action {
+  +player: EntityRef
+  +type: enum
+  --
+  +ball_id: string?
+  +moves: Move[]?
+  +variant: string?
+  +tags: string[]?
+}
+
+class Coordinate {
+  &lt;&lt;oneOf&gt;&gt;
+  FreeCoordinate
+  NamedCoordinate
+  RelativeCoordinate
+}
+
+Drill *-- Meta
+Drill *-- Court
+Drill *-- Entity
+Drill *-- Frame
+Frame *-- Action
+Action *-- Coordinate
+@enduml</pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_top_level_fields">13.1.1. Top-Level Fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="20%">
+<col width="20%">
+<col width="60%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Required</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>meta</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Drill metadata (id, title, author, tags, etc.).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>court</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ruleset, court type, drill focus.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>entities</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Non-ball entities: offense, defense, coach, cones, stations.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>balls</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Array of balls; each ball has <code>id</code> + one of <code>carried_by</code>, <code>at</code>, or <code>dead</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>frames</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ordered coaching phases; each carries <code>actions</code> and <code>end_state</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>color_scheme</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Override FIBA default color roles.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>named_positions</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Custom named court positions.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>areas</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Highlighted zones on the court.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>labels</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Free text annotations on the court.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_coordinate_oneof">13.2. Coordinate oneOf</h3>
+<div class="literalblock">
+<div class="content">
+<pre>@startuml
+skinparam backgroundColor white
+skinparam defaultFontName Helvetica
+
+abstract class Coordinate &lt;&lt;oneOf&gt;&gt;
+
+class FreeCoordinate {
+  +x: number
+  +y: number
+}
+
+class NamedCoordinate {
+  +named: string
+}
+
+class RelativeCoordinate {
+  +relative_to: string
+  +dx: number
+  +dy: number
+}
+
+Coordinate &lt;|-- FreeCoordinate
+Coordinate &lt;|-- NamedCoordinate
+Coordinate &lt;|-- RelativeCoordinate
+@enduml</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_enums_summary">13.3. Enums Summary</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="25%">
+<col width="75%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Enum</th>
+<th class="tableblock halign-left valign-top">Values</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ruleset</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>fiba</code>, <code>nba</code>, <code>ncaa</code>, <code>nfhs</code>, <code>custom</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>court.type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>half_court</code>, <code>full_court</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>drill_focus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>offense</code>, <code>defense</code>, <code>transition</code>, <code>neutral</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>difficulty</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>beginner</code>, <code>intermediate</code>, <code>advanced</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>source_format</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>fiba</code>, <code>fastdraw</code>, <code>open</code>, <code>custom</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>entity.type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>offense</code>, <code>defense</code>, <code>coach</code>, <code>cone</code>, <code>station</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>area.form</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rectangle</code>, <code>ellipse</code>, <code>triangle</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>color_role</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>offense</code>, <code>defense</code>, <code>black</code>, <code>grey</code>, <code>yellow</code>, <code>green</code>, <code>red</code>, <code>blue</code>, <code>white</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>unit</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>m</code>, <code>ft</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Action <code>type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">move, cut, screen, defend, dribble, pass, shoot, rebound, pickup</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cut <code>variant</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">backdoor, give_and_go, flash, v_cut, l_cut, curl, flare, fade, basket</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Screen <code>variant</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ball_screen, back_screen, down_screen, flare_screen, cross_screen, pin_down</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defend <code>variant</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">on_ball, deny, help, hedge, switch, box_out</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dribble per-move <code>variant</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">speed, hesitation, crossover, behind_back, between_legs, spin, retreat</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pass <code>variant</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">chest, bounce, overhead, lob, baseball, hand_off, outlet</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Shoot <code>variant</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jumper, three, layup, floater, dunk, hook, free_throw</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rebound <code>variant</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">offensive, defensive</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Frame <code>outcome</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">make, miss, turnover, steal, foul</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>movement_intensity</code> (move/cut/dribble <code>intensity</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">slow, normal, fast, explosive</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ball_intensity</code> (pass/shoot <code>intensity</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">soft, normal, hard, bullet</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>physicality</code> (screen/defend/rebound/pickup)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">passive, normal, aggressive, hard</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Per-move <code>variant</code> values are recommended vocabulary; the schema accepts any string for a move&#8217;s <code>variant</code> so renderers can fall back gracefully.
+</td>
+</tr>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_llm_generation_guide">14. LLM Generation Guide</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_prompt_pattern">14.1. Prompt Pattern</h3>
+<div class="paragraph">
+<p>{ocf} is designed so that LLMs can generate valid drill JSON from natural language descriptions.
+The key is the named position vocabulary — it grounds spatial references in a controlled set of terms.</p>
+</div>
+<div class="paragraph">
+<p>Example prompt structure:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>Generate an Open Coaching Format v1 JSON for the following drill:
+
+Ruleset: FIBA, Half Court, Offense
+Title: "3-Man Weave"
+
+Description:
+offense_1 starts at midcourt.center with the ball.
+offense_2 starts at inbound.sideline_left_mid.
+offense_3 starts at inbound.sideline_right_mid.
+
+Step 1: offense_1 passes to offense_2, cuts behind toward the right sideline.
+Step 2: offense_2 passes to offense_3 who has filled the center lane.
+Step 3: offense_3 finishes at the basket.
+
+Output only valid JSON matching https://opencoachingformat.org/schema/v1.json</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_llm_output_tips">14.2. LLM Output Tips</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Actions express <strong>intent</strong>, not geometry — prefer named positions in <code>end_state</code> over raw coordinates wherever a standard name applies</p>
+</li>
+<li>
+<p>Leave optional action fields out when the description is vague; add <code>variant</code>, <code>ball_id</code>, and timing only when the description implies them</p>
+</li>
+<li>
+<p>Use <code>relative_to</code> for positions defined as offsets ("2 meters right of the elbow")</p>
+</li>
+<li>
+<p>Every frame requires an <code>end_state</code>; list only the entities whose positions change in that frame (others inherit)</p>
+</li>
+<li>
+<p>Ball state in <code>end_state.balls</code> must reflect the result of the actions: use <code>carried_by</code> after a pass/pickup, <code>dead</code> after a made shot with no rebound</p>
+</li>
+<li>
+<p>Set the ball <code>dead</code> in <code>end_state.balls</code> after a <code>shoot</code> with <code>result: "make"</code> if no <code>rebound</code> or <code>pickup</code> follows in that frame or the next</p>
+</li>
+<li>
+<p>Frame <code>description</code> should mirror the coaching instruction in natural language — LLMs should always generate this field</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_validation">14.3. Validation</h3>
+<div class="paragraph">
+<p>After LLM generation, validate against the JSON Schema:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">npx ajv-cli validate \
+  -s opencoachingformat-v1.schema.json \
+  -d my_drill.json</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_fiba_import_mapping">Appendix A: FIBA Import Mapping</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="25%">
+<col width="25%">
+<col width="50%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">FIBA Field</th>
+<th class="tableblock halign-left valign-top">OCF Field</th>
+<th class="tableblock halign-left valign-top">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code> (GUID)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>meta.id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GUID → UUID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>fullCourt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>court.type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code> → <code>full_court</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>wheelchair</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>court.wheelchair</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Direct</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dynamicElement.type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>entity.type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">See type map below</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dynamicElement.nr</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>entity.nr</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Direct</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dynamicElement.color</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>entity.color</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">See color map below</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dynamicElement.x</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>entity.x</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>(fiba_x - 192) / 192 * 7.5</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dynamicElement.y</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>entity.y</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>(270 - fiba_y) / 270 * 14.0</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lineElement.type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>frame.actions[].type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">See action type map below</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lineElement.curved</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">— (derived from action type)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Renderer infers path style</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lineElement.coords</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>frame.actions[].moves[].to</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Coordinate conversion each point</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>staticElement (area)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>areas[]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">form, color, position</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>staticElement (text)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>labels[]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">text, position</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect2">
+<h3 id="_fiba_dynamic_element_type_map">A.1. FIBA Dynamic Element Type Map</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">FIBA <code>type</code></th>
+<th class="tableblock halign-left valign-top">OCF <code>entity.type</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0 (offence)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>offense</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 (defence)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>defense</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2 (ball)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">— (map to <code>balls[]</code> entry with <code>carried_by</code> or <code>at</code>)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3 (coach)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>coach</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4 (cone)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cone</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5 (shooting)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">— (map to <code>shoot</code> action)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6 (handoff)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">— (map to <code>pass</code> action with <code>variant: "hand_off"</code>)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_fiba_line_type_map">A.2. FIBA Line Type Map</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">FIBA <code>type</code></th>
+<th class="tableblock halign-left valign-top">OCF action <code>type</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0 (movement)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>move</code> or <code>cut</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 (passing)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pass</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2 (dribbling)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>dribble</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3 (screen)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>screen</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4 (line)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">— (annotate with <code>tags</code>)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5 (free)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">— (annotate with <code>tags</code>)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_fiba_color_map">A.3. FIBA Color Map</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col width="33.3333%">
+<col width="33.3333%">
+<col width="33.3334%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">FIBA <code>color</code></th>
+<th class="tableblock halign-left valign-top">FIBA name</th>
+<th class="tableblock halign-left valign-top">OCF <code>color_role</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">unknown</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>black</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yellow</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>yellow</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">green</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>green</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">red</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>red</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">grey</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grey</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">black</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>black</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">blue</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>blue</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">offence</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>offense</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">defence</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>defense</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_changelog">Appendix B: Changelog</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_v2_1_0">B.1. v2.1.0</h3>
+<div class="paragraph">
+<p>Adds optional <code>intensity</code> (<code>movement_intensity</code> for move/cut/dribble,
+<code>ball_intensity</code> for pass/shoot) and <code>physicality</code> (screen/defend/rebound/
+pickup) enums. Deprecates frame-level <code>duration_ms</code> in favor of per-action
+<code>intensity</code>; <code>duration_ms</code> remains valid for backward compatibility.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_v2_0_0">B.2. v2.0.0</h3>
+<div class="paragraph">
+<p>Semantic action model. Replaces line-based frames with per-player actions
+(move, cut, screen, defend, dribble, pass, shoot, rebound, pickup). The ball
+entity is replaced by a top-level <code>balls</code> array with a carried_by/at/dead
+lifecycle and automatic possession transfer. Frames gain explicit
+<code>start_state</code>/<code>end_state</code> anchors and outcome <code>branches</code>. The <code>lines</code> array and
+<code>entity_states</code> are removed.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_v1_0_0_2025_02_27">B.3. v1.0.0 (2025-02-27)</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Initial release</p>
+</li>
+<li>
+<p>FIBA-compatible entity model</p>
+</li>
+<li>
+<p>Normalized coordinate system (meters/feet, origin at midcourt)</p>
+</li>
+<li>
+<p>Named position registry (FIBA, NBA, NCAA, NFHS)</p>
+</li>
+<li>
+<p>Frame-based animation model with entity delta states</p>
+</li>
+<li>
+<p>Registry approach for custom named positions</p>
+</li>
+<li>
+<p>Semantic color roles with WCAG guidance</p>
+</li>
+<li>
+<p>FIBA legacy import coordinate mapping</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div></body></html>
