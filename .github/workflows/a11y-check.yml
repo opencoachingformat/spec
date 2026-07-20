@@ -44,6 +44,15 @@ jobs:
           echo "Preview server did not start in time" >&2
           exit 1
 
+      - name: Install matching ChromeDriver
+        working-directory: site
+        run: |
+          CHROME_VERSION=$(google-chrome --version | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+          echo "Installed Chrome version: $CHROME_VERSION"
+          CHROMEDRIVER_PATH=$(npx --yes @puppeteer/browsers install "chromedriver@$CHROME_VERSION" --platform linux --format "{{path}}")
+          echo "Installed ChromeDriver at: $CHROMEDRIVER_PATH"
+          echo "CHROMEDRIVER_PATH=$CHROMEDRIVER_PATH" >> "$GITHUB_ENV"
+
       - name: Run axe against all routes
         working-directory: site
         run: |
@@ -55,4 +64,5 @@ jobs:
             http://localhost:4321/docs/rulesets/ \
             http://localhost:4321/examples/ \
             http://localhost:4321/ecosystem/ \
+            --chromedriver-path "$CHROMEDRIVER_PATH" \
             --exit
