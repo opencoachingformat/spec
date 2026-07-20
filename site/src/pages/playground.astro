@@ -1,0 +1,118 @@
+---
+import Base from '../layouts/Base.astro';
+import examples from '../generated/examples.json';
+import { OCF_VALIDATOR_COMMIT, OCF_VALIDATOR_BROWSER_URL } from '../lib/validator-version.mjs';
+
+const quickMode = examples.find((e) => e.slug === 'quick-mode');
+const seedJson = quickMode ? quickMode.json : '{}';
+const shortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
+---
+<Base
+  title="Playground"
+  description="Validate an Open Coaching Format document directly in your browser."
+>
+  <h1>Playground</h1>
+  <p>
+    Paste an OCF action-model document below and click Validate. Validation runs
+    entirely in your browser — no data leaves your machine — using the same rules
+    as the reference CLI validator (<a href="https://github.com/opencoachingformat/ocf-validator">ocf-validator</a>,
+    pinned at commit <code>{shortSha}</code>).
+  </p>
+
+  <textarea id="ocf-input" rows="20" spellcheck="false" set:text={seedJson}></textarea>
+  <div class="actions">
+    <button id="ocf-validate-btn" type="button">Validate</button>
+  </div>
+  <pre id="ocf-output">Click Validate to see results.</pre>
+
+  <p>
+    See the <a href="/errors/">error code reference</a> for details on each code
+    the validator can emit.
+  </p>
+</Base>
+
+<style>
+  textarea {
+    width: 100%;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.85rem;
+    background: var(--code-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem;
+  }
+  .actions {
+    margin: 0.75rem 0;
+  }
+  button {
+    font: inherit;
+    font-weight: 600;
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #0b1220;
+    cursor: pointer;
+  }
+  button:hover {
+    filter: brightness(1.1);
+  }
+  #ocf-output {
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 3rem;
+  }
+</style>
+
+<script define:vars={{ browserUrl: OCF_VALIDATOR_BROWSER_URL }}>
+  const input = document.getElementById('ocf-input');
+  const output = document.getElementById('ocf-output');
+  const btn = document.getElementById('ocf-validate-btn');
+
+  function formatIssue(issue) {
+    const tag = issue.severity === 'error' ? 'error' : 'warn ';
+    const loc = issue.frame ? `${issue.path} (${issue.frame})` : issue.path;
+    return `  ${tag} ${issue.code} ${loc}\n        ${issue.message}`;
+  }
+
+  function renderResult(res) {
+    const lines = [];
+    if (res.valid && res.warnings.length === 0) {
+      lines.push('ok — no errors or warnings');
+    } else {
+      lines.push(res.valid ? 'warn' : 'fail');
+      for (const e of res.errors) lines.push(formatIssue(e));
+      for (const w of res.warnings) lines.push(formatIssue(w));
+      lines.push(`  ${res.summary.errors} error(s), ${res.summary.warnings} warning(s)`);
+    }
+    output.textContent = lines.join('\n');
+  }
+
+  let validatorPromise;
+  function loadValidator() {
+    if (!validatorPromise) {
+      validatorPromise = import(/* @vite-ignore */ browserUrl);
+    }
+    return validatorPromise;
+  }
+
+  btn.addEventListener('click', async () => {
+    output.textContent = 'Validating…';
+
+    let doc;
+    try {
+      doc = JSON.parse(input.value);
+    } catch (err) {
+      output.textContent = `  error JSON_PARSE /\n        File is not valid JSON: ${err.message}`;
+      return;
+    }
+
+    try {
+      const { validate } = await loadValidator();
+      renderResult(validate(doc));
+    } catch (err) {
+      output.textContent = `Failed to load or run the validator: ${err.message}`;
+    }
+  });
+</script>

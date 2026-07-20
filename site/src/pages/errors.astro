@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro';
+import errorCodes from '../generated/error-codes.json';
+
+const rows = Object.entries(errorCodes)
+  .map(([code, def]) => ({ code, ...def }))
+  .sort((a, b) => a.code.localeCompare(b.code));
+---
+<Base
+  title="Error Codes"
+  description="Reference of every error and warning code emitted by the OCF validator."
+>
+  <h1>Error Codes</h1>
+  <p>
+    Reference for every code the <a href="/playground/">validator</a> can emit,
+    generated from the validator's own <code>shared/error-codes.json</code>.
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>Severity</th>
+        <th>Category</th>
+        <th>Message template</th>
+        <th>Spec ref</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((row) => (
+        <tr>
+          <td><code>{row.code}</code></td>
+          <td>{row.severity}</td>
+          <td>{row.category}</td>
+          <td>{row.message}</td>
+          <td>{row.spec_ref}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</Base>

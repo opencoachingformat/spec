@@ -2,6 +2,7 @@ import { readFileSync, writeFileSync, copyFileSync, mkdirSync, readdirSync } fro
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { load } from '@asciidoctor/core';
+import { OCF_ERROR_CODES_URL } from '../src/lib/validator-version.mjs';
 
 const siteRoot = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const repoRoot = path.dirname(siteRoot);
@@ -51,6 +52,15 @@ const examples = exampleFiles.map((filename) => {
 
 writeFileSync(path.join(outDir, 'examples.json'), JSON.stringify(examples, null, 2), 'utf-8');
 
+const errorCodesRes = await fetch(OCF_ERROR_CODES_URL);
+if (!errorCodesRes.ok) {
+  throw new Error(
+    `Failed to fetch error-codes.json from ${OCF_ERROR_CODES_URL}: ${errorCodesRes.status} ${errorCodesRes.statusText}`
+  );
+}
+const errorCodes = await errorCodesRes.json();
+writeFileSync(path.join(outDir, 'error-codes.json'), JSON.stringify(errorCodes, null, 2), 'utf-8');
+
 console.log(
-  `Generated site/src/generated/spec.html, toc.json, schema.json, examples.json (${examples.length} examples)`
+  `Generated site/src/generated/spec.html, toc.json, schema.json, examples.json (${examples.length} examples), error-codes.json (${Object.keys(errorCodes).length} codes)`
 );
