@@ -489,7 +489,7 @@
         "id": { "type": "string", "description": "Unique frame id within the drill." },
         "label": { "type": "string" },
         "description": { "type": "string", "description": "Coaching instruction; LLMs should generate this." },
-        "duration_ms": { "type": "integer", "minimum": 0 },
+        "duration_ms": { "type": "integer", "minimum": 0, "description": "Deprecated: use per-action 'intensity' instead. Suggested animation duration for the phase." },
         "start_state": {
           "$ref": "#/definitions/state",
           "description": "Optional. Defaults to the previous frame's end_state."
