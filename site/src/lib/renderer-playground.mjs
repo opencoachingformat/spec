@@ -32,6 +32,48 @@ export function canRender(validationResult) {
   );
 }
 
+/**
+ * Sanitize an error message for safe display in the UI.
+ * Strips local file paths, internal stack traces, and caps at 300 characters.
+ */
+export function sanitizeErrorMessage(err) {
+  if (err == null) return 'Unknown error.';
+
+  let raw;
+  if (typeof err === 'string') {
+    raw = err;
+  } else if (typeof err.message === 'string') {
+    raw = err.message;
+  } else {
+    return 'Unknown error.';
+  }
+
+  // Collapse newlines to spaces
+  let msg = raw.replace(/[\r\n]+/g, ' ');
+
+  // Strip absolute POSIX/Unix paths (e.g. /Users/foo/bar.js, /home/user/x)
+  msg = msg.replace(/\/(?:[\w.-]+\/)+[\w.-]+/g, '<path>');
+
+  // Strip Windows-style paths (e.g. C:\Users\foo\bar.js)
+  msg = msg.replace(/[A-Za-z]:\\(?:[\w.-]+\\)*[\w.-]+/g, '<path>');
+
+  // Strip file:// URIs
+  msg = msg.replace(/file:\/\/[^\s)]+/g, '<path>');
+
+  // Strip V8 stack trace lines: "    at FunctionName (file:line:col)" or "    at file:line:col"
+  msg = msg.replace(/\s+at\s+(?:[\w.<>]+\s+\()?[^)]+\)?/g, '');
+
+  // Collapse multiple spaces
+  msg = msg.replace(/\s{2,}/g, ' ').trim();
+
+  // Cap at 300 characters
+  if (msg.length > 300) {
+    msg = msg.slice(0, 297) + '...';
+  }
+
+  return msg || 'Unknown error.';
+}
+
 export function buildFeedbackMarkdown(input) {
   const {
     json = '',

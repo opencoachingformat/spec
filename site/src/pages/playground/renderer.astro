@@ -64,12 +64,12 @@ const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
           </div>
         </div>
         <div class="frame-nav" id="rp-frame-nav" hidden>
-          <button id="rp-prev-btn" type="button" disabled>← Previous</button>
+          <button id="rp-prev-btn" type="button" aria-label="Previous frame" disabled>← Previous</button>
           <span id="rp-frame-info">frame 1 / 1</span>
-          <button id="rp-next-btn" type="button" disabled>Next →</button>
+          <button id="rp-next-btn" type="button" aria-label="Next frame" disabled>Next →</button>
         </div>
         <div class="export-row" id="rp-export-row" hidden>
-          <button id="rp-download-btn" type="button">Download PNG</button>
+          <button id="rp-download-btn" type="button" aria-label="Download current frame as PNG">Download PNG</button>
         </div>
       </div>
     </div>
@@ -276,7 +276,7 @@ const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
   seedJson,
   examples: examples.map((e) => ({ slug: e.slug, json: e.json })),
 }}>
-  import { parseDocument, clampFrameIndex, canRender } from '../../lib/renderer-playground.mjs';
+  import { parseDocument, clampFrameIndex, canRender, sanitizeErrorMessage } from '../../lib/renderer-playground.mjs';
 
   const editor = document.getElementById('rp-editor');
   const exampleSelect = document.getElementById('rp-example');
@@ -363,6 +363,21 @@ const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
     }
   }
 
+  /**
+   * Size the canvas drawing buffer from its displayed bounding rect × devicePixelRatio.
+   * Preserves the CSS aspect ratio (set via CSS) and avoids zero dimensions.
+   */
+  function sizeCanvasForDisplay() {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const w = Math.max(1, Math.round(rect.width * dpr));
+    const h = Math.max(1, Math.round(rect.height * dpr));
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w;
+      canvas.height = h;
+    }
+  }
+
   async function renderFrame() {
     if (!currentRenderer || !currentDoc) return;
 
@@ -381,16 +396,14 @@ const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
     frameIndex = clampFrameIndex(frameIndex, frameCount);
 
     try {
+      sizeCanvasForDisplay();
       currentRenderer.renderToCanvas(frameIndex, canvas);
       hasRendered = true;
       frameNav.hidden = false;
       exportRow.hidden = false;
       updateFrameNav();
     } catch (err) {
-      const message = err && typeof err.message === 'string'
-        ? err.message.replace(/[\r\n]+/g, ' ').slice(0, 300)
-        : 'Unknown rendering error.';
-      showRenderError(message);
+      showRenderError(sanitizeErrorMessage(err));
       frameNav.hidden = true;
       exportRow.hidden = true;
     }
@@ -430,7 +443,7 @@ const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
         currentDoc = parsed.value;
       }
     } catch (err) {
-      validationOutput.textContent = `Failed to load or run the validator: ${err.message}`;
+      validationOutput.textContent = `Failed to load or run the validator: ${sanitizeErrorMessage(err)}`;
       lastValidation = null;
     }
   });
@@ -447,10 +460,7 @@ const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
       frameIndex = 0;
       await renderFrame();
     } catch (err) {
-      const message = err && typeof err.message === 'string'
-        ? err.message.replace(/[\r\n]+/g, ' ').slice(0, 300)
-        : 'Failed to load the renderer.';
-      showRenderError(message);
+      showRenderError(sanitizeErrorMessage(err));
     }
   });
 

@@ -3,6 +3,7 @@ import {
   parseDocument,
   clampFrameIndex,
   canRender,
+  sanitizeErrorMessage,
   buildFeedbackMarkdown,
 } from './renderer-playground.mjs';
 import { OCF_RENDERER_COMMIT } from './renderer-version.mjs';
@@ -129,6 +130,59 @@ test('canRender: valid with warnings still true', () => {
 
 test('canRender: missing valid property returns false', () => {
   assert.equal(canRender({ errors: [] }), false);
+});
+
+test('sanitizeErrorMessage: strips absolute Unix paths', () => {
+  const result = sanitizeErrorMessage('Error in /Users/dev/project/src/index.js line 42');
+  assert.ok(!result.includes('/Users/'), `path leaked: ${result}`);
+  assert.ok(result.includes('<path>'));
+});
+
+test('sanitizeErrorMessage: strips Windows paths', () => {
+  const result = sanitizeErrorMessage('Error in C:\\Users\\dev\\project\\src\\index.js');
+  assert.ok(!result.includes('C:\\'), `path leaked: ${result}`);
+  assert.ok(result.includes('<path>'));
+});
+
+test('sanitizeErrorMessage: strips file:// URIs', () => {
+  const result = sanitizeErrorMessage('Failed to load file:///home/user/bundle.js');
+  assert.ok(!result.includes('file://'), `URI leaked: ${result}`);
+  assert.ok(result.includes('<path>'));
+});
+
+test('sanitizeErrorMessage: strips stack trace lines', () => {
+  const msg = 'TypeError: x is not a function\n    at renderFrame (index.js:42:10)\n    at main (app.js:8:3)';
+  const result = sanitizeErrorMessage(msg);
+  assert.ok(!result.includes('    at'), `stack leaked: ${result}`);
+  assert.ok(result.startsWith('TypeError'));
+});
+
+test('sanitizeErrorMessage: caps at 300 characters', () => {
+  const long = 'A'.repeat(500);
+  const result = sanitizeErrorMessage(long);
+  assert.ok(result.length <= 300, `length was ${result.length}`);
+  assert.ok(result.endsWith('...'));
+});
+
+test('sanitizeErrorMessage: accepts Error objects', () => {
+  const err = new Error('Something broke at /opt/app/server.js');
+  const result = sanitizeErrorMessage(err);
+  assert.ok(!result.includes('/opt/'), `path leaked: ${result}`);
+  assert.ok(result.includes('Something broke'));
+});
+
+test('sanitizeErrorMessage: handles null/undefined gracefully', () => {
+  assert.equal(sanitizeErrorMessage(null), 'Unknown error.');
+  assert.equal(sanitizeErrorMessage(undefined), 'Unknown error.');
+});
+
+test('sanitizeErrorMessage: handles non-string non-object input', () => {
+  assert.equal(sanitizeErrorMessage(42), 'Unknown error.');
+  assert.equal(sanitizeErrorMessage({}), 'Unknown error.');
+});
+
+test('sanitizeErrorMessage: preserves clean short messages', () => {
+  assert.equal(sanitizeErrorMessage('Render failed: WebGL context lost'), 'Render failed: WebGL context lost');
 });
 
 test('buildFeedbackMarkdown: includes JSON in fenced block', () => {
