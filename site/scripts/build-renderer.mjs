@@ -23,6 +23,9 @@ try {
   const cloneUrl = `https://github.com/${OCF_RENDERER_REPOSITORY}.git`;
   console.log(`Cloning ${OCF_RENDERER_REPOSITORY}@${OCF_RENDERER_COMMIT.slice(0, 7)} into ${tmpDir}...`);
 
+  // Arbitrary commit SHAs cannot be fetched via shallow clone of a
+  // named branch (git clone --depth 1 only fetches the branch tip).
+  // Instead, init an empty repo and fetch exactly the pinned SHA.
   execSync('git init', { cwd: tmpDir, stdio: 'pipe' });
   execSync(`git remote add origin ${cloneUrl}`, { cwd: tmpDir, stdio: 'pipe' });
   execSync(`git fetch --depth 1 origin ${OCF_RENDERER_COMMIT}`, {
@@ -35,7 +38,7 @@ try {
   });
 
   console.log('Installing dependencies...');
-  execSync('npm install', {
+  execSync('npm ci', {
     cwd: tmpDir,
     stdio: 'pipe',
   });

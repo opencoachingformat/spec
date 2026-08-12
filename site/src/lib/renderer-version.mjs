@@ -8,6 +8,6 @@
 // pages (via Vite) and directly by scripts/build-renderer.mjs under
 // plain Node with no TypeScript loader.
 export const OCF_RENDERER_REPOSITORY = 'opencoachingformat/ocf-renderer';
-export const OCF_RENDERER_COMMIT = '5c705a571faa0fa2876ea9594c4efa74c641fedc';
+export const OCF_RENDERER_COMMIT = '18f499286dcf12dba1a410ffc410c56d2545cdec';
 
 export const OCF_RENDERER_SHORT_SHA = OCF_RENDERER_COMMIT.slice(0, 7);
