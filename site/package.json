@@ -5,8 +5,10 @@
   "version": "0.0.0",
   "scripts": {
     "build:adoc": "node scripts/build-adoc.mjs",
-    "build": "npm run build:adoc && astro build",
-    "dev": "npm run build:adoc && astro dev"
+    "build:renderer": "node scripts/build-renderer.mjs",
+    "build": "npm run build:adoc && npm run build:renderer && astro build",
+    "dev": "npm run build:adoc && npm run build:renderer && astro dev",
+    "test:renderer-build": "node scripts/build-renderer.test.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
