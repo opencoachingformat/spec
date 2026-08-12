@@ -30,7 +30,7 @@ async function validateAndRender(page: Page) {
   const renderBtn = page.locator('#rp-render-btn');
   await expect(renderBtn).toBeEnabled({ timeout: 15_000 });
   await renderBtn.click();
-  await expect(page.locator('#rp-frame-nav')).not.toHaveAttribute('hidden', '', { timeout: 15_000 });
+  await expect(page.locator('#rp-frame-nav')).toBeVisible({ timeout: 15_000 });
 }
 
 test.describe('renderer playground', () => {
@@ -52,7 +52,7 @@ test.describe('renderer playground', () => {
     await expect(renderBtn).toBeEnabled({ timeout: 15_000 });
     await renderBtn.click();
 
-    await expect(page.locator('#rp-frame-nav')).not.toHaveAttribute('hidden', '', { timeout: 15_000 });
+    await expect(page.locator('#rp-frame-nav')).toBeVisible({ timeout: 15_000 });
     await expect(page.locator('#rp-frame-info')).toHaveText('frame 1 / 2');
 
     const canvas = page.locator('#rp-canvas');
@@ -84,7 +84,7 @@ test.describe('renderer playground', () => {
     await validate(page);
     await expect(page.locator('#rp-validation-output')).toContainText(/fail|error/);
     await expect(page.locator('#rp-render-btn')).toBeDisabled();
-    await expect(page.locator('#rp-frame-nav')).toHaveAttribute('hidden', '');
+    await expect(page.locator('#rp-frame-nav')).toBeHidden();
   });
 
   test('desktop layout has editor and preview in separate columns', async ({ page }) => {
@@ -207,7 +207,7 @@ test.describe('renderer playground', () => {
     await goToPlayground(page);
     await validateAndRender(page);
 
-    await expect(page.locator('#rp-export-row')).not.toHaveAttribute('hidden', '');
+    await expect(page.locator('#rp-export-row')).toBeVisible();
     const downloadBtn = page.locator('#rp-download-btn');
     await expect(downloadBtn).toBeVisible();
     await expect(downloadBtn).toContainText('Download PNG');
