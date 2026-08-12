@@ -8,7 +8,8 @@
     "build:renderer": "node scripts/build-renderer.mjs",
     "build": "npm run build:adoc && npm run build:renderer && astro build",
     "dev": "npm run build:adoc && npm run build:renderer && astro dev",
-    "test:renderer-build": "node scripts/build-renderer.test.mjs"
+    "test:renderer-build": "node scripts/build-renderer.test.mjs",
+    "test:renderer-playground": "node src/lib/renderer-playground.test.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
