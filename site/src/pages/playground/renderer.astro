@@ -3,7 +3,12 @@ import Base from '../../layouts/Base.astro';
 import examples from '../../generated/examples.json';
 import { OCF_VALIDATOR_COMMIT, OCF_VALIDATOR_BROWSER_URL } from '../../lib/validator-version.mjs';
 import { OCF_RENDERER_COMMIT, OCF_RENDERER_SHORT_SHA } from '../../lib/renderer-version.mjs';
+import { buildDiscussionUrl } from '../../lib/discussions.mjs';
 import rendererModuleUrl from '../../generated/renderer/index.js?url';
+
+const CATEGORY_CONFIG = {
+  renderer: 'renderer-feedback',
+};
 
 const seedExample = examples.find((e) => e.slug === 'quick-mode');
 const seedJson = seedExample ? seedExample.json : '{}';
@@ -42,6 +47,7 @@ const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
       <button id="rp-validate-btn" type="button">Validate</button>
       <button id="rp-render-btn" type="button" disabled>Render</button>
       <button id="rp-reset-btn" type="button">Reset</button>
+      <button id="rp-feedback-btn" type="button">Send Feedback</button>
     </div>
 
     <div class="workspace">
@@ -73,6 +79,29 @@ const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
         </div>
       </div>
     </div>
+
+    <dialog id="rp-feedback-dialog" class="feedback-dialog">
+      <form method="dialog" class="feedback-dialog-form">
+        <h2>Send Feedback to GitHub Discussions</h2>
+        <p class="feedback-intro">
+          The following information will be included in your feedback:
+        </p>
+        <pre id="rp-feedback-preview" class="feedback-preview"></pre>
+        <label class="feedback-checkbox-label">
+          <input type="checkbox" id="rp-feedback-copy" />
+          Copy feedback to clipboard before opening GitHub Discussions
+        </label>
+        <div class="feedback-actions">
+          <button id="rp-feedback-copy-open-btn" type="button" disabled>
+            Copy feedback & open GitHub Discussions
+          </button>
+          <button id="rp-feedback-open-btn" type="button">
+            Open GitHub Discussions without copying
+          </button>
+          <button type="submit" class="feedback-cancel">Cancel</button>
+        </div>
+      </form>
+    </dialog>
   </div>
 </Base>
 
@@ -259,6 +288,105 @@ const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
     cursor: pointer;
   }
 
+  .feedback-dialog {
+    max-width: 600px;
+    max-height: 80vh;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+  }
+
+  .feedback-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .feedback-dialog-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .feedback-dialog h2 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+
+  .feedback-intro {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .feedback-preview {
+    max-height: 300px;
+    overflow-y: auto;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem;
+    font-size: 0.8rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0;
+  }
+
+  .feedback-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .feedback-checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+
+  .feedback-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .feedback-actions button {
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.9rem;
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+
+  #rp-feedback-copy-open-btn {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0b1220;
+  }
+
+  #rp-feedback-copy-open-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  #rp-feedback-open-btn {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0b1220;
+  }
+
+  .feedback-cancel {
+    margin-left: auto;
+  }
+
   @media (max-width: 720px) {
     .workspace {
       grid-template-columns: 1fr;
@@ -275,14 +403,17 @@ const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
   rendererUrl: rendererModuleUrl,
   seedJson,
   examples: examples.map((e) => ({ slug: e.slug, json: e.json })),
+  categoryConfig: CATEGORY_CONFIG,
 }}>
-  import { parseDocument, clampFrameIndex, canRender, sanitizeErrorMessage } from '../../lib/renderer-playground.mjs';
+  import { parseDocument, clampFrameIndex, canRender, sanitizeErrorMessage, buildFeedbackMarkdown } from '../../lib/renderer-playground.mjs';
+  import { buildDiscussionUrl } from '../../lib/discussions.mjs';
 
   const editor = document.getElementById('rp-editor');
   const exampleSelect = document.getElementById('rp-example');
   const validateBtn = document.getElementById('rp-validate-btn');
   const renderBtn = document.getElementById('rp-render-btn');
   const resetBtn = document.getElementById('rp-reset-btn');
+  const feedbackBtn = document.getElementById('rp-feedback-btn');
   const validationOutput = document.getElementById('rp-validation-output');
   const canvas = document.getElementById('rp-canvas');
   const frameNav = document.getElementById('rp-frame-nav');
@@ -293,6 +424,11 @@ const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
   const exportRow = document.getElementById('rp-export-row');
   const renderError = document.getElementById('rp-render-error');
   const noFrames = document.getElementById('rp-no-frames');
+  const feedbackDialog = document.getElementById('rp-feedback-dialog');
+  const feedbackPreview = document.getElementById('rp-feedback-preview');
+  const feedbackCopyCheckbox = document.getElementById('rp-feedback-copy');
+  const feedbackCopyOpenBtn = document.getElementById('rp-feedback-copy-open-btn');
+  const feedbackOpenBtn = document.getElementById('rp-feedback-open-btn');
 
   let lastValidation = null;
   let currentRenderer = null;
@@ -499,5 +635,40 @@ const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
     link.download = `ocf-frame-${frameIndex + 1}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
+  });
+
+  feedbackBtn.addEventListener('click', () => {
+    const markdown = buildFeedbackMarkdown({
+      json: editor.value,
+      frameIndex: frameIndex,
+      validation: lastValidation,
+    });
+    feedbackPreview.textContent = markdown;
+    feedbackCopyCheckbox.checked = false;
+    feedbackCopyOpenBtn.disabled = true;
+    feedbackDialog.showModal();
+  });
+
+  feedbackCopyCheckbox.addEventListener('change', () => {
+    feedbackCopyOpenBtn.disabled = !feedbackCopyCheckbox.checked;
+  });
+
+  feedbackCopyOpenBtn.addEventListener('click', async () => {
+    const markdown = feedbackPreview.textContent;
+    const url = buildDiscussionUrl('renderer', categoryConfig);
+
+    try {
+      await navigator.clipboard.writeText(markdown);
+      window.open(url, '_blank');
+      feedbackDialog.close();
+    } catch (err) {
+      feedbackCopyOpenBtn.disabled = true;
+    }
+  });
+
+  feedbackOpenBtn.addEventListener('click', () => {
+    const url = buildDiscussionUrl('renderer', categoryConfig);
+    window.open(url, '_blank');
+    feedbackDialog.close();
   });
 </script>
