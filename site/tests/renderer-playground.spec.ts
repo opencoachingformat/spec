@@ -1,4 +1,4 @@
-import { test, expect, type Page, type BrowserContext, type Browser } from '@playwright/test';
+import { test, expect, type Page, type Browser } from '@playwright/test';
 
 const PLAYGROUND = '/playground/renderer/';
 
@@ -135,18 +135,28 @@ test.describe('renderer playground', () => {
     await expect(page.locator('#rp-feedback-copy-open-btn')).toBeDisabled();
   });
 
-  test('no-copy action navigates to Discussions fallback', async ({ page, context }) => {
+  test('no-copy action navigates to Discussions fallback', async ({ page }) => {
+    // Stub window.open before page scripts run so headless Chromium does not
+    // attempt to navigate to an external GitHub URL. The stub records the
+    // requested URL for assertion without opening a real popup.
+    await page.addInitScript(() => {
+      (window as any).__openedUrls = [];
+      window.open = (url?: string | URL) => {
+        (window as any).__openedUrls.push(String(url));
+        return null;
+      };
+    });
     await goToPlayground(page);
     await page.locator('#rp-feedback-btn').click();
     await expect(page.locator('#rp-feedback-dialog')).toBeVisible();
 
-    const popupPromise = context.waitForEvent('page');
     await page.locator('#rp-feedback-open-btn').click();
-    const popup = await popupPromise;
-    const url = popup.url();
+
+    const openedUrls = await page.evaluate(() => (window as any).__openedUrls as string[]);
+    expect(openedUrls.length).toBeGreaterThan(0);
+    const url = openedUrls[openedUrls.length - 1];
     expect(url).toContain('github.com');
     expect(url).toContain('discussions');
-    await popup.close();
   });
 
   test('clipboard copy occurs only after opt-in and explicit action', async ({ browser }) => {
@@ -154,6 +164,14 @@ test.describe('renderer playground', () => {
       permissions: ['clipboard-read', 'clipboard-write'],
     });
     const page = await context.newPage();
+    // Stub window.open so headless Chromium does not attempt external navigation.
+    await page.addInitScript(() => {
+      (window as any).__openedUrls = [];
+      window.open = (url?: string | URL) => {
+        (window as any).__openedUrls.push(String(url));
+        return null;
+      };
+    });
     await page.goto(PLAYGROUND, { waitUntil: 'networkidle' });
     await expect(page.locator('#rp-editor')).toBeVisible();
 
@@ -165,16 +183,16 @@ test.describe('renderer playground', () => {
     await page.locator('#rp-feedback-copy').check();
     await expect(page.locator('#rp-feedback-copy-open-btn')).toBeEnabled();
 
-    const popupPromise = context.waitForEvent('page');
     await page.locator('#rp-feedback-copy-open-btn').click();
-    const popup = await popupPromise;
-    expect(popup.url()).toContain('github.com');
+
+    const openedUrls = await page.evaluate(() => (window as any).__openedUrls as string[]);
+    expect(openedUrls.length).toBeGreaterThan(0);
+    expect(openedUrls[openedUrls.length - 1]).toContain('github.com');
 
     const clipboardText = await page.evaluate(() => navigator.clipboard.readText());
     expect(clipboardText).toContain('OCF Renderer Playground Feedback');
     expect(clipboardText).toContain('```json');
 
-    await popup.close();
     await context.close();
   });
 
