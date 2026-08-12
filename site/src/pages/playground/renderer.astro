@@ -52,6 +52,7 @@ const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
 
     <div class="workspace">
       <div class="editor-pane">
+        <label for="rp-editor" class="sr-only">OCF document editor</label>
         <textarea
           id="rp-editor"
           rows="24"
@@ -109,6 +110,18 @@ const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
 </Base>
 
 <style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
   .renderer-playground {
     display: flex;
     flex-direction: column;
@@ -419,8 +432,13 @@ const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
   examples: examples.map((e) => ({ slug: e.slug, json: e.json })),
   categoryConfig: CATEGORY_CONFIG,
 }}>
+  window.__RP_VARS__ = { validatorUrl, rendererUrl, seedJson, examples, categoryConfig };
+</script>
+<script>
   import { parseDocument, clampFrameIndex, canRender, sanitizeErrorMessage, buildFeedbackMarkdown } from '../../lib/renderer-playground.mjs';
   import { buildDiscussionUrl } from '../../lib/discussions.mjs';
+
+  const { validatorUrl, rendererUrl, seedJson, examples, categoryConfig } = window.__RP_VARS__;
 
   const editor = document.getElementById('rp-editor');
   const exampleSelect = document.getElementById('rp-example');
