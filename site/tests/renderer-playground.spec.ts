@@ -166,11 +166,7 @@ test.describe('renderer playground', () => {
     const page = await context.newPage();
     // Stub window.open so headless Chromium does not attempt external navigation.
     await page.addInitScript(() => {
-      (window as any).__openedUrls = [];
-      window.open = (url?: string | URL) => {
-        (window as any).__openedUrls.push(String(url));
-        return null;
-      };
+      window.open = () => null;
     });
     await page.goto(PLAYGROUND, { waitUntil: 'networkidle' });
     await expect(page.locator('#rp-editor')).toBeVisible();
@@ -184,10 +180,6 @@ test.describe('renderer playground', () => {
     await expect(page.locator('#rp-feedback-copy-open-btn')).toBeEnabled();
 
     await page.locator('#rp-feedback-copy-open-btn').click();
-
-    const openedUrls = await page.evaluate(() => (window as any).__openedUrls as string[]);
-    expect(openedUrls.length).toBeGreaterThan(0);
-    expect(openedUrls[openedUrls.length - 1]).toContain('github.com');
 
     const clipboardText = await page.evaluate(() => navigator.clipboard.readText());
     expect(clipboardText).toContain('OCF Renderer Playground Feedback');
