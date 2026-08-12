@@ -91,6 +91,9 @@ const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
           <input type="checkbox" id="rp-feedback-copy" />
           Copy feedback to clipboard before opening GitHub Discussions
         </label>
+        <p id="rp-feedback-clipboard-error" class="feedback-clipboard-error" role="alert" hidden>
+          Clipboard access failed. You can manually select and copy the feedback above, then continue to GitHub Discussions.
+        </p>
         <div class="feedback-actions">
           <button id="rp-feedback-copy-open-btn" type="button" disabled>
             Copy feedback & open GitHub Discussions
@@ -340,6 +343,17 @@ const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
     cursor: pointer;
   }
 
+  .feedback-clipboard-error {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    color: var(--text-muted);
+  }
+
   .feedback-checkbox-label input[type="checkbox"] {
     width: 18px;
     height: 18px;
@@ -429,6 +443,7 @@ const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
   const feedbackCopyCheckbox = document.getElementById('rp-feedback-copy');
   const feedbackCopyOpenBtn = document.getElementById('rp-feedback-copy-open-btn');
   const feedbackOpenBtn = document.getElementById('rp-feedback-open-btn');
+  const feedbackClipboardError = document.getElementById('rp-feedback-clipboard-error');
 
   let lastValidation = null;
   let currentRenderer = null;
@@ -645,7 +660,9 @@ const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
     });
     feedbackPreview.textContent = markdown;
     feedbackCopyCheckbox.checked = false;
+    feedbackCopyCheckbox.disabled = false;
     feedbackCopyOpenBtn.disabled = true;
+    feedbackClipboardError.hidden = true;
     feedbackDialog.showModal();
   });
 
@@ -662,7 +679,9 @@ const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
       window.open(url, '_blank');
       feedbackDialog.close();
     } catch (err) {
+      feedbackClipboardError.hidden = false;
       feedbackCopyOpenBtn.disabled = true;
+      feedbackCopyCheckbox.disabled = true;
     }
   });
 
