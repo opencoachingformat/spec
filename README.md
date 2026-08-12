@@ -113,7 +113,9 @@ Units are real-world: **meters** for FIBA, **feet** for NBA/NCAA/NFHS.
 
 | Project | Type | Status |
 |---------|------|--------|
-| [ocf-editor](https://github.com/opencoachingformat/ocf-editor) *(planned)* | Web editor + viewer | 🚧 In development |
+| [ocf-validator](https://github.com/opencoachingformat/ocf-validator) | Reference validator (TypeScript + Python) | ✅ Available |
+| [ocf-renderer](https://github.com/opencoachingformat/ocf-renderer) | Three.js renderer (tactical print mode) | 🚧 In development |
+| [ocf-editor](https://github.com/opencoachingformat/ocf-editor) | Web editor + viewer | 📋 Planned |
 
 *Built something with OCF? Open a PR to add it here.*
 
@@ -121,14 +123,15 @@ Units are real-world: **meters** for FIBA, **feet** for NBA/NCAA/NFHS.
 
 ## Roadmap
 
-This repository defines the **schema and standard**. Planned companion projects
+This repository defines the **schema and standard**. Companion projects
 (separate repos):
 
-1. **Validator** — semantic rules JSON Schema can't express: ball-possession
+1. **Validator** ✅ — semantic rules JSON Schema can't express: ball-possession
    consistency (only the carrier may `pass`/`shoot`/`dribble`), branch target
    integrity, and `end_state` agreement with action endpoints.
-2. **Renderer** — draw drills and animate them from the JSON.
-3. **Editor** — visual authoring on top of the renderer.
+2. **Renderer** 🚧 — Three.js-based renderer; v1 renders static tactical-print
+   diagrams from OCF JSON (FIBA half/full court). Animation mode planned next.
+3. **Editor** 📋 — visual authoring on top of the renderer.
 
 End goal: generate drills and set plays from natural language (LLM) and render
 them directly, plus video overlay for practice analysis and video → play

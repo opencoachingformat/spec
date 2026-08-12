@@ -44,8 +44,8 @@ const toc = [
           <h2 class="visually-hidden">Renderer</h2>
           <Card
             title="Renderer"
-            description="Draws drills and animates them from OCF JSON."
-            href="https://github.com/opencoachingformat"
+            description="Three.js-based renderer; v1 renders static tactical-print diagrams from OCF JSON (FIBA half/full court). Animation mode planned next."
+            href="https://github.com/opencoachingformat/ocf-renderer"
             status="In development"
           />
         </div>
@@ -63,14 +63,15 @@ const toc = [
       <h2 id="roadmap">Roadmap</h2>
       <ol>
         <li>
-          <strong>Validator</strong> — semantic rules JSON Schema can't
+          <strong>Validator ✅</strong> — semantic rules JSON Schema can't
           express: ball-possession consistency (only the carrier may
           <code>pass</code>/<code>shoot</code>/<code>dribble</code>), branch
           target integrity, and <code>end_state</code> agreement with
           action endpoints.
         </li>
-        <li><strong>Renderer</strong> — draw drills and animate them from the JSON.</li>
-        <li><strong>Editor</strong> — visual authoring on top of the renderer.</li>
+        <li><strong>Renderer 🚧</strong> — Three.js-based renderer; v1 renders static tactical-print
+          diagrams from OCF JSON (FIBA half/full court). Animation mode planned next.</li>
+        <li><strong>Editor 📋</strong> — visual authoring on top of the renderer.</li>
       </ol>
       <p>
         End goal: generate drills and set plays from natural language (LLM)
