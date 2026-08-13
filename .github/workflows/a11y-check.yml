@@ -7,6 +7,10 @@ on:
       - 'site/src/layouts/**'
       - 'site/src/components/**'
       - 'site/public/**'
+      - 'site/package.json'
+      - 'site/package-lock.json'
+      - 'site/scripts/**'
+      - 'site/src/lib/**'
 
 jobs:
   axe:
