@@ -1,0 +1,723 @@
+---
+import Base from '../../layouts/Base.astro';
+import examples from '../../generated/examples.json';
+import { OCF_VALIDATOR_COMMIT, OCF_VALIDATOR_BROWSER_URL } from '../../lib/validator-version.mjs';
+import { OCF_RENDERER_COMMIT, OCF_RENDERER_SHORT_SHA } from '../../lib/renderer-version.mjs';
+import { buildDiscussionUrl } from '../../lib/discussions.mjs';
+import rendererModuleUrl from '../../generated/renderer/index.js?url';
+
+const CATEGORY_CONFIG = {
+  renderer: 'renderer-feedback',
+};
+
+const seedExample = examples.find((e) => e.slug === 'quick-mode');
+const seedJson = seedExample ? seedExample.json : '{}';
+const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
+---
+
+<Base
+  title="Renderer Playground"
+  description="Render an Open Coaching Format document in your browser using the experimental WebGL renderer."
+  wide
+>
+  <div class="renderer-playground">
+
+    <div class="notice">
+      Experimental renderer — this preview and its API are not final and may change.
+    </div>
+
+    <h1>Renderer Playground</h1>
+    <p class="intro">
+      Edit an OCF document, validate it, and render the result on a WebGL canvas.
+      Validation uses <a href="https://github.com/opencoachingformat/ocf-validator">ocf-validator</a>
+      (<code>{validatorShortSha}</code>). Rendering uses
+      <a href="https://github.com/opencoachingformat/ocf-renderer">ocf-renderer</a>
+      (<code>{OCF_RENDERER_SHORT_SHA}</code>). Everything runs locally in your browser.
+    </p>
+
+    <div class="controls">
+      <label for="rp-example">Example:</label>
+      <select id="rp-example">
+        {examples.map((ex) => (
+          <option value={ex.slug} selected={ex.slug === 'quick-mode'}>
+            {ex.title}
+          </option>
+        ))}
+      </select>
+      <button id="rp-validate-btn" type="button">Validate</button>
+      <button id="rp-render-btn" type="button" disabled>Render</button>
+      <button id="rp-reset-btn" type="button">Reset</button>
+      <button id="rp-feedback-btn" type="button">Send Feedback</button>
+    </div>
+
+    <div class="workspace">
+      <div class="editor-pane">
+        <label for="rp-editor" class="sr-only">OCF document editor</label>
+        <textarea
+          id="rp-editor"
+          rows="24"
+          spellcheck="false"
+          set:text={seedJson}
+        ></textarea>
+        <pre id="rp-validation-output">Click Validate to check the document.</pre>
+      </div>
+
+      <div class="preview-pane">
+        <div id="rp-render-error" class="render-error" hidden></div>
+        <div class="canvas-wrap">
+          <canvas id="rp-canvas"></canvas>
+          <div id="rp-no-frames" class="no-frames" hidden>
+            No frames to render. Validate a document with at least one frame.
+          </div>
+        </div>
+        <div class="frame-nav" id="rp-frame-nav" hidden>
+          <button id="rp-prev-btn" type="button" aria-label="Previous frame" disabled>← Previous</button>
+          <span id="rp-frame-info">frame 1 / 1</span>
+          <button id="rp-next-btn" type="button" aria-label="Next frame" disabled>Next →</button>
+        </div>
+        <div class="export-row" id="rp-export-row" hidden>
+          <button id="rp-download-btn" type="button" aria-label="Download current frame as PNG">Download PNG</button>
+        </div>
+      </div>
+    </div>
+
+    <dialog id="rp-feedback-dialog" class="feedback-dialog">
+      <form method="dialog" class="feedback-dialog-form">
+        <h2>Send Feedback to GitHub Discussions</h2>
+        <p class="feedback-intro">
+          The following information will be included in your feedback:
+        </p>
+        <pre id="rp-feedback-preview" class="feedback-preview"></pre>
+        <label class="feedback-checkbox-label">
+          <input type="checkbox" id="rp-feedback-copy" />
+          Copy feedback to clipboard before opening GitHub Discussions
+        </label>
+        <p id="rp-feedback-clipboard-error" class="feedback-clipboard-error" role="alert" hidden>
+          Clipboard access failed. You can manually select and copy the feedback above, then continue to GitHub Discussions.
+        </p>
+        <div class="feedback-actions">
+          <button id="rp-feedback-copy-open-btn" type="button" disabled>
+            Copy feedback & open GitHub Discussions
+          </button>
+          <button id="rp-feedback-open-btn" type="button">
+            Open GitHub Discussions without copying
+          </button>
+          <button type="submit" class="feedback-cancel">Cancel</button>
+        </div>
+      </form>
+    </dialog>
+  </div>
+</Base>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .renderer-playground {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Ensure the HTML `hidden` attribute always hides elements, even when
+     a flex/grid parent rule sets `display: flex`. Scoped to this page. */
+  .renderer-playground [hidden] {
+    display: none !important;
+  }
+
+  .notice {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  .intro {
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .controls label {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .controls select,
+  .controls button {
+    font: inherit;
+    font-size: 0.9rem;
+    min-height: 44px;
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+
+  .controls select {
+    flex: 1 1 12rem;
+    min-width: 10rem;
+  }
+
+  .controls button {
+    font-weight: 600;
+  }
+
+  #rp-validate-btn,
+  #rp-render-btn {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0b1220;
+  }
+
+  button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .workspace {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .editor-pane,
+  .preview-pane {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+
+  textarea {
+    width: 100%;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8rem;
+    background: var(--code-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem;
+    resize: vertical;
+    min-height: 16rem;
+  }
+
+  #rp-validation-output {
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 2.5rem;
+    font-size: 0.8rem;
+    margin: 0;
+  }
+
+  .canvas-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  #rp-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .no-frames,
+  .render-error {
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    border-radius: 6px;
+  }
+
+  .no-frames {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  .render-error {
+    background: #2d1117;
+    border: 1px solid #6e2b33;
+    color: #f5c2c7;
+  }
+
+  .frame-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .frame-nav button {
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.85rem;
+    min-height: 44px;
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+
+  #rp-frame-info {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    flex: 1;
+    text-align: center;
+  }
+
+  .export-row {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .export-row button {
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.85rem;
+    min-height: 44px;
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #0b1220;
+    cursor: pointer;
+  }
+
+  .feedback-dialog {
+    max-width: 600px;
+    max-height: 80vh;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+  }
+
+  .feedback-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .feedback-dialog-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .feedback-dialog h2 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+
+  .feedback-intro {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .feedback-preview {
+    max-height: 300px;
+    overflow-y: auto;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem;
+    font-size: 0.8rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0;
+  }
+
+  .feedback-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .feedback-clipboard-error {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    color: var(--text-muted);
+  }
+
+  .feedback-checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+
+  .feedback-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .feedback-actions button {
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.9rem;
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+
+  #rp-feedback-copy-open-btn {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0b1220;
+  }
+
+  #rp-feedback-copy-open-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  #rp-feedback-open-btn {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0b1220;
+  }
+
+  .feedback-cancel {
+    margin-left: auto;
+  }
+
+  @media (max-width: 720px) {
+    .workspace {
+      grid-template-columns: 1fr;
+    }
+
+    .controls select {
+      flex: 1 1 100%;
+    }
+  }
+</style>
+
+<script define:vars={{
+  validatorUrl: OCF_VALIDATOR_BROWSER_URL,
+  rendererUrl: rendererModuleUrl,
+  seedJson,
+  examples: examples.map((e) => ({ slug: e.slug, json: e.json })),
+  categoryConfig: CATEGORY_CONFIG,
+}}>
+  window.__OCF_RENDERER_PLAYGROUND_VARS__ = { validatorUrl, rendererUrl, seedJson, examples, categoryConfig };
+</script>
+<script>
+  import { parseDocument, clampFrameIndex, canRender, sanitizeErrorMessage, buildFeedbackMarkdown } from '../../lib/renderer-playground.mjs';
+  import { buildDiscussionUrl } from '../../lib/discussions.mjs';
+
+  const __vars = window.__OCF_RENDERER_PLAYGROUND_VARS__;
+  if (!__vars) {
+    throw new Error('OCF renderer playground vars not found — inline script may not have executed.');
+  }
+  const { validatorUrl, rendererUrl, seedJson, examples, categoryConfig } = __vars;
+  // Clean up the global after reading to avoid leaking it on the window.
+  delete window.__OCF_RENDERER_PLAYGROUND_VARS__;
+
+  const editor = document.getElementById('rp-editor');
+  const exampleSelect = document.getElementById('rp-example');
+  const validateBtn = document.getElementById('rp-validate-btn');
+  const renderBtn = document.getElementById('rp-render-btn');
+  const resetBtn = document.getElementById('rp-reset-btn');
+  const feedbackBtn = document.getElementById('rp-feedback-btn');
+  const validationOutput = document.getElementById('rp-validation-output');
+  const canvas = document.getElementById('rp-canvas');
+  const frameNav = document.getElementById('rp-frame-nav');
+  const prevBtn = document.getElementById('rp-prev-btn');
+  const nextBtn = document.getElementById('rp-next-btn');
+  const frameInfo = document.getElementById('rp-frame-info');
+  const downloadBtn = document.getElementById('rp-download-btn');
+  const exportRow = document.getElementById('rp-export-row');
+  const renderError = document.getElementById('rp-render-error');
+  const noFrames = document.getElementById('rp-no-frames');
+  const feedbackDialog = document.getElementById('rp-feedback-dialog');
+  const feedbackPreview = document.getElementById('rp-feedback-preview');
+  const feedbackCopyCheckbox = document.getElementById('rp-feedback-copy');
+  const feedbackCopyOpenBtn = document.getElementById('rp-feedback-copy-open-btn');
+  const feedbackOpenBtn = document.getElementById('rp-feedback-open-btn');
+  const feedbackClipboardError = document.getElementById('rp-feedback-clipboard-error');
+
+  let lastValidation = null;
+  let currentRenderer = null;
+  let currentDoc = null;
+  let frameCount = 0;
+  let frameIndex = 0;
+  let hasRendered = false;
+
+  let validatorPromise;
+  function loadValidator() {
+    if (!validatorPromise) {
+      validatorPromise = import(/* @vite-ignore */ validatorUrl);
+    }
+    return validatorPromise;
+  }
+
+  let rendererPromise;
+  function loadRenderer() {
+    if (!rendererPromise) {
+      rendererPromise = import(/* @vite-ignore */ rendererUrl);
+    }
+    return rendererPromise;
+  }
+
+  function formatIssue(issue) {
+    const tag = issue.severity === 'error' ? 'error' : 'warn ';
+    const loc = issue.frame ? `${issue.path} (${issue.frame})` : issue.path;
+    return `  ${tag} ${issue.code} ${loc}\n        ${issue.message}`;
+  }
+
+  function showValidationResult(res) {
+    const lines = [];
+    if (res.valid && res.warnings.length === 0) {
+      lines.push('ok — no errors or warnings');
+    } else {
+      lines.push(res.valid ? 'warn' : 'fail');
+      for (const e of res.errors) lines.push(formatIssue(e));
+      for (const w of res.warnings) lines.push(formatIssue(w));
+      lines.push(`  ${res.summary.errors} error(s), ${res.summary.warnings} warning(s)`);
+    }
+    validationOutput.textContent = lines.join('\n');
+  }
+
+  function hidePreview() {
+    frameNav.hidden = true;
+    exportRow.hidden = true;
+    renderError.hidden = true;
+    noFrames.hidden = true;
+    hasRendered = false;
+  }
+
+  function showRenderError(message) {
+    renderError.textContent = message;
+    renderError.hidden = false;
+    hasRendered = false;
+  }
+
+  function updateFrameNav() {
+    frameInfo.textContent = `frame ${frameIndex + 1} / ${frameCount}`;
+    prevBtn.disabled = frameIndex <= 0;
+    nextBtn.disabled = frameIndex >= frameCount - 1;
+  }
+
+  function clearCanvas() {
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+
+  /**
+   * Size the canvas drawing buffer from its displayed bounding rect × devicePixelRatio.
+   * Preserves the CSS aspect ratio (set via CSS) and avoids zero dimensions.
+   */
+  function sizeCanvasForDisplay() {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const w = Math.max(1, Math.round(rect.width * dpr));
+    const h = Math.max(1, Math.round(rect.height * dpr));
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w;
+      canvas.height = h;
+    }
+  }
+
+  async function renderFrame() {
+    if (!currentRenderer || !currentDoc) return;
+
+    renderError.hidden = true;
+    noFrames.hidden = true;
+
+    frameCount = Array.isArray(currentDoc.frames) ? currentDoc.frames.length : 0;
+    if (frameCount === 0) {
+      noFrames.hidden = false;
+      frameNav.hidden = true;
+      exportRow.hidden = true;
+      clearCanvas();
+      return;
+    }
+
+    frameIndex = clampFrameIndex(frameIndex, frameCount);
+
+    try {
+      sizeCanvasForDisplay();
+      currentRenderer.renderToCanvas(frameIndex, canvas);
+      hasRendered = true;
+      frameNav.hidden = false;
+      exportRow.hidden = false;
+      updateFrameNav();
+    } catch (err) {
+      showRenderError(sanitizeErrorMessage(err));
+      frameNav.hidden = true;
+      exportRow.hidden = true;
+    }
+  }
+
+  exampleSelect.addEventListener('change', () => {
+    const selected = examples.find((e) => e.slug === exampleSelect.value);
+    if (selected) {
+      editor.value = selected.json;
+    }
+    lastValidation = null;
+    renderBtn.disabled = true;
+    validationOutput.textContent = 'Click Validate to check the document.';
+    hidePreview();
+  });
+
+  validateBtn.addEventListener('click', async () => {
+    validationOutput.textContent = 'Validating…';
+    renderBtn.disabled = true;
+    hidePreview();
+
+    const parsed = parseDocument(editor.value);
+    if (!parsed.ok) {
+      validationOutput.textContent = `  error JSON_PARSE /\n        ${parsed.message}`;
+      lastValidation = null;
+      return;
+    }
+
+    try {
+      const { validate } = await loadValidator();
+      const result = validate(parsed.value);
+      lastValidation = result;
+      showValidationResult(result);
+      renderBtn.disabled = !canRender(result);
+
+      if (canRender(result)) {
+        currentDoc = parsed.value;
+      }
+    } catch (err) {
+      validationOutput.textContent = `Failed to load or run the validator: ${sanitizeErrorMessage(err)}`;
+      lastValidation = null;
+    }
+  });
+
+  renderBtn.addEventListener('click', async () => {
+    if (!currentDoc) return;
+
+    renderError.hidden = true;
+    noFrames.hidden = true;
+
+    try {
+      const { OCFRenderer } = await loadRenderer();
+      currentRenderer = new OCFRenderer(currentDoc);
+      frameIndex = 0;
+      await renderFrame();
+    } catch (err) {
+      showRenderError(sanitizeErrorMessage(err));
+    }
+  });
+
+  resetBtn.addEventListener('click', () => {
+    editor.value = seedJson;
+    lastValidation = null;
+    currentDoc = null;
+    currentRenderer = null;
+    frameCount = 0;
+    frameIndex = 0;
+    renderBtn.disabled = true;
+    validationOutput.textContent = 'Click Validate to check the document.';
+    hidePreview();
+    clearCanvas();
+  });
+
+  prevBtn.addEventListener('click', () => {
+    if (frameIndex > 0) {
+      frameIndex--;
+      clearCanvas();
+      renderFrame();
+    }
+  });
+
+  nextBtn.addEventListener('click', () => {
+    if (frameIndex < frameCount - 1) {
+      frameIndex++;
+      clearCanvas();
+      renderFrame();
+    }
+  });
+
+  downloadBtn.addEventListener('click', () => {
+    if (!hasRendered) return;
+    const link = document.createElement('a');
+    link.download = `ocf-frame-${frameIndex + 1}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+
+  feedbackBtn.addEventListener('click', () => {
+    const markdown = buildFeedbackMarkdown({
+      json: editor.value,
+      frameIndex: frameIndex,
+      validation: lastValidation,
+    });
+    feedbackPreview.textContent = markdown;
+    feedbackCopyCheckbox.checked = false;
+    feedbackCopyCheckbox.disabled = false;
+    feedbackCopyOpenBtn.disabled = true;
+    feedbackClipboardError.hidden = true;
+    feedbackDialog.showModal();
+  });
+
+  feedbackCopyCheckbox.addEventListener('change', () => {
+    feedbackCopyOpenBtn.disabled = !feedbackCopyCheckbox.checked;
+  });
+
+  feedbackCopyOpenBtn.addEventListener('click', async () => {
+    const markdown = feedbackPreview.textContent;
+    const url = buildDiscussionUrl('renderer', categoryConfig);
+
+    try {
+      await navigator.clipboard.writeText(markdown);
+      window.open(url, '_blank');
+      feedbackDialog.close();
+    } catch (err) {
+      feedbackClipboardError.hidden = false;
+      feedbackCopyOpenBtn.disabled = true;
+      feedbackCopyCheckbox.disabled = true;
+    }
+  });
+
+  feedbackOpenBtn.addEventListener('click', () => {
+    const url = buildDiscussionUrl('renderer', categoryConfig);
+    window.open(url, '_blank');
+    feedbackDialog.close();
+  });
+</script>
