@@ -1,6 +1,6 @@
 {
   "name": "@opencoachingformat/spec",
-  "version": "2.1.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "Open standard for basketball drill diagrams and animations.",
   "files": [
