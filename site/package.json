@@ -5,8 +5,11 @@
   "version": "0.0.0",
   "scripts": {
     "build:adoc": "node scripts/build-adoc.mjs",
-    "build": "npm run build:adoc && astro build",
-    "dev": "npm run build:adoc && astro dev"
+    "build:renderer": "node scripts/build-renderer.mjs",
+    "build": "npm run build:adoc && npm run build:renderer && astro build",
+    "dev": "npm run build:adoc && npm run build:renderer && astro dev",
+    "test:renderer-build": "node scripts/build-renderer.test.mjs",
+    "test:renderer-playground": "node src/lib/renderer-playground.test.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
@@ -14,6 +17,7 @@
   },
   "devDependencies": {
     "@asciidoctor/core": "^4.0.4",
-    "@axe-core/cli": "^4.12.1"
+    "@axe-core/cli": "^4.12.1",
+    "@playwright/test": "^1.52.0"
   }
 }

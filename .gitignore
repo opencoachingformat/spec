@@ -7,3 +7,5 @@ dist/
 site/src/generated/
 .astro/
 .superpowers/
+site/test-results/
+site/playwright-report/
