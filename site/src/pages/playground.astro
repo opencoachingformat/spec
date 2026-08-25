@@ -1,11 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
 import examples from '../generated/examples.json';
-import { OCF_VALIDATOR_COMMIT, OCF_VALIDATOR_BROWSER_URL } from '../lib/validator-version.mjs';
+import { OCF_VALIDATOR_VERSION, OCF_VALIDATOR_BROWSER_URL } from '../lib/validator-version.mjs';
 
 const quickMode = examples.find((e) => e.slug === 'quick-mode');
 const seedJson = quickMode ? quickMode.json : '{}';
-const shortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
 ---
 <Base
   title="Playground"
@@ -16,7 +15,7 @@ const shortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
     Paste an OCF action-model document below and click Validate. Validation runs
     entirely in your browser — no data leaves your machine — using the same rules
     as the reference CLI validator (<a href="https://github.com/opencoachingformat/ocf-validator">ocf-validator</a>,
-    pinned at commit <code>{shortSha}</code>).
+    <a href="https://www.npmjs.com/package/@opencoachingformat/validator"><code>@opencoachingformat/validator@{OCF_VALIDATOR_VERSION}</code></a>).
   </p>
 
   <textarea id="ocf-input" rows="20" spellcheck="false" set:text={seedJson}></textarea>

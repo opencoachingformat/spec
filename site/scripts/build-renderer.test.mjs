@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import assert from 'node:assert/strict';
-import { OCF_RENDERER_COMMIT } from '../src/lib/renderer-version.mjs';
+import { OCF_RENDERER_VERSION } from '../src/lib/renderer-version.mjs';
 
 const siteRoot = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const rendererDir = path.join(siteRoot, 'src', 'generated', 'renderer');
@@ -29,12 +29,12 @@ test('generated/renderer/index.js exists', () => {
   assert.ok(existsSync(bundlePath), `${bundlePath} does not exist`);
 });
 
-test('generated/renderer/metadata.json exists and contains pinned SHA', () => {
+test('generated/renderer/metadata.json exists and contains pinned version', () => {
   const metaPath = path.join(rendererDir, 'metadata.json');
   assert.ok(existsSync(metaPath), `${metaPath} does not exist`);
   const meta = JSON.parse(readFileSync(metaPath, 'utf-8'));
-  assert.equal(meta.commit, OCF_RENDERER_COMMIT, 'metadata commit does not match pinned SHA');
-  assert.equal(meta.shortCommit, OCF_RENDERER_COMMIT.slice(0, 7), 'short commit mismatch');
+  assert.equal(meta.version, OCF_RENDERER_VERSION, 'metadata version does not match pinned version');
+  assert.equal(meta.package, '@opencoachingformat/renderer', 'package name mismatch');
   assert.ok(meta.repository, 'repository missing from metadata');
   assert.ok(meta.buildDate, 'buildDate missing from metadata');
 });

@@ -6,8 +6,8 @@ import {
   sanitizeErrorMessage,
   buildFeedbackMarkdown,
 } from './renderer-playground.mjs';
-import { OCF_RENDERER_COMMIT } from './renderer-version.mjs';
-import { OCF_VALIDATOR_COMMIT } from './validator-version.mjs';
+import { OCF_RENDERER_VERSION } from './renderer-version.mjs';
+import { OCF_VALIDATOR_VERSION } from './validator-version.mjs';
 
 let passed = 0;
 let failed = 0;
@@ -190,8 +190,8 @@ test('buildFeedbackMarkdown: includes JSON in fenced block', () => {
     json: '{"frames":[]}',
     frameIndex: 0,
     validation: { valid: true, errors: [], warnings: [] },
-    rendererCommit: 'abc1234567890',
-    validatorCommit: 'def9876543210',
+    rendererVersion: '0.1.0',
+    validatorVersion: '0.1.0',
   });
   assert.ok(md.includes('```json'), 'missing fenced code block');
   assert.ok(md.includes('{"frames":[]}'), 'missing JSON content');
@@ -203,32 +203,32 @@ test('buildFeedbackMarkdown: includes frame index', () => {
     json: '{}',
     frameIndex: 2,
     validation: { valid: true, errors: [], warnings: [] },
-    rendererCommit: 'abc123',
-    validatorCommit: 'def456',
+    rendererVersion: '0.1.0',
+    validatorVersion: '0.1.0',
   });
   assert.match(md, /\*\*Frame:\*\*\s*2/);
 });
 
-test('buildFeedbackMarkdown: includes renderer SHA', () => {
+test('buildFeedbackMarkdown: includes renderer version', () => {
   const md = buildFeedbackMarkdown({
     json: '{}',
     frameIndex: 0,
     validation: { valid: true, errors: [], warnings: [] },
-    rendererCommit: OCF_RENDERER_COMMIT,
-    validatorCommit: OCF_VALIDATOR_COMMIT,
+    rendererVersion: OCF_RENDERER_VERSION,
+    validatorVersion: OCF_VALIDATOR_VERSION,
   });
-  assert.ok(md.includes(OCF_RENDERER_COMMIT.slice(0, 7)), 'missing renderer short SHA');
+  assert.ok(md.includes(`@opencoachingformat/renderer@${OCF_RENDERER_VERSION}`), 'missing renderer version');
 });
 
-test('buildFeedbackMarkdown: includes validator SHA', () => {
+test('buildFeedbackMarkdown: includes validator version', () => {
   const md = buildFeedbackMarkdown({
     json: '{}',
     frameIndex: 0,
     validation: { valid: true, errors: [], warnings: [] },
-    rendererCommit: OCF_RENDERER_COMMIT,
-    validatorCommit: OCF_VALIDATOR_COMMIT,
+    rendererVersion: OCF_RENDERER_VERSION,
+    validatorVersion: OCF_VALIDATOR_VERSION,
   });
-  assert.ok(md.includes(OCF_VALIDATOR_COMMIT.slice(0, 7)), 'missing validator short SHA');
+  assert.ok(md.includes(`@opencoachingformat/validator@${OCF_VALIDATOR_VERSION}`), 'missing validator version');
 });
 
 test('buildFeedbackMarkdown: includes validation result', () => {
@@ -236,22 +236,22 @@ test('buildFeedbackMarkdown: includes validation result', () => {
     json: '{}',
     frameIndex: 0,
     validation: { valid: false, errors: [{ code: 'E1' }], warnings: [{ code: 'W1' }] },
-    rendererCommit: 'abc',
-    validatorCommit: 'def',
+    rendererVersion: '0.1.0',
+    validatorVersion: '0.1.0',
   });
   assert.ok(md.includes('invalid'), 'should show invalid');
   assert.ok(md.includes('1 error(s)'), 'should show error count');
   assert.ok(md.includes('1 warning(s)'), 'should show warning count');
 });
 
-test('buildFeedbackMarkdown: uses pinned commits by default', () => {
+test('buildFeedbackMarkdown: uses pinned versions by default', () => {
   const md = buildFeedbackMarkdown({
     json: '{}',
     frameIndex: 0,
     validation: { valid: true, errors: [], warnings: [] },
   });
-  assert.ok(md.includes(OCF_RENDERER_COMMIT), 'missing pinned renderer commit');
-  assert.ok(md.includes(OCF_VALIDATOR_COMMIT), 'missing pinned validator commit');
+  assert.ok(md.includes(OCF_RENDERER_VERSION), 'missing pinned renderer version');
+  assert.ok(md.includes(OCF_VALIDATOR_VERSION), 'missing pinned validator version');
 });
 
 if (failed > 0) {

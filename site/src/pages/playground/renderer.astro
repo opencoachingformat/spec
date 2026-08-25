@@ -1,8 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
 import examples from '../../generated/examples.json';
-import { OCF_VALIDATOR_COMMIT, OCF_VALIDATOR_BROWSER_URL } from '../../lib/validator-version.mjs';
-import { OCF_RENDERER_COMMIT, OCF_RENDERER_SHORT_SHA } from '../../lib/renderer-version.mjs';
+import { OCF_VALIDATOR_VERSION, OCF_VALIDATOR_BROWSER_URL } from '../../lib/validator-version.mjs';
+import { OCF_RENDERER_VERSION } from '../../lib/renderer-version.mjs';
 import { buildDiscussionUrl } from '../../lib/discussions.mjs';
 import rendererModuleUrl from '../../generated/renderer/index.js?url';
 
@@ -12,7 +12,6 @@ const CATEGORY_CONFIG = {
 
 const seedExample = examples.find((e) => e.slug === 'quick-mode');
 const seedJson = seedExample ? seedExample.json : '{}';
-const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
 ---
 
 <Base
@@ -30,9 +29,9 @@ const validatorShortSha = OCF_VALIDATOR_COMMIT.slice(0, 7);
     <p class="intro">
       Edit an OCF document, validate it, and render the result on a WebGL canvas.
       Validation uses <a href="https://github.com/opencoachingformat/ocf-validator">ocf-validator</a>
-      (<code>{validatorShortSha}</code>). Rendering uses
+      (<a href="https://www.npmjs.com/package/@opencoachingformat/validator"><code>@opencoachingformat/validator@{OCF_VALIDATOR_VERSION}</code></a>). Rendering uses
       <a href="https://github.com/opencoachingformat/ocf-renderer">ocf-renderer</a>
-      (<code>{OCF_RENDERER_SHORT_SHA}</code>). Everything runs locally in your browser.
+      (<a href="https://www.npmjs.com/package/@opencoachingformat/renderer"><code>@opencoachingformat/renderer@{OCF_RENDERER_VERSION}</code></a>). Everything runs locally in your browser.
     </p>
 
     <div class="controls">

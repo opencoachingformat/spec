@@ -88,6 +88,18 @@ opencoachingformat/
 → [Full Specification (AsciiDoc)](docs/specification-v1.adoc)
 → [JSON Schema v1](schema/v1.json)
 
+### Using the schema from npm
+
+```bash
+npm install @opencoachingformat/spec
+```
+
+```js
+import schema from "@opencoachingformat/spec/schema/v1.json" with { type: "json" };
+```
+
+The package ships only `schema/v1.json` — no runtime code, no dependencies.
+
 ### Coordinate System
 
 ```
@@ -111,11 +123,11 @@ Units are real-world: **meters** for FIBA, **feet** for NBA/NCAA/NFHS.
 
 ## Implementations
 
-| Project | Type | Status |
-|---------|------|--------|
-| [ocf-validator](https://github.com/opencoachingformat/ocf-validator) | Reference validator (TypeScript + Python) | ✅ Available |
-| [ocf-renderer](https://github.com/opencoachingformat/ocf-renderer) | Three.js renderer (tactical print mode) | 🚧 In development |
-| [ocf-editor](https://github.com/opencoachingformat/ocf-editor) | Web editor + viewer | 📋 Planned |
+| Project | Type | npm | Status |
+|---------|------|-----|--------|
+| [ocf-validator](https://github.com/opencoachingformat/ocf-validator) | Reference validator (TypeScript + Python) | [`@opencoachingformat/validator`](https://www.npmjs.com/package/@opencoachingformat/validator) | ✅ Available |
+| [ocf-renderer](https://github.com/opencoachingformat/ocf-renderer) | Three.js renderer (tactical print mode) | [`@opencoachingformat/renderer`](https://www.npmjs.com/package/@opencoachingformat/renderer) | 🚧 In development |
+| [ocf-editor](https://github.com/opencoachingformat/ocf-editor) | Web editor + viewer | — | 📋 Planned |
 
 *Built something with OCF? Open a PR to add it here.*
 
