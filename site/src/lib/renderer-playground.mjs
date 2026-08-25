@@ -1,5 +1,5 @@
-import { OCF_RENDERER_COMMIT } from './renderer-version.mjs';
-import { OCF_VALIDATOR_COMMIT } from './validator-version.mjs';
+import { OCF_RENDERER_VERSION } from './renderer-version.mjs';
+import { OCF_VALIDATOR_VERSION } from './validator-version.mjs';
 
 export function parseDocument(text) {
   let value;
@@ -79,12 +79,9 @@ export function buildFeedbackMarkdown(input) {
     json = '',
     frameIndex = 0,
     validation = null,
-    rendererCommit = OCF_RENDERER_COMMIT,
-    validatorCommit = OCF_VALIDATOR_COMMIT,
+    rendererVersion = OCF_RENDERER_VERSION,
+    validatorVersion = OCF_VALIDATOR_VERSION,
   } = input;
-
-  const rendererShort = rendererCommit.slice(0, 7);
-  const validatorShort = validatorCommit.slice(0, 7);
 
   let validLine = 'n/a';
   if (validation && typeof validation === 'object') {
@@ -98,8 +95,8 @@ export function buildFeedbackMarkdown(input) {
   return [
     '## OCF Renderer Playground Feedback',
     '',
-    `**Renderer:** ${rendererShort} (${rendererCommit})`,
-    `**Validator:** ${validatorShort} (${validatorCommit})`,
+    `**Renderer:** @opencoachingformat/renderer@${rendererVersion}`,
+    `**Validator:** @opencoachingformat/validator@${validatorVersion}`,
     `**Frame:** ${frameIndex}`,
     `**Validation:** ${validLine}`,
     '',
