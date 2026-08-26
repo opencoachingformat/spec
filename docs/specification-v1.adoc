@@ -215,6 +215,13 @@ Positive `dx` = viewer's right. Positive `dy` = toward offense basket.
 
 All coordinates in meters (m). Backcourt positions are the exact y-negation of their frontcourt counterparts.
 
+NOTE: The machine-readable source of truth for every ruleset's named-position
+coordinates is `positions/{fiba,nba,ncaa,nfhs}-v1.json`, exported from
+`@opencoachingformat/spec` via `resolveNamedPosition(name, ruleset)`. The tables
+below are the human-readable FIBA reference; tools MUST read the JSON, not parse
+these tables. A test (`test/positions-anchors.test.mjs`) guards the JSON against
+the cross-ruleset anchor values in the difference table.
+
 [cols="2,1,1,3", options="header"]
 |===
 | Name | x (m) | y (m) | Description
@@ -279,7 +286,8 @@ All coordinates in meters (m). Backcourt positions are the exact y-negation of t
 
 === Ruleset Differences
 
-Key position differences across rulesets (all values in respective unit):
+Key position differences across rulesets, as centered coordinates (origin at
+court center), matching the values in `positions/{ruleset}-v1.json`:
 
 [cols="2,1,1,1,1", options="header"]
 |===
@@ -288,10 +296,16 @@ Key position differences across rulesets (all values in respective unit):
 | `top_of_the_key` y  | 5.68  | 20.75 | 20.75 | 19.75
 | `left_wing` x       | ±6.75 | ±22.15| ±20.75| ±19.75
 | `left_corner` x     | ±7.50 | ±25.0 | ±25.0 | ±25.0
-| `left_corner` y     | 13.98 | 46.58 | 46.58 | 41.58
-| `free_throw_line` y | 8.20  | 19.00 | 19.00 | 19.00
+| `left_corner` y     | 13.98 | 43.305| 43.305| 38.305
+| `free_throw_line` y | 8.20  | 28.0  | 28.0  | 23.0
 | `left_elbow` x      | ±2.45 |  ±8.0 |  ±6.0 |  ±6.0
 |===
+
+NOTE: These are centered-coordinate values (y measured from the court center,
+positive toward the offense basket), not distances from the baseline. For
+example NBA `free_throw_line` y = 28.0 is the free-throw line's position in the
+centered system (half-court 47 − 19.0 ft from baseline), not the familiar
+"19 ft from the baseline" figure.
 
 NOTE: NBA corners are defined by a straight sideline section, not an arc.
 The `left_corner` and `right_corner` positions mark the junction point where the straight section meets the arc.
@@ -1023,6 +1037,79 @@ The y-axis is inverted (y increases downward in FIBA, upward in {ocf}).
     { "form": "rectangle", "color": "yellow", "opacity": 0.2, "x": 0.0, "y": 10.5, "width": 4.9, "height": 4.0, "rotation": 0 }
   ],
   "labels": [ { "text": "Roll!", "x": 3.2, "y": 9.5, "color": "black" } ]
+}
+----
+
+---
+
+== External References
+
+Some `meta` fields point at content that lives *outside* the document — in a
+versioned registry or playbook. They all share one shape, the **External
+Reference**:
+
+[cols="1,3", options="header"]
+|===
+| Field | Meaning
+| `id` | Stable identifier in the external source. The **only** field with normative meaning — tools resolve by `id`, never by matching `title`.
+| `title` | Human-readable label, convenience only (useful when `source` is unreachable).
+| `source` | Stable URI of the external *collection* (a registry index or playbook manifest), not a document path. Any URI; the official registry under `opencoachingformat.org` is recommended, third-party registries are first-class.
+| `source_version` | SemVer of that collection. Optional; when present it MUST be valid SemVer so resolvers can compare compatibility.
+|===
+
+Resolution is **best-effort, not a validity requirement**: a document whose
+`source` is unreachable is still valid — `id`/`title` remain useful. Validators
+check reference *shape* only and never fetch `source`.
+
+Where a reference stands in for concrete data the renderer needs, it is
+resolved into the document's normal fields at **authoring time**, and the
+reference remains as pure provenance. Renderers never resolve references.
+
+=== `meta.based_on_formation`
+
+Records the standard starting formation a play begins from, looked up from a
+versioned formation registry instead of being hand-authored. Resolved to
+concrete `entities[].x/y` at authoring time.
+
+`adjustments` is an optional list of per-entity deltas from the registry's
+stored position. `dx`/`dy` are in court units and are anchored to that
+entity's *resolved formation position* — this is a different anchor from a
+relative coordinate (`relative_to`), so `adjustments` carry no `relative_to`.
+
+[source,json]
+----
+"based_on_formation": {
+  "id": "4_out_1_in",
+  "title": "4 Out 1 In",
+  "source": "https://opencoachingformat.org/registry/formations/basketball-v1.json",
+  "source_version": "1.0.0",
+  "adjustments": [
+    { "entity": "offense_5", "dx": -0.5, "dy": 0.0, "note": "tighter to the block" }
+  ]
+}
+----
+
+=== `meta.based_on_play`
+
+Records that this play is a `variant`, `progression`, or `counter` of another
+play. Direction is fixed: the referenced play is always the base; this document
+is the derivative. A single optional reference (not an array).
+
+[cols="1,3", options="header"]
+|===
+| `relationship` | Meaning (read as "*this* play is …")
+| `variant` | a tactical variation of the base play
+| `progression` | a training step built from the base play
+| `counter` | a response to a specific defense against the base play
+|===
+
+[source,json]
+----
+"based_on_play": {
+  "id": "7c9e4f2a-1b3d-4a6e-8f0c-2d5e9a1b3c7f",
+  "title": "Pick the Picker BLOB",
+  "source": "https://opencoachingformat.org/playbooks/hoopsgeek-classics/index.json",
+  "relationship": "variant"
 }
 ----
 

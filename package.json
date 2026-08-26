@@ -1,20 +1,30 @@
 {
   "name": "@opencoachingformat/spec",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "type": "module",
   "description": "Open standard for basketball drill diagrams and animations.",
   "files": [
     "schema",
+    "positions",
     "README.md",
     "LICENSE"
   ],
+  "exports": {
+    "./schema/v1.json": "./schema/v1.json",
+    "./positions/resolve-position.mjs": "./positions/resolve-position.mjs",
+    "./positions/fiba-v1.json": "./positions/fiba-v1.json",
+    "./positions/nba-v1.json": "./positions/nba-v1.json",
+    "./positions/ncaa-v1.json": "./positions/ncaa-v1.json",
+    "./positions/nfhs-v1.json": "./positions/nfhs-v1.json"
+  },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "validate": "ajv validate --spec=draft7 -s schema/v1.json -d \"examples/*.ocf.json\" --all-errors --verbose -c ajv-formats",
     "test:invalid": "node scripts/check-invalid.mjs",
-    "test": "npm run validate && npm run test:invalid"
+    "test:positions": "node --test test/positions-anchors.test.mjs",
+    "test": "npm run validate && npm run test:invalid && npm run test:positions"
   },
   "devDependencies": {
     "ajv-cli": "^5.0.0",

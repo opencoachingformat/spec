@@ -1,0 +1,10 @@
+{
+  "meta": {
+    "id": "9f8b7c6d-5e4a-4b3c-2d1e-0f9a8b7c6d5e",
+    "title": "Bad source_version",
+    "based_on_formation": { "id": "4_out_1_in", "source_version": "2024-08" }
+  },
+  "court": { "ruleset": "fiba", "type": "half_court" },
+  "entities": [],
+  "frames": [ { "id": "f1", "actions": [], "end_state": {} } ]
+}
