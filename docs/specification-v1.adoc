@@ -286,7 +286,8 @@ the cross-ruleset anchor values in the difference table.
 
 === Ruleset Differences
 
-Key position differences across rulesets (all values in respective unit):
+Key position differences across rulesets, as centered coordinates (origin at
+court center), matching the values in `positions/{ruleset}-v1.json`:
 
 [cols="2,1,1,1,1", options="header"]
 |===
@@ -295,10 +296,16 @@ Key position differences across rulesets (all values in respective unit):
 | `top_of_the_key` y  | 5.68  | 20.75 | 20.75 | 19.75
 | `left_wing` x       | ±6.75 | ±22.15| ±20.75| ±19.75
 | `left_corner` x     | ±7.50 | ±25.0 | ±25.0 | ±25.0
-| `left_corner` y     | 13.98 | 46.58 | 46.58 | 41.58
-| `free_throw_line` y | 8.20  | 19.00 | 19.00 | 19.00
+| `left_corner` y     | 13.98 | 43.305| 43.305| 38.305
+| `free_throw_line` y | 8.20  | 28.0  | 28.0  | 23.0
 | `left_elbow` x      | ±2.45 |  ±8.0 |  ±6.0 |  ±6.0
 |===
+
+NOTE: These are centered-coordinate values (y measured from the court center,
+positive toward the offense basket), not distances from the baseline. For
+example NBA `free_throw_line` y = 28.0 is the free-throw line's position in the
+centered system (half-court 47 − 19.0 ft from baseline), not the familiar
+"19 ft from the baseline" figure.
 
 NOTE: NBA corners are defined by a straight sideline section, not an arc.
 The `left_corner` and `right_corner` positions mark the junction point where the straight section meets the arc.
