@@ -3,6 +3,15 @@
   "version": "1.1.0",
   "type": "module",
   "description": "Open standard for basketball drill diagrams and animations.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opencoachingformat/spec.git"
+  },
+  "homepage": "https://opencoachingformat.org",
+  "bugs": {
+    "url": "https://github.com/opencoachingformat/spec/issues"
+  },
+  "license": "CC-BY-4.0",
   "files": [
     "schema",
     "positions",
