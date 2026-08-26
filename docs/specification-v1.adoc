@@ -1,5 +1,5 @@
 = Open Coaching Format — Open Standard for Basketball Drill Diagrams
-:version: 1.0.0
+:version: 1.1.0
 :doctype: book
 :toc: left
 :toc-title: Table of Contents
@@ -1413,29 +1413,32 @@ npx ajv-cli validate \
 [appendix]
 == Changelog
 
-=== v2.1.0
+=== v1.1.0
 
-Adds optional `intensity` (`movement_intensity` for move/cut/dribble,
-`ball_intensity` for pass/shoot) and `physicality` (screen/defend/rebound/
-pickup) enums. Deprecates frame-level `duration_ms` in favor of per-action
-`intensity`; `duration_ms` remains valid for backward compatibility.
+Adds the *External References* convention and applies it twice under `meta`:
+`based_on_formation` (starting-formation registry reference with optional
+per-entity `adjustments`) and `based_on_play` (play lineage —
+`variant`/`progression`/`counter`). Promotes the named-position catalog to
+structured data (`positions/{fiba,nba,ncaa,nfhs}-v1.json`) exported via
+`resolveNamedPosition`. Additive and backwards-compatible.
 
-=== v2.0.0
+=== v1.0.0
 
-Semantic action model. Replaces line-based frames with per-player actions
-(move, cut, screen, defend, dribble, pass, shoot, rebound, pickup). The ball
-entity is replaced by a top-level `balls` array with a carried_by/at/dead
-lifecycle and automatic possession transfer. Frames gain explicit
-`start_state`/`end_state` anchors and outcome `branches`. The `lines` array and
-`entity_states` are removed.
+The first stable Open Coaching Format. Semantic action model: per-player
+actions (move, cut, screen, defend, dribble, pass, shoot, rebound, pickup)
+replace the earlier line-based frames. The ball entity is replaced by a
+top-level `balls` array with a carried_by/at/dead lifecycle and automatic
+possession transfer. Frames gain explicit `start_state`/`end_state` anchors
+and outcome `branches`. Actions carry optional `intensity`
+(`movement_intensity` for move/cut/dribble, `ball_intensity` for pass/shoot)
+and `physicality` (screen/defend/rebound/pickup) enums; frame-level
+`duration_ms` is deprecated in favor of per-action `intensity` but remains
+valid. Retains the FIBA-compatible entity model, the real-unit coordinate
+system (meters/feet, origin at midcourt), the named-position registry (FIBA,
+NBA, NCAA, NFHS) with a `custom` escape hatch, and semantic color roles.
 
-=== v1.0.0 (2025-02-27)
+=== v0.1.0 (2025-02-27)
 
-* Initial release
-* FIBA-compatible entity model
-* Normalized coordinate system (meters/feet, origin at midcourt)
-* Named position registry (FIBA, NBA, NCAA, NFHS)
-* Frame-based animation model with entity delta states
-* Registry approach for custom named positions
-* Semantic color roles with WCAG guidance
-* FIBA legacy import coordinate mapping
+Initial pre-stable draft — a line-based geometric format (movement/passing/
+screen lines, entity delta states per frame). Superseded by the v1.0.0
+semantic action model; retained here for historical context only.

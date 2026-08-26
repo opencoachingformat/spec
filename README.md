@@ -3,7 +3,7 @@
 **An open standard for representing sports coaching diagrams, drill animations, and playbooks as structured data.**
 
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
-[![Schema Version](https://img.shields.io/badge/schema-v1.0.1-blue)](schema/v1.json)
+[![Schema Version](https://img.shields.io/badge/schema-v1.1.0-blue)](schema/v1.json)
 [![Status: Draft](https://img.shields.io/badge/status-draft-yellow)]()
 
 ---
