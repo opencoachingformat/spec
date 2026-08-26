@@ -215,6 +215,13 @@ Positive `dx` = viewer's right. Positive `dy` = toward offense basket.
 
 All coordinates in meters (m). Backcourt positions are the exact y-negation of their frontcourt counterparts.
 
+NOTE: The machine-readable source of truth for every ruleset's named-position
+coordinates is `positions/{fiba,nba,ncaa,nfhs}-v1.json`, exported from
+`@opencoachingformat/spec` via `resolveNamedPosition(name, ruleset)`. The tables
+below are the human-readable FIBA reference; tools MUST read the JSON, not parse
+these tables. A test (`test/positions-anchors.test.mjs`) guards the JSON against
+the cross-ruleset anchor values in the difference table.
+
 [cols="2,1,1,3", options="header"]
 |===
 | Name | x (m) | y (m) | Description
