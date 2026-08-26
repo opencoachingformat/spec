@@ -5,7 +5,7 @@
 <h2 id="_abstract">1. Abstract</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>{ocf} v1.0.0</strong> is an open, ruleset-aware JSON schema for representing basketball drill diagrams and multi-step animations.
+<p><strong>{ocf} v1.1.0</strong> is an open, ruleset-aware JSON schema for representing basketball drill diagrams and multi-step animations.
 It defines a court coordinate system based on real-world units (meters or feet), a registry of named court positions per ruleset,
 a semantic entity model, and a frame-based animation structure.</p>
 </div>
@@ -2739,54 +2739,39 @@ Output only valid JSON matching https://opencoachingformat.org/schema/v1.json</c
 <h2 id="_changelog">Appendix B: Changelog</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_v2_1_0">B.1. v2.1.0</h3>
+<h3 id="_v1_1_0">B.1. v1.1.0</h3>
 <div class="paragraph">
-<p>Adds optional <code>intensity</code> (<code>movement_intensity</code> for move/cut/dribble,
-<code>ball_intensity</code> for pass/shoot) and <code>physicality</code> (screen/defend/rebound/
-pickup) enums. Deprecates frame-level <code>duration_ms</code> in favor of per-action
-<code>intensity</code>; <code>duration_ms</code> remains valid for backward compatibility.</p>
+<p>Adds the <strong>External References</strong> convention and applies it twice under <code>meta</code>:
+<code>based_on_formation</code> (starting-formation registry reference with optional
+per-entity <code>adjustments</code>) and <code>based_on_play</code> (play lineage —
+<code>variant</code>/<code>progression</code>/<code>counter</code>). Promotes the named-position catalog to
+structured data (<code>positions/{fiba,nba,ncaa,nfhs}-v1.json</code>) exported via
+<code>resolveNamedPosition</code>. Additive and backwards-compatible.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_v2_0_0">B.2. v2.0.0</h3>
+<h3 id="_v1_0_0">B.2. v1.0.0</h3>
 <div class="paragraph">
-<p>Semantic action model. Replaces line-based frames with per-player actions
-(move, cut, screen, defend, dribble, pass, shoot, rebound, pickup). The ball
-entity is replaced by a top-level <code>balls</code> array with a carried_by/at/dead
-lifecycle and automatic possession transfer. Frames gain explicit
-<code>start_state</code>/<code>end_state</code> anchors and outcome <code>branches</code>. The <code>lines</code> array and
-<code>entity_states</code> are removed.</p>
+<p>The first stable Open Coaching Format. Semantic action model: per-player
+actions (move, cut, screen, defend, dribble, pass, shoot, rebound, pickup)
+replace the earlier line-based frames. The ball entity is replaced by a
+top-level <code>balls</code> array with a carried_by/at/dead lifecycle and automatic
+possession transfer. Frames gain explicit <code>start_state</code>/<code>end_state</code> anchors
+and outcome <code>branches</code>. Actions carry optional <code>intensity</code>
+(<code>movement_intensity</code> for move/cut/dribble, <code>ball_intensity</code> for pass/shoot)
+and <code>physicality</code> (screen/defend/rebound/pickup) enums; frame-level
+<code>duration_ms</code> is deprecated in favor of per-action <code>intensity</code> but remains
+valid. Retains the FIBA-compatible entity model, the real-unit coordinate
+system (meters/feet, origin at midcourt), the named-position registry (FIBA,
+NBA, NCAA, NFHS) with a <code>custom</code> escape hatch, and semantic color roles.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_v1_0_0_2025_02_27">B.3. v1.0.0 (2025-02-27)</h3>
-<div class="ulist">
-<ul>
-<li>
-<p>Initial release</p>
-</li>
-<li>
-<p>FIBA-compatible entity model</p>
-</li>
-<li>
-<p>Normalized coordinate system (meters/feet, origin at midcourt)</p>
-</li>
-<li>
-<p>Named position registry (FIBA, NBA, NCAA, NFHS)</p>
-</li>
-<li>
-<p>Frame-based animation model with entity delta states</p>
-</li>
-<li>
-<p>Registry approach for custom named positions</p>
-</li>
-<li>
-<p>Semantic color roles with WCAG guidance</p>
-</li>
-<li>
-<p>FIBA legacy import coordinate mapping</p>
-</li>
-</ul>
+<h3 id="_v0_1_0_2025_02_27">B.3. v0.1.0 (2025-02-27)</h3>
+<div class="paragraph">
+<p>Initial pre-stable draft — a line-based geometric format (movement/passing/
+screen lines, entity delta states per frame). Superseded by the v1.0.0
+semantic action model; retained here for historical context only.</p>
 </div>
 </div>
 </div>
