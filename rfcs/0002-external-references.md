@@ -6,7 +6,7 @@
 | Title       | External References: Named Formations & Play Lineage |
 | Author(s)   | opencoachingformat maintainers                    |
 | Created     | 2026-08-26                                        |
-| Status      | Draft                                             |
+| Status      | Accepted                                          |
 | Affects     | Schema + Spec                                     |
 | Version     | Targets OCF v1.1.0                                |
 
