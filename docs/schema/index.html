@@ -1033,6 +1033,101 @@
       },
       &quot;additionalProperties&quot;: false
     },
+    &quot;formation_adjustment&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;Per-entity delta from the resolved formation position. dx/dy are in court units, anchored to that entity&#39;s registry position (not a named position, so no relative_to).&quot;,
+      &quot;required&quot;: [
+        &quot;entity&quot;,
+        &quot;dx&quot;,
+        &quot;dy&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;entity&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;dx&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;dy&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;note&quot;: {
+          &quot;type&quot;: &quot;string&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;based_on_formation&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;External reference to a starting formation in a versioned registry, resolved to entities at authoring time; pure provenance thereafter. Resolve by id, never by title.&quot;,
+      &quot;required&quot;: [
+        &quot;id&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;id&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Stable formation id in the registry. Only field with normative meaning.&quot;
+        },
+        &quot;title&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Human-readable label, convenience only.&quot;
+        },
+        &quot;source&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;format&quot;: &quot;uri&quot;,
+          &quot;description&quot;: &quot;Stable URI of the formation registry index. Any URI; not host-restricted.&quot;
+        },
+        &quot;source_version&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;SemVer of the referenced registry. Optional; when present MUST be valid SemVer.&quot;,
+          &quot;pattern&quot;: &quot;^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$&quot;
+        },
+        &quot;adjustments&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/formation_adjustment&quot;
+          }
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;based_on_play&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;External reference to another play this one derives from. The referenced play is always the base; this document is the derivative. Resolve by id, never by title.&quot;,
+      &quot;required&quot;: [
+        &quot;id&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;id&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Stable play id in the referenced playbook index. Only field with normative meaning.&quot;
+        },
+        &quot;title&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Human-readable label, convenience only.&quot;
+        },
+        &quot;source&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;format&quot;: &quot;uri&quot;,
+          &quot;description&quot;: &quot;Stable URI of the playbook index/manifest. Any URI; not host-restricted.&quot;
+        },
+        &quot;source_version&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;SemVer of the referenced playbook. Optional; when present MUST be valid SemVer.&quot;,
+          &quot;pattern&quot;: &quot;^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$&quot;
+        },
+        &quot;relationship&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;enum&quot;: [
+            &quot;variant&quot;,
+            &quot;progression&quot;,
+            &quot;counter&quot;
+          ],
+          &quot;description&quot;: &quot;How this play relates to the base. Direction is fixed: this play derives from the referenced base.&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
     &quot;color_scheme&quot;: {
       &quot;type&quot;: &quot;object&quot;,
       &quot;description&quot;: &quot;Hex color values for each semantic role.&quot;,
@@ -1299,6 +1394,12 @@
         &quot;source_url&quot;: {
           &quot;type&quot;: &quot;string&quot;,
           &quot;format&quot;: &quot;uri&quot;
+        },
+        &quot;based_on_formation&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/based_on_formation&quot;
+        },
+        &quot;based_on_play&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/based_on_play&quot;
         }
       },
       &quot;additionalProperties&quot;: false

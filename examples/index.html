@@ -310,6 +310,101 @@
       }
     }
   ]
+}</code></pre></section><section class="example" data-astro-cid-jon2qpe7><h2 id="based-on-references" data-astro-cid-jon2qpe7>4-Out-1-In Variant with Lineage</h2><p data-astro-cid-jon2qpe7>Starts from the 4 Out 1 In formation with a tighter big, recorded as a variant of an existing play.</p><pre tabindex="0" data-astro-cid-jon2qpe7><code data-astro-cid-jon2qpe7>{
+  &quot;$schema&quot;: &quot;https://opencoachingformat.org/schema/v1.json&quot;,
+  &quot;meta&quot;: {
+    &quot;id&quot;: &quot;9f8b7c6d-5e4a-4b3c-2d1e-0f9a8b7c6d5e&quot;,
+    &quot;title&quot;: &quot;4-Out-1-In Variant with Lineage&quot;,
+    &quot;description&quot;: &quot;Starts from the 4 Out 1 In formation with a tighter big, recorded as a variant of an existing play.&quot;,
+    &quot;author&quot;: &quot;OCF Examples&quot;,
+    &quot;tags&quot;: [
+      &quot;example&quot;,
+      &quot;external-references&quot;
+    ],
+    &quot;difficulty&quot;: &quot;intermediate&quot;,
+    &quot;created&quot;: &quot;2026-08-26T10:00:00Z&quot;,
+    &quot;source_format&quot;: &quot;open&quot;,
+    &quot;based_on_formation&quot;: {
+      &quot;id&quot;: &quot;4_out_1_in&quot;,
+      &quot;title&quot;: &quot;4 Out 1 In&quot;,
+      &quot;source&quot;: &quot;https://opencoachingformat.org/registry/formations/basketball-v1.json&quot;,
+      &quot;source_version&quot;: &quot;1.0.0&quot;,
+      &quot;adjustments&quot;: [
+        {
+          &quot;entity&quot;: &quot;offense_5&quot;,
+          &quot;dx&quot;: -0.5,
+          &quot;dy&quot;: 0,
+          &quot;note&quot;: &quot;tighter to the block for this play&quot;
+        }
+      ]
+    },
+    &quot;based_on_play&quot;: {
+      &quot;id&quot;: &quot;7c9e4f2a-1b3d-4a6e-8f0c-2d5e9a1b3c7f&quot;,
+      &quot;title&quot;: &quot;Pick the Picker BLOB&quot;,
+      &quot;source&quot;: &quot;https://opencoachingformat.org/playbooks/hoopsgeek-classics/index.json&quot;,
+      &quot;relationship&quot;: &quot;variant&quot;
+    }
+  },
+  &quot;court&quot;: {
+    &quot;ruleset&quot;: &quot;fiba&quot;,
+    &quot;type&quot;: &quot;half_court&quot;,
+    &quot;drill_focus&quot;: &quot;offense&quot;
+  },
+  &quot;entities&quot;: [
+    {
+      &quot;type&quot;: &quot;offense&quot;,
+      &quot;nr&quot;: 1,
+      &quot;x&quot;: 0,
+      &quot;y&quot;: 5.68
+    },
+    {
+      &quot;type&quot;: &quot;offense&quot;,
+      &quot;nr&quot;: 2,
+      &quot;x&quot;: -6.75,
+      &quot;y&quot;: 8.6
+    },
+    {
+      &quot;type&quot;: &quot;offense&quot;,
+      &quot;nr&quot;: 3,
+      &quot;x&quot;: 6.75,
+      &quot;y&quot;: 8.6
+    },
+    {
+      &quot;type&quot;: &quot;offense&quot;,
+      &quot;nr&quot;: 4,
+      &quot;x&quot;: -7.5,
+      &quot;y&quot;: 13.98
+    },
+    {
+      &quot;type&quot;: &quot;offense&quot;,
+      &quot;nr&quot;: 5,
+      &quot;x&quot;: -0.5,
+      &quot;y&quot;: 10.5
+    }
+  ],
+  &quot;balls&quot;: [
+    {
+      &quot;id&quot;: &quot;ball_1&quot;,
+      &quot;carried_by&quot;: &quot;offense_1&quot;
+    }
+  ],
+  &quot;frames&quot;: [
+    {
+      &quot;id&quot;: &quot;frame_1&quot;,
+      &quot;label&quot;: &quot;Set&quot;,
+      &quot;description&quot;: &quot;Players hold the adjusted 4 Out 1 In shape.&quot;,
+      &quot;actions&quot;: [],
+      &quot;end_state&quot;: {
+        &quot;offense_1&quot;: {
+          &quot;named&quot;: &quot;top_of_the_key&quot;
+        },
+        &quot;offense_5&quot;: {
+          &quot;x&quot;: -0.5,
+          &quot;y&quot;: 10.5
+        }
+      }
+    }
+  ]
 }</code></pre></section><section class="example" data-astro-cid-jon2qpe7><h2 id="pick-and-roll" data-astro-cid-jon2qpe7>Basic Pick &amp; Roll</h2><p data-astro-cid-jon2qpe7>Ball handler uses a ball screen at the top of the key. Screener rolls to the basket for the finish.</p><pre tabindex="0" data-astro-cid-jon2qpe7><code data-astro-cid-jon2qpe7>{
   &quot;$schema&quot;: &quot;https://opencoachingformat.org/schema/v1.json&quot;,
   &quot;meta&quot;: {
