@@ -211,7 +211,7 @@
     "action_ref": {
       "type": "string",
       "description": "Reference to another action in the same frame: '<entity_ref>.<action_type>'.",
-      "pattern": "^((offense|defense)_[1-9]|coach|(cone|station)_[1-9][0-9]*)\\.(move|cut|screen|defend|dribble|pass|shoot|rebound|pickup)$"
+      "pattern": "^((offense|defense)_[1-9]|coach|(cone|station)_[1-9][0-9]*)\\.(move|cut|screen|defend|dribble|pass|shoot|rebound|pickup|tackle|clear|faceoff|check)$"
     },
 
     "movement_intensity": {
@@ -402,6 +402,71 @@
       "additionalProperties": false
     },
 
+    "action_tackle": {
+      "type": "object",
+      "$comment": "Reserved for invasion sports (soccer/futsal/hockey). No variants defined yet; must be specified before promotion.",
+      "required": ["player", "type"],
+      "properties": {
+        "player": { "$ref": "#/definitions/entity_ref" },
+        "type": { "const": "tackle" },
+        "physicality": { "$ref": "#/definitions/physicality" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "after": { "$ref": "#/definitions/action_ref" },
+        "with": { "$ref": "#/definitions/action_ref" },
+        "on_catch": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+
+    "action_clear": {
+      "type": "object",
+      "$comment": "Reserved for invasion sports (soccer/futsal/hockey). No variants defined yet.",
+      "required": ["player", "type"],
+      "properties": {
+        "player": { "$ref": "#/definitions/entity_ref" },
+        "type": { "const": "clear" },
+        "ball_id": { "$ref": "#/definitions/ball_ref" },
+        "intensity": { "$ref": "#/definitions/ball_intensity" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "after": { "$ref": "#/definitions/action_ref" },
+        "with": { "$ref": "#/definitions/action_ref" },
+        "on_catch": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+
+    "action_faceoff": {
+      "type": "object",
+      "$comment": "Reserved for hockey. No variants defined yet.",
+      "required": ["player", "type"],
+      "properties": {
+        "player": { "$ref": "#/definitions/entity_ref" },
+        "type": { "const": "faceoff" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "after": { "$ref": "#/definitions/action_ref" },
+        "with": { "$ref": "#/definitions/action_ref" },
+        "on_catch": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+
+    "action_check": {
+      "type": "object",
+      "$comment": "Reserved for hockey. No variants defined yet.",
+      "required": ["player", "type"],
+      "properties": {
+        "player": { "$ref": "#/definitions/entity_ref" },
+        "type": { "const": "check" },
+        "on_player": { "$ref": "#/definitions/entity_ref" },
+        "physicality": { "$ref": "#/definitions/physicality" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "after": { "$ref": "#/definitions/action_ref" },
+        "with": { "$ref": "#/definitions/action_ref" },
+        "on_catch": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+
     "action": {
       "description": "Any action. Discriminated by 'type'.",
       "oneOf": [
@@ -413,7 +478,11 @@
         { "$ref": "#/definitions/action_pass" },
         { "$ref": "#/definitions/action_shoot" },
         { "$ref": "#/definitions/action_rebound" },
-        { "$ref": "#/definitions/action_pickup" }
+        { "$ref": "#/definitions/action_pickup" },
+        { "$ref": "#/definitions/action_tackle" },
+        { "$ref": "#/definitions/action_clear" },
+        { "$ref": "#/definitions/action_faceoff" },
+        { "$ref": "#/definitions/action_check" }
       ]
     },
 
