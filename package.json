@@ -1,8 +1,8 @@
 {
   "name": "@opencoachingformat/spec",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "type": "module",
-  "description": "Open standard for basketball drill diagrams and animations.",
+  "description": "Open standard for team-sport coaching diagrams and animations (invasion team sports; basketball first).",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/opencoachingformat/spec.git"
@@ -15,6 +15,7 @@
   "files": [
     "schema",
     "positions",
+    "sports",
     "README.md",
     "LICENSE"
   ],
@@ -24,7 +25,12 @@
     "./positions/fiba-v1.json": "./positions/fiba-v1.json",
     "./positions/nba-v1.json": "./positions/nba-v1.json",
     "./positions/ncaa-v1.json": "./positions/ncaa-v1.json",
-    "./positions/nfhs-v1.json": "./positions/nfhs-v1.json"
+    "./positions/nfhs-v1.json": "./positions/nfhs-v1.json",
+    "./sports/basketball-v1.json": "./sports/basketball-v1.json",
+    "./sports/soccer-v0.0.1.json": "./sports/soccer-v0.0.1.json",
+    "./sports/handball-v0.0.1.json": "./sports/handball-v0.0.1.json",
+    "./sports/hockey-v0.0.1.json": "./sports/hockey-v0.0.1.json",
+    "./sports/futsal-v0.0.1.json": "./sports/futsal-v0.0.1.json"
   },
   "publishConfig": {
     "access": "public"
@@ -33,7 +39,8 @@
     "validate": "ajv validate --spec=draft7 -s schema/v1.json -d \"examples/*.ocf.json\" --all-errors --verbose -c ajv-formats",
     "test:invalid": "node scripts/check-invalid.mjs",
     "test:positions": "node --test test/positions-anchors.test.mjs",
-    "test": "npm run validate && npm run test:invalid && npm run test:positions"
+    "test:sport": "node --test test/sport-branches.test.mjs",
+    "test": "npm run validate && npm run test:invalid && npm run test:positions && npm run test:sport"
   },
   "devDependencies": {
     "ajv-cli": "^5.0.0",

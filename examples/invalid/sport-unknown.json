@@ -1,0 +1,6 @@
+{
+  "sport": "volleyball",
+  "meta": { "id": "c3d4e5f6-3333-4a6e-8f0c-2d5e9a1b3c7f", "title": "Unknown sport" },
+  "court": { "ruleset": "fiba", "type": "half_court" },
+  "entities": [], "frames": [ { "id": "f", "actions": [], "end_state": {} } ]
+}

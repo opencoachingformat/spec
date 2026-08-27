@@ -1,16 +1,16 @@
 # Open Coaching Format (OCF)
 
-**An open standard for representing sports coaching diagrams, drill animations, and playbooks as structured data.**
+**An open standard for representing team-sport coaching diagrams, drill animations, and playbooks as structured data — for invasion team sports, basketball first.**
 
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
-[![Schema Version](https://img.shields.io/badge/schema-v1.1.1-blue)](schema/v1.json)
+[![Schema Version](https://img.shields.io/badge/schema-v1.2.0-blue)](schema/v1.json)
 [![Status: Draft](https://img.shields.io/badge/status-draft-yellow)]()
 
 ---
 
 ## What is OCF?
 
-The Open Coaching Format is a JSON-based standard for encoding sports coaching content — drills, plays, playbooks, and animated diagrams — in a structured, interoperable format.
+The Open Coaching Format is a JSON-based standard for encoding team-sport coaching content — drills, plays, playbooks, and animated diagrams — in a structured, interoperable format. It targets **invasion team sports** (basketball, soccer, handball, hockey, futsal), with **basketball fully defined first** and the others reserved with provisional vocabularies.
 
 **No open standard for this currently exists.** All major coaching tools (FIBA Europe Coaching App, FastDraw, Sportplan.net) use proprietary formats with image-only export. OCF changes that.
 

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://opencoachingformat.org/registry/sports/sport-schema-v1.json",
+  "sport": "soccer",
+  "version": "0.0.1",
+  "status": "provisional",
+  "action_types": ["move","pass","shoot","defend","dribble","tackle","clear"],
+  "variants": {},
+  "outcomes": [],
+  "rulesets": []
+}

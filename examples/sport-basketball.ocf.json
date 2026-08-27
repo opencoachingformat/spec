@@ -1,0 +1,16 @@
+{
+  "$schema": "https://opencoachingformat.org/schema/v1.json",
+  "sport": "basketball",
+  "meta": { "id": "a1b2c3d4-1111-4a6e-8f0c-2d5e9a1b3c7f", "title": "Sport-tagged basketball", "created": "2026-08-27T10:00:00Z", "source_format": "open" },
+  "court": { "ruleset": "fiba", "type": "half_court", "drill_focus": "offense" },
+  "entities": [
+    { "type": "offense", "nr": 1, "x": 0.0, "y": 5.68 },
+    { "type": "offense", "nr": 4, "x": -2.45, "y": 8.2 }
+  ],
+  "balls": [ { "id": "ball_1", "carried_by": "offense_1" } ],
+  "frames": [
+    { "id": "f1", "label": "Screen", "description": "big sets a ball screen",
+      "actions": [ { "player": "offense_4", "type": "screen", "for_player": "offense_1", "variant": "ball_screen" } ],
+      "end_state": { "offense_1": { "named": "top_of_the_key" }, "offense_4": { "x": -0.5, "y": 6.7 } } }
+  ]
+}

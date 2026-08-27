@@ -1,0 +1,7 @@
+{
+  "sport": "soccer",
+  "meta": { "id": "e5f6a7b8-5555-4a6e-8f0c-2d5e9a1b3c7f", "title": "Screen under soccer" },
+  "court": { "ruleset": "custom", "type": "full_court", "custom_dimensions": { "unit": "m", "length": 105, "width": 68, "basket_from_baseline": 0, "three_point_distance": 0, "paint_width": 40.3, "paint_depth": 16.5, "free_throw_distance": 11 } },
+  "entities": [ { "type": "offense", "nr": 4, "x": 0, "y": 8 } ],
+  "frames": [ { "id": "f", "actions": [ { "player": "offense_4", "type": "screen", "for_player": "offense_4" } ], "end_state": {} } ]
+}
