@@ -701,6 +701,135 @@
       }
     }
   ]
+}</code></pre></section><section class="example" data-astro-cid-jon2qpe7><h2 id="sport-basketball" data-astro-cid-jon2qpe7>Sport-tagged basketball</h2><p data-astro-cid-jon2qpe7></p><pre tabindex="0" data-astro-cid-jon2qpe7><code data-astro-cid-jon2qpe7>{
+  &quot;$schema&quot;: &quot;https://opencoachingformat.org/schema/v1.json&quot;,
+  &quot;sport&quot;: &quot;basketball&quot;,
+  &quot;meta&quot;: {
+    &quot;id&quot;: &quot;a1b2c3d4-1111-4a6e-8f0c-2d5e9a1b3c7f&quot;,
+    &quot;title&quot;: &quot;Sport-tagged basketball&quot;,
+    &quot;created&quot;: &quot;2026-08-27T10:00:00Z&quot;,
+    &quot;source_format&quot;: &quot;open&quot;
+  },
+  &quot;court&quot;: {
+    &quot;ruleset&quot;: &quot;fiba&quot;,
+    &quot;type&quot;: &quot;half_court&quot;,
+    &quot;drill_focus&quot;: &quot;offense&quot;
+  },
+  &quot;entities&quot;: [
+    {
+      &quot;type&quot;: &quot;offense&quot;,
+      &quot;nr&quot;: 1,
+      &quot;x&quot;: 0,
+      &quot;y&quot;: 5.68
+    },
+    {
+      &quot;type&quot;: &quot;offense&quot;,
+      &quot;nr&quot;: 4,
+      &quot;x&quot;: -2.45,
+      &quot;y&quot;: 8.2
+    }
+  ],
+  &quot;balls&quot;: [
+    {
+      &quot;id&quot;: &quot;ball_1&quot;,
+      &quot;carried_by&quot;: &quot;offense_1&quot;
+    }
+  ],
+  &quot;frames&quot;: [
+    {
+      &quot;id&quot;: &quot;f1&quot;,
+      &quot;label&quot;: &quot;Screen&quot;,
+      &quot;description&quot;: &quot;big sets a ball screen&quot;,
+      &quot;actions&quot;: [
+        {
+          &quot;player&quot;: &quot;offense_4&quot;,
+          &quot;type&quot;: &quot;screen&quot;,
+          &quot;for_player&quot;: &quot;offense_1&quot;,
+          &quot;variant&quot;: &quot;ball_screen&quot;
+        }
+      ],
+      &quot;end_state&quot;: {
+        &quot;offense_1&quot;: {
+          &quot;named&quot;: &quot;top_of_the_key&quot;
+        },
+        &quot;offense_4&quot;: {
+          &quot;x&quot;: -0.5,
+          &quot;y&quot;: 6.7
+        }
+      }
+    }
+  ]
+}</code></pre></section><section class="example" data-astro-cid-jon2qpe7><h2 id="sport-soccer" data-astro-cid-jon2qpe7>Sport-tagged soccer (provisional)</h2><p data-astro-cid-jon2qpe7></p><pre tabindex="0" data-astro-cid-jon2qpe7><code data-astro-cid-jon2qpe7>{
+  &quot;$schema&quot;: &quot;https://opencoachingformat.org/schema/v1.json&quot;,
+  &quot;sport&quot;: &quot;soccer&quot;,
+  &quot;meta&quot;: {
+    &quot;id&quot;: &quot;b2c3d4e5-2222-4a6e-8f0c-2d5e9a1b3c7f&quot;,
+    &quot;title&quot;: &quot;Sport-tagged soccer (provisional)&quot;,
+    &quot;created&quot;: &quot;2026-08-27T10:00:00Z&quot;,
+    &quot;source_format&quot;: &quot;open&quot;
+  },
+  &quot;court&quot;: {
+    &quot;ruleset&quot;: &quot;custom&quot;,
+    &quot;type&quot;: &quot;full_court&quot;,
+    &quot;custom_dimensions&quot;: {
+      &quot;unit&quot;: &quot;m&quot;,
+      &quot;length&quot;: 105,
+      &quot;width&quot;: 68,
+      &quot;basket_from_baseline&quot;: 0,
+      &quot;three_point_distance&quot;: 0,
+      &quot;paint_width&quot;: 40.3,
+      &quot;paint_depth&quot;: 16.5,
+      &quot;free_throw_distance&quot;: 11
+    }
+  },
+  &quot;entities&quot;: [
+    {
+      &quot;type&quot;: &quot;offense&quot;,
+      &quot;nr&quot;: 9,
+      &quot;x&quot;: 0,
+      &quot;y&quot;: 30
+    },
+    {
+      &quot;type&quot;: &quot;defense&quot;,
+      &quot;nr&quot;: 4,
+      &quot;x&quot;: 0,
+      &quot;y&quot;: 40
+    }
+  ],
+  &quot;balls&quot;: [
+    {
+      &quot;id&quot;: &quot;ball_1&quot;,
+      &quot;carried_by&quot;: &quot;offense_9&quot;
+    }
+  ],
+  &quot;frames&quot;: [
+    {
+      &quot;id&quot;: &quot;f1&quot;,
+      &quot;label&quot;: &quot;Tackle&quot;,
+      &quot;description&quot;: &quot;defender challenges&quot;,
+      &quot;actions&quot;: [
+        {
+          &quot;player&quot;: &quot;defense_4&quot;,
+          &quot;type&quot;: &quot;tackle&quot;
+        },
+        {
+          &quot;player&quot;: &quot;offense_9&quot;,
+          &quot;type&quot;: &quot;pass&quot;,
+          &quot;to_player&quot;: &quot;offense_9&quot;
+        }
+      ],
+      &quot;end_state&quot;: {
+        &quot;offense_9&quot;: {
+          &quot;x&quot;: 0,
+          &quot;y&quot;: 30
+        },
+        &quot;defense_4&quot;: {
+          &quot;x&quot;: 0,
+          &quot;y&quot;: 38
+        }
+      }
+    }
+  ]
 }</code></pre></section><section class="example" data-astro-cid-jon2qpe7><h2 id="transition-3v2" data-astro-cid-jon2qpe7>3v2 Transition</h2><p data-astro-cid-jon2qpe7>Three offensive players attack two defenders in transition and create a quality shot through ball movement and spacing.</p><pre tabindex="0" data-astro-cid-jon2qpe7><code data-astro-cid-jon2qpe7>{
   &quot;$schema&quot;: &quot;https://opencoachingformat.org/schema/v1.json&quot;,
   &quot;meta&quot;: {

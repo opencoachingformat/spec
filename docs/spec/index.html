@@ -1,11 +1,11 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Specification — Open Coaching Format</title><meta name="description" content="Full specification for the Open Coaching Format JSON schema: coordinate system, entities, actions, frames, and rulesets."><link rel="canonical" href="https://opencoachingformat.org/docs/spec/"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta property="og:type" content="website"><meta property="og:title" content="Specification — Open Coaching Format"><meta property="og:description" content="Full specification for the Open Coaching Format JSON schema: coordinate system, entities, actions, frames, and rulesets."><meta property="og:image" content="https://opencoachingformat.org/og-banner.svg"><meta property="og:url" content="https://opencoachingformat.org/docs/spec/"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Specification — Open Coaching Format"><meta name="twitter:description" content="Full specification for the Open Coaching Format JSON schema: coordinate system, entities, actions, frames, and rulesets."><meta name="twitter:image" content="https://opencoachingformat.org/og-banner.svg"><style>:root{color-scheme:dark;--bg-page:#0b1220;--bg-elevated:#0f172a;--border:#1e293b;--text-primary:#f1f5f9;--text-muted:#cbd5e1;--link:#93c5fd;--accent:#60a5fa;--code-bg:#111c30;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif}*{box-sizing:border-box}html,body{background:var(--bg-page);color:var(--text-primary);margin:0;padding:0}body{line-height:1.6}a{color:var(--link)}main{max-width:860px;margin:0 auto;padding:2rem 1.5rem 4rem}main.wide{max-width:1100px}pre{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:1rem;overflow-x:auto}code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}table{border-collapse:collapse;width:100%}th,td{border:1px solid var(--border);text-align:left;padding:.4rem .6rem}:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.site-header[data-astro-cid-wpvy4v7s]{background:var(--bg-elevated);border-bottom:1px solid var(--border)}.nav-bar[data-astro-cid-wpvy4v7s]{justify-content:space-between;align-items:center;max-width:1100px;margin:0 auto;padding:.75rem 1.5rem;display:flex}.brand[data-astro-cid-wpvy4v7s]{color:var(--text-primary);font-size:1.05rem;font-weight:700;text-decoration:none}.nav-inline[data-astro-cid-wpvy4v7s] ul[data-astro-cid-wpvy4v7s]{gap:.25rem;margin:0;padding:0;list-style:none;display:flex}.nav-inline[data-astro-cid-wpvy4v7s] a[data-astro-cid-wpvy4v7s]{min-height:44px;color:var(--link);border-radius:4px;align-items:center;padding:0 .9rem;font-weight:600;text-decoration:none;display:inline-flex}.nav-inline[data-astro-cid-wpvy4v7s] a[data-astro-cid-wpvy4v7s]:hover{text-decoration:underline}.nav-toggle[data-astro-cid-wpvy4v7s]{border:1px solid var(--border);cursor:pointer;background:0 0;border-radius:4px;width:44px;height:44px;padding:0;display:none}.nav-toggle-icon[data-astro-cid-wpvy4v7s],.nav-toggle-icon[data-astro-cid-wpvy4v7s]:before,.nav-toggle-icon[data-astro-cid-wpvy4v7s]:after{background:var(--text-primary);width:20px;height:2px;margin:0 auto;display:block}.nav-toggle-icon[data-astro-cid-wpvy4v7s]:before,.nav-toggle-icon[data-astro-cid-wpvy4v7s]:after{content:"";position:relative}.nav-toggle-icon[data-astro-cid-wpvy4v7s]:before{top:-6px}.nav-toggle-icon[data-astro-cid-wpvy4v7s]:after{top:4px}.nav-drawer[data-astro-cid-wpvy4v7s]{background:var(--bg-elevated);border-left:1px solid var(--border);z-index:30;width:min(320px,85vw);height:100%;padding:1rem 1.5rem;position:fixed;top:0;right:0;overflow-y:auto}.nav-drawer[data-astro-cid-wpvy4v7s][hidden]{display:none}.nav-drawer-header[data-astro-cid-wpvy4v7s]{justify-content:space-between;align-items:center;margin-bottom:1rem;display:flex}.nav-drawer[data-astro-cid-wpvy4v7s] ul[data-astro-cid-wpvy4v7s]{flex-direction:column;gap:.25rem;margin:0;padding:0;list-style:none;display:flex}.nav-drawer[data-astro-cid-wpvy4v7s] a[data-astro-cid-wpvy4v7s]{min-height:44px;color:var(--link);border-radius:4px;align-items:center;padding:0 .5rem;font-weight:600;text-decoration:none;display:flex}.nav-close[data-astro-cid-wpvy4v7s]{border:1px solid var(--border);width:44px;height:44px;color:var(--text-primary);cursor:pointer;background:0 0;border-radius:4px;font-size:1.25rem;line-height:1}.nav-backdrop[data-astro-cid-wpvy4v7s]{z-index:20;background:#02060f99;position:fixed;inset:0}.nav-backdrop[data-astro-cid-wpvy4v7s][hidden]{display:none}@media (width<=720px){.nav-inline[data-astro-cid-wpvy4v7s]{display:none}.nav-toggle[data-astro-cid-wpvy4v7s]{display:block}}
 .spec-layout[data-astro-cid-n4gyk75r]{grid-template-columns:220px 1fr;align-items:start;gap:2rem;display:grid}.mini-toc[data-astro-cid-n4gyk75r]{font-size:.9rem;position:sticky;top:1.5rem}.mini-toc-title[data-astro-cid-n4gyk75r]{color:var(--text-muted);margin:0 0 .5rem;font-weight:700}.mini-toc[data-astro-cid-n4gyk75r] ul[data-astro-cid-n4gyk75r]{flex-direction:column;gap:.35rem;margin:0;padding:0;list-style:none;display:flex}.mini-toc[data-astro-cid-n4gyk75r] a[data-astro-cid-n4gyk75r]{padding:.25rem 0;display:block}@media (width<=860px){.spec-layout[data-astro-cid-n4gyk75r]{grid-template-columns:1fr}.mini-toc[data-astro-cid-n4gyk75r]{position:static}}
-</style></head><body><header class="site-header" data-astro-cid-wpvy4v7s><div class="nav-bar" data-astro-cid-wpvy4v7s><a class="brand" href="/" data-astro-cid-wpvy4v7s>Open Coaching Format</a><button id="nav-toggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-drawer" aria-label="Open navigation menu" data-astro-cid-wpvy4v7s><span class="nav-toggle-icon" aria-hidden="true" data-astro-cid-wpvy4v7s></span></button><nav class="nav-inline" aria-label="Primary" data-astro-cid-wpvy4v7s><ul data-astro-cid-wpvy4v7s><li data-astro-cid-wpvy4v7s><a href="/" data-astro-cid-wpvy4v7s>Home</a></li><li data-astro-cid-wpvy4v7s><a href="/docs/" data-astro-cid-wpvy4v7s>Docs</a></li><li data-astro-cid-wpvy4v7s><a href="/examples/" data-astro-cid-wpvy4v7s>Examples</a></li><li data-astro-cid-wpvy4v7s><a href="/playground/" data-astro-cid-wpvy4v7s>Playground</a></li><li data-astro-cid-wpvy4v7s><a href="/playground/renderer/" data-astro-cid-wpvy4v7s>Renderer</a></li><li data-astro-cid-wpvy4v7s><a href="/errors/" data-astro-cid-wpvy4v7s>Error Codes</a></li><li data-astro-cid-wpvy4v7s><a href="/ecosystem/" data-astro-cid-wpvy4v7s>Ecosystem</a></li><li data-astro-cid-wpvy4v7s><a href="https://github.com/opencoachingformat/spec" data-astro-cid-wpvy4v7s>GitHub</a></li></ul></nav></div><div id="nav-drawer" class="nav-drawer" role="dialog" aria-modal="true" aria-label="Primary navigation" hidden data-astro-cid-wpvy4v7s><div class="nav-drawer-header" data-astro-cid-wpvy4v7s><span class="brand" data-astro-cid-wpvy4v7s>Open Coaching Format</span><button id="nav-close" class="nav-close" type="button" aria-label="Close navigation menu" data-astro-cid-wpvy4v7s><span aria-hidden="true" data-astro-cid-wpvy4v7s>&times;</span></button></div><ul data-astro-cid-wpvy4v7s><li data-astro-cid-wpvy4v7s><a href="/" data-astro-cid-wpvy4v7s>Home</a></li><li data-astro-cid-wpvy4v7s><a href="/docs/" data-astro-cid-wpvy4v7s>Docs</a></li><li data-astro-cid-wpvy4v7s><a href="/examples/" data-astro-cid-wpvy4v7s>Examples</a></li><li data-astro-cid-wpvy4v7s><a href="/playground/" data-astro-cid-wpvy4v7s>Playground</a></li><li data-astro-cid-wpvy4v7s><a href="/playground/renderer/" data-astro-cid-wpvy4v7s>Renderer</a></li><li data-astro-cid-wpvy4v7s><a href="/errors/" data-astro-cid-wpvy4v7s>Error Codes</a></li><li data-astro-cid-wpvy4v7s><a href="/ecosystem/" data-astro-cid-wpvy4v7s>Ecosystem</a></li><li data-astro-cid-wpvy4v7s><a href="https://github.com/opencoachingformat/spec" data-astro-cid-wpvy4v7s>GitHub</a></li></ul></div><div id="nav-backdrop" class="nav-backdrop" hidden data-astro-cid-wpvy4v7s></div></header><script type="module">var e=document.getElementById(`nav-toggle`),t=document.getElementById(`nav-drawer`),n=document.getElementById(`nav-backdrop`),r=document.getElementById(`nav-close`);if(e&&t&&n&&r){let i=`a[href], button:not([disabled])`;function a(){t.hidden=!1,n.hidden=!1,e.setAttribute(`aria-expanded`,`true`);let r=t.querySelector(i);r instanceof HTMLElement&&r.focus(),document.addEventListener(`keydown`,s)}function o(){t.hidden=!0,n.hidden=!0,e.setAttribute(`aria-expanded`,`false`),e.focus(),document.removeEventListener(`keydown`,s)}function s(e){if(e.key===`Escape`){o();return}if(e.key===`Tab`){let n=Array.from(t.querySelectorAll(i));if(n.length===0)return;let r=n.indexOf(document.activeElement);e.shiftKey&&r<=0?(e.preventDefault(),n[n.length-1].focus()):!e.shiftKey&&r===n.length-1&&(e.preventDefault(),n[0].focus())}}e.addEventListener(`click`,a),r.addEventListener(`click`,o),n.addEventListener(`click`,o)}</script><main class="wide"><div class="spec-layout" data-astro-cid-n4gyk75r><nav class="mini-toc" aria-label="On this page" data-astro-cid-n4gyk75r><p class="mini-toc-title" data-astro-cid-n4gyk75r>On this page</p><ul data-astro-cid-n4gyk75r><li data-astro-cid-n4gyk75r><a href="#_abstract" data-astro-cid-n4gyk75r>Abstract</a></li><li data-astro-cid-n4gyk75r><a href="#_introduction" data-astro-cid-n4gyk75r>Introduction</a></li><li data-astro-cid-n4gyk75r><a href="#_coordinate_system" data-astro-cid-n4gyk75r>Coordinate System</a></li><li data-astro-cid-n4gyk75r><a href="#_named_court_positions" data-astro-cid-n4gyk75r>Named Court Positions</a></li><li data-astro-cid-n4gyk75r><a href="#_entities" data-astro-cid-n4gyk75r>Entities</a></li><li data-astro-cid-n4gyk75r><a href="#_actions" data-astro-cid-n4gyk75r>Actions</a></li><li data-astro-cid-n4gyk75r><a href="#_frames" data-astro-cid-n4gyk75r>Frames</a></li><li data-astro-cid-n4gyk75r><a href="#_areas_and_labels" data-astro-cid-n4gyk75r>Areas and Labels</a></li><li data-astro-cid-n4gyk75r><a href="#_color_scheme" data-astro-cid-n4gyk75r>Color Scheme</a></li><li data-astro-cid-n4gyk75r><a href="#_court_configuration" data-astro-cid-n4gyk75r>Court Configuration</a></li><li data-astro-cid-n4gyk75r><a href="#_ruleset_conversion" data-astro-cid-n4gyk75r>Ruleset Conversion</a></li><li data-astro-cid-n4gyk75r><a href="#_complete_example" data-astro-cid-n4gyk75r>Complete Example</a></li><li data-astro-cid-n4gyk75r><a href="#_external_references" data-astro-cid-n4gyk75r>External References</a></li><li data-astro-cid-n4gyk75r><a href="#_schema_reference" data-astro-cid-n4gyk75r>Schema Reference</a></li><li data-astro-cid-n4gyk75r><a href="#_llm_generation_guide" data-astro-cid-n4gyk75r>LLM Generation Guide</a></li><li data-astro-cid-n4gyk75r><a href="#_fiba_import_mapping" data-astro-cid-n4gyk75r>FIBA Import Mapping</a></li><li data-astro-cid-n4gyk75r><a href="#_changelog" data-astro-cid-n4gyk75r>Changelog</a></li></ul></nav><div class="spec-content" data-astro-cid-n4gyk75r><h1>Open Coaching Format — Open Standard for Basketball Drill Diagrams</h1>
+</style></head><body><header class="site-header" data-astro-cid-wpvy4v7s><div class="nav-bar" data-astro-cid-wpvy4v7s><a class="brand" href="/" data-astro-cid-wpvy4v7s>Open Coaching Format</a><button id="nav-toggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-drawer" aria-label="Open navigation menu" data-astro-cid-wpvy4v7s><span class="nav-toggle-icon" aria-hidden="true" data-astro-cid-wpvy4v7s></span></button><nav class="nav-inline" aria-label="Primary" data-astro-cid-wpvy4v7s><ul data-astro-cid-wpvy4v7s><li data-astro-cid-wpvy4v7s><a href="/" data-astro-cid-wpvy4v7s>Home</a></li><li data-astro-cid-wpvy4v7s><a href="/docs/" data-astro-cid-wpvy4v7s>Docs</a></li><li data-astro-cid-wpvy4v7s><a href="/examples/" data-astro-cid-wpvy4v7s>Examples</a></li><li data-astro-cid-wpvy4v7s><a href="/playground/" data-astro-cid-wpvy4v7s>Playground</a></li><li data-astro-cid-wpvy4v7s><a href="/playground/renderer/" data-astro-cid-wpvy4v7s>Renderer</a></li><li data-astro-cid-wpvy4v7s><a href="/errors/" data-astro-cid-wpvy4v7s>Error Codes</a></li><li data-astro-cid-wpvy4v7s><a href="/ecosystem/" data-astro-cid-wpvy4v7s>Ecosystem</a></li><li data-astro-cid-wpvy4v7s><a href="https://github.com/opencoachingformat/spec" data-astro-cid-wpvy4v7s>GitHub</a></li></ul></nav></div><div id="nav-drawer" class="nav-drawer" role="dialog" aria-modal="true" aria-label="Primary navigation" hidden data-astro-cid-wpvy4v7s><div class="nav-drawer-header" data-astro-cid-wpvy4v7s><span class="brand" data-astro-cid-wpvy4v7s>Open Coaching Format</span><button id="nav-close" class="nav-close" type="button" aria-label="Close navigation menu" data-astro-cid-wpvy4v7s><span aria-hidden="true" data-astro-cid-wpvy4v7s>&times;</span></button></div><ul data-astro-cid-wpvy4v7s><li data-astro-cid-wpvy4v7s><a href="/" data-astro-cid-wpvy4v7s>Home</a></li><li data-astro-cid-wpvy4v7s><a href="/docs/" data-astro-cid-wpvy4v7s>Docs</a></li><li data-astro-cid-wpvy4v7s><a href="/examples/" data-astro-cid-wpvy4v7s>Examples</a></li><li data-astro-cid-wpvy4v7s><a href="/playground/" data-astro-cid-wpvy4v7s>Playground</a></li><li data-astro-cid-wpvy4v7s><a href="/playground/renderer/" data-astro-cid-wpvy4v7s>Renderer</a></li><li data-astro-cid-wpvy4v7s><a href="/errors/" data-astro-cid-wpvy4v7s>Error Codes</a></li><li data-astro-cid-wpvy4v7s><a href="/ecosystem/" data-astro-cid-wpvy4v7s>Ecosystem</a></li><li data-astro-cid-wpvy4v7s><a href="https://github.com/opencoachingformat/spec" data-astro-cid-wpvy4v7s>GitHub</a></li></ul></div><div id="nav-backdrop" class="nav-backdrop" hidden data-astro-cid-wpvy4v7s></div></header><script type="module">var e=document.getElementById(`nav-toggle`),t=document.getElementById(`nav-drawer`),n=document.getElementById(`nav-backdrop`),r=document.getElementById(`nav-close`);if(e&&t&&n&&r){let i=`a[href], button:not([disabled])`;function a(){t.hidden=!1,n.hidden=!1,e.setAttribute(`aria-expanded`,`true`);let r=t.querySelector(i);r instanceof HTMLElement&&r.focus(),document.addEventListener(`keydown`,s)}function o(){t.hidden=!0,n.hidden=!0,e.setAttribute(`aria-expanded`,`false`),e.focus(),document.removeEventListener(`keydown`,s)}function s(e){if(e.key===`Escape`){o();return}if(e.key===`Tab`){let n=Array.from(t.querySelectorAll(i));if(n.length===0)return;let r=n.indexOf(document.activeElement);e.shiftKey&&r<=0?(e.preventDefault(),n[n.length-1].focus()):!e.shiftKey&&r===n.length-1&&(e.preventDefault(),n[0].focus())}}e.addEventListener(`click`,a),r.addEventListener(`click`,o),n.addEventListener(`click`,o)}</script><main class="wide"><div class="spec-layout" data-astro-cid-n4gyk75r><nav class="mini-toc" aria-label="On this page" data-astro-cid-n4gyk75r><p class="mini-toc-title" data-astro-cid-n4gyk75r>On this page</p><ul data-astro-cid-n4gyk75r><li data-astro-cid-n4gyk75r><a href="#_abstract" data-astro-cid-n4gyk75r>Abstract</a></li><li data-astro-cid-n4gyk75r><a href="#_introduction" data-astro-cid-n4gyk75r>Introduction</a></li><li data-astro-cid-n4gyk75r><a href="#_coordinate_system" data-astro-cid-n4gyk75r>Coordinate System</a></li><li data-astro-cid-n4gyk75r><a href="#_named_court_positions" data-astro-cid-n4gyk75r>Named Court Positions</a></li><li data-astro-cid-n4gyk75r><a href="#_entities" data-astro-cid-n4gyk75r>Entities</a></li><li data-astro-cid-n4gyk75r><a href="#_sport" data-astro-cid-n4gyk75r>Sport</a></li><li data-astro-cid-n4gyk75r><a href="#_actions" data-astro-cid-n4gyk75r>Actions</a></li><li data-astro-cid-n4gyk75r><a href="#_frames" data-astro-cid-n4gyk75r>Frames</a></li><li data-astro-cid-n4gyk75r><a href="#_areas_and_labels" data-astro-cid-n4gyk75r>Areas and Labels</a></li><li data-astro-cid-n4gyk75r><a href="#_color_scheme" data-astro-cid-n4gyk75r>Color Scheme</a></li><li data-astro-cid-n4gyk75r><a href="#_court_configuration" data-astro-cid-n4gyk75r>Court Configuration</a></li><li data-astro-cid-n4gyk75r><a href="#_ruleset_conversion" data-astro-cid-n4gyk75r>Ruleset Conversion</a></li><li data-astro-cid-n4gyk75r><a href="#_complete_example" data-astro-cid-n4gyk75r>Complete Example</a></li><li data-astro-cid-n4gyk75r><a href="#_external_references" data-astro-cid-n4gyk75r>External References</a></li><li data-astro-cid-n4gyk75r><a href="#_schema_reference" data-astro-cid-n4gyk75r>Schema Reference</a></li><li data-astro-cid-n4gyk75r><a href="#_llm_generation_guide" data-astro-cid-n4gyk75r>LLM Generation Guide</a></li><li data-astro-cid-n4gyk75r><a href="#_fiba_import_mapping" data-astro-cid-n4gyk75r>FIBA Import Mapping</a></li><li data-astro-cid-n4gyk75r><a href="#_changelog" data-astro-cid-n4gyk75r>Changelog</a></li></ul></nav><div class="spec-content" data-astro-cid-n4gyk75r><h1>Open Coaching Format — Open Standard for Basketball Drill Diagrams</h1>
 <div class="sect1">
 <h2 id="_abstract">1. Abstract</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>{ocf} v1.1.1</strong> is an open, ruleset-aware JSON schema for representing basketball drill diagrams and multi-step animations.
+<p><strong>{ocf} v1.2.0</strong> is an open, ruleset-aware JSON schema for representing basketball drill diagrams and multi-step animations.
 It defines a court coordinate system based on real-world units (meters or feet), a registry of named court positions per ruleset,
 a semantic entity model, and a frame-based animation structure.</p>
 </div>
@@ -1051,7 +1051,34 @@ on the same ball, the ball becomes <code>dead</code>.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_actions">6. Actions</h2>
+<h2 id="_sport">6. Sport</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>OCF targets <strong>invasion team sports</strong> — two teams sharing a field, ball/puck
+possession, and off-ball movement (basketball, soccer, handball, hockey,
+futsal). Basketball is fully defined; the others are reserved with provisional
+action vocabularies.</p>
+</div>
+<div class="paragraph">
+<p>The optional <code>sport</code> field declares the sport:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"sport": "basketball"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>sport</code> is optional and defaults to <code>basketball</code> for backwards compatibility;
+it is planned to become required in v2. The declared sport determines which
+action types (and variants) are valid — e.g. <code>screen</code>/<code>rebound</code> are valid under
+<code>basketball</code>, <code>tackle</code>/<code>clear</code> under <code>soccer</code>. Documents with no <code>sport</code> field
+are treated as basketball.</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_actions">7. Actions</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Movement and ball events are expressed as semantic <strong>actions</strong>, not geometric
@@ -1060,7 +1087,7 @@ has a required <code>player</code> and <code>type</code>; everything else is opt
 sketch quickly or annotate in full detail.</p>
 </div>
 <div class="sect2">
-<h3 id="_action_types">6.1. Action Types</h3>
+<h3 id="_action_types">7.1. Action Types</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col width="14.2857%">
@@ -1187,7 +1214,7 @@ is not offset — the offset applies only to a <strong>carried</strong> ball.</p
 </div>
 </div>
 <div class="sect2">
-<h3 id="_movement_sequences">6.2. Movement Sequences</h3>
+<h3 id="_movement_sequences">7.2. Movement Sequences</h3>
 <div class="paragraph">
 <p><code>move</code>, <code>cut</code> and <code>dribble</code> carry a <code>moves[]</code> sequence. A move <strong>without</strong> <code>to</code> is
 a move on the spot (ball handling / fake); a move <strong>with</strong> <code>to</code> carries the player
@@ -1213,7 +1240,7 @@ position in the frame <code>end_state</code>. Reference fields (<code>around_pla
 </div>
 </div>
 <div class="sect2">
-<h3 id="_intensity_physicality">6.3. Intensity &amp; Physicality</h3>
+<h3 id="_intensity_physicality">7.3. Intensity &amp; Physicality</h3>
 <div class="paragraph">
 <p>Two optional, independent enums express relative execution style. Neither
 implies a concrete duration — a downstream application combines them with
@@ -1278,7 +1305,7 @@ new play files should express tempo via <code>intensity</code> instead.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_timing">6.4. Timing</h3>
+<h3 id="_timing">7.4. Timing</h3>
 <div class="paragraph">
 <p>Actions express ordering semantically, not in seconds (omitted = at frame
 start):</p>
@@ -1314,13 +1341,13 @@ start):</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_frames">7. Frames</h2>
+<h2 id="_frames">8. Frames</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>A frame is a coaching phase. It combines explicit anchors with semantic actions.</p>
 </div>
 <div class="sect2">
-<h3 id="_frame_model">7.1. Frame Model</h3>
+<h3 id="_frame_model">8.1. Frame Model</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col width="20%">
@@ -1379,7 +1406,7 @@ start):</p>
 </table>
 </div>
 <div class="sect2">
-<h3 id="_states">7.2. States</h3>
+<h3 id="_states">8.2. States</h3>
 <div class="paragraph">
 <p><code>start_state</code> and <code>end_state</code> map entity refs to coordinates, plus an optional
 <code>balls</code> map of ball ref &#8594; ball state. Because each frame carries an explicit
@@ -1401,7 +1428,7 @@ explicitly only at jumps, steals, rebounds or continuum resets.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_branches">7.3. Branches</h3>
+<h3 id="_branches">8.3. Branches</h3>
 <div class="paragraph">
 <p>Without <code>branches</code>, the next frame in the array follows. With <code>branches</code>, the
 outcome selects the next frame. Outcomes are <code>make</code>, <code>miss</code>, <code>turnover</code>,
@@ -1419,10 +1446,10 @@ ball <code>dead</code>.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_areas_and_labels">8. Areas and Labels</h2>
+<h2 id="_areas_and_labels">9. Areas and Labels</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_areas">8.1. Areas</h3>
+<h3 id="_areas">9.1. Areas</h3>
 <div class="paragraph">
 <p>Highlighted zones for marking training areas, defensive zones, or emphasis regions.</p>
 </div>
@@ -1470,7 +1497,7 @@ ball <code>dead</code>.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_labels">8.2. Labels</h3>
+<h3 id="_labels">9.2. Labels</h3>
 <div class="paragraph">
 <p>Free text annotations on the court:</p>
 </div>
@@ -1489,10 +1516,10 @@ ball <code>dead</code>.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_color_scheme">9. Color Scheme</h2>
+<h2 id="_color_scheme">10. Color Scheme</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_design">9.1. Design</h3>
+<h3 id="_design">10.1. Design</h3>
 <div class="paragraph">
 <p>Colors are defined as semantic roles, not as direct hex values in entities or lines.
 This allows editors to customize the appearance globally without modifying individual elements.</p>
@@ -1570,7 +1597,7 @@ This allows editors to customize the appearance globally without modifying indiv
 </table>
 </div>
 <div class="sect2">
-<h3 id="_wcag_accessibility">9.2. WCAG Accessibility</h3>
+<h3 id="_wcag_accessibility">10.2. WCAG Accessibility</h3>
 <div class="admonitionblock important">
 <table>
 <tr>
@@ -1664,7 +1691,7 @@ This matches the FIBA SVG renderer behavior.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_overriding_colors">9.3. Overriding Colors</h3>
+<h3 id="_overriding_colors">10.3. Overriding Colors</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-json" data-lang="json">"color_scheme": {
@@ -1683,10 +1710,10 @@ This matches the FIBA SVG renderer behavior.
 </div>
 </div>
 <div class="sect1">
-<h2 id="_court_configuration">10. Court Configuration</h2>
+<h2 id="_court_configuration">11. Court Configuration</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_supported_rulesets">10.1. Supported Rulesets</h3>
+<h3 id="_supported_rulesets">11.1. Supported Rulesets</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col width="16.6666%">
@@ -1737,7 +1764,7 @@ This matches the FIBA SVG renderer behavior.
 </table>
 </div>
 <div class="sect2">
-<h3 id="_half_court_vs_full_court">10.2. Half Court vs Full Court</h3>
+<h3 id="_half_court_vs_full_court">11.2. Half Court vs Full Court</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col width="25%">
@@ -1762,7 +1789,7 @@ This matches the FIBA SVG renderer behavior.
 </table>
 </div>
 <div class="sect2">
-<h3 id="_drill_focus">10.3. Drill Focus</h3>
+<h3 id="_drill_focus">11.3. Drill Focus</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col width="25%">
@@ -1795,7 +1822,7 @@ This matches the FIBA SVG renderer behavior.
 </table>
 </div>
 <div class="sect2">
-<h3 id="_custom_ruleset">10.4. Custom Ruleset</h3>
+<h3 id="_custom_ruleset">11.4. Custom Ruleset</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-json" data-lang="json">"court": {
@@ -1820,14 +1847,14 @@ This matches the FIBA SVG renderer behavior.
 </div>
 </div>
 <div class="sect1">
-<h2 id="_ruleset_conversion">11. Ruleset Conversion</h2>
+<h2 id="_ruleset_conversion">12. Ruleset Conversion</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Converting a drill between rulesets is an explicit, lossless operation for <strong>named positions</strong>
 and a best-effort proportional mapping for <strong>free coordinates</strong>.</p>
 </div>
 <div class="sect2">
-<h3 id="_named_position_conversion">11.1. Named Position Conversion</h3>
+<h3 id="_named_position_conversion">12.1. Named Position Conversion</h3>
 <div class="paragraph">
 <p>Named positions are looked up independently in each ruleset&#8217;s coordinate table.
 The semantic meaning is preserved exactly.</p>
@@ -1840,7 +1867,7 @@ The semantic meaning is preserved exactly.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_free_coordinate_conversion">11.2. Free Coordinate Conversion</h3>
+<h3 id="_free_coordinate_conversion">12.2. Free Coordinate Conversion</h3>
 <div class="paragraph">
 <p>Free absolute coordinates are converted proportionally:</p>
 </div>
@@ -1872,7 +1899,7 @@ Please verify their positions against the target ruleset."</em></p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_fiba_legacy_import">11.3. FIBA Legacy Import</h3>
+<h3 id="_fiba_legacy_import">12.3. FIBA Legacy Import</h3>
 <div class="paragraph">
 <p>Existing FIBA Europe diagrams use a proprietary pixel coordinate system (384 × 540).
 Conversion to {ocf} FIBA coordinates:</p>
@@ -1901,10 +1928,10 @@ The y-axis is inverted (y increases downward in FIBA, upward in {ocf}).
 </div>
 </div>
 <div class="sect1">
-<h2 id="_complete_example">12. Complete Example</h2>
+<h2 id="_complete_example">13. Complete Example</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_pick_roll_half_court_fiba">12.1. Pick &amp; Roll — Half Court, FIBA</h3>
+<h3 id="_pick_roll_half_court_fiba">13.1. Pick &amp; Roll — Half Court, FIBA</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-json" data-lang="json">{
@@ -1993,7 +2020,7 @@ The y-axis is inverted (y increases downward in FIBA, upward in {ocf}).
 </div>
 </div>
 <div class="sect1">
-<h2 id="_external_references">13. External References</h2>
+<h2 id="_external_references">14. External References</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Some <code>meta</code> fields point at content that lives <strong>outside</strong> the document — in a
@@ -2041,7 +2068,7 @@ resolved into the document&#8217;s normal fields at <strong>authoring time</stro
 reference remains as pure provenance. Renderers never resolve references.</p>
 </div>
 <div class="sect2">
-<h3 id="_meta_based_on_formation">13.1. <code>meta.based_on_formation</code></h3>
+<h3 id="_meta_based_on_formation">14.1. <code>meta.based_on_formation</code></h3>
 <div class="paragraph">
 <p>Records the standard starting formation a play begins from, looked up from a
 versioned formation registry instead of being hand-authored. Resolved to
@@ -2068,7 +2095,7 @@ relative coordinate (<code>relative_to</code>), so <code>adjustments</code> carr
 </div>
 </div>
 <div class="sect2">
-<h3 id="_meta_based_on_play">13.2. <code>meta.based_on_play</code></h3>
+<h3 id="_meta_based_on_play">14.2. <code>meta.based_on_play</code></h3>
 <div class="paragraph">
 <p>Records that this play is a <code>variant</code>, <code>progression</code>, or <code>counter</code> of another
 play. Direction is fixed: the referenced play is always the base; this document
@@ -2115,10 +2142,10 @@ is the derivative. A single optional reference (not an array).</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_schema_reference">14. Schema Reference</h2>
+<h2 id="_schema_reference">15. Schema Reference</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_top_level_structure">14.1. Top-Level Structure</h3>
+<h3 id="_top_level_structure">15.1. Top-Level Structure</h3>
 <div class="literalblock">
 <div class="content">
 <pre>@startuml
@@ -2211,7 +2238,7 @@ Action *-- Coordinate
 </div>
 </div>
 <div class="sect3">
-<h4 id="_top_level_fields">14.1.1. Top-Level Fields</h4>
+<h4 id="_top_level_fields">15.1.1. Top-Level Fields</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col width="20%">
@@ -2276,7 +2303,7 @@ Action *-- Coordinate
 </div>
 </div>
 <div class="sect2">
-<h3 id="_coordinate_oneof">14.2. Coordinate oneOf</h3>
+<h3 id="_coordinate_oneof">15.2. Coordinate oneOf</h3>
 <div class="literalblock">
 <div class="content">
 <pre>@startuml
@@ -2308,7 +2335,7 @@ Coordinate &lt;|-- RelativeCoordinate
 </div>
 </div>
 <div class="sect2">
-<h3 id="_enums_summary">14.3. Enums Summary</h3>
+<h3 id="_enums_summary">15.3. Enums Summary</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col width="25%">
@@ -2424,10 +2451,10 @@ Per-move <code>variant</code> values are recommended vocabulary; the schema acce
 </div>
 </div>
 <div class="sect1">
-<h2 id="_llm_generation_guide">15. LLM Generation Guide</h2>
+<h2 id="_llm_generation_guide">16. LLM Generation Guide</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_prompt_pattern">15.1. Prompt Pattern</h3>
+<h3 id="_prompt_pattern">16.1. Prompt Pattern</h3>
 <div class="paragraph">
 <p>{ocf} is designed so that LLMs can generate valid drill JSON from natural language descriptions.
 The key is the named position vocabulary — it grounds spatial references in a controlled set of terms.</p>
@@ -2456,7 +2483,7 @@ Output only valid JSON matching https://opencoachingformat.org/schema/v1.json</c
 </div>
 </div>
 <div class="sect2">
-<h3 id="_llm_output_tips">15.2. LLM Output Tips</h3>
+<h3 id="_llm_output_tips">16.2. LLM Output Tips</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -2484,7 +2511,7 @@ Output only valid JSON matching https://opencoachingformat.org/schema/v1.json</c
 </div>
 </div>
 <div class="sect2">
-<h3 id="_validation">15.3. Validation</h3>
+<h3 id="_validation">16.3. Validation</h3>
 <div class="paragraph">
 <p>After LLM generation, validate against the JSON Schema:</p>
 </div>
@@ -2739,7 +2766,16 @@ Output only valid JSON matching https://opencoachingformat.org/schema/v1.json</c
 <h2 id="_changelog">Appendix B: Changelog</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_v1_1_1">B.1. v1.1.1</h3>
+<h3 id="_v1_2_0">B.1. v1.2.0</h3>
+<div class="paragraph">
+<p>Adds the optional <code>sport</code> field and per-sport action-type scoping (RFC 0003).
+Basketball is fully defined; soccer/handball/hockey/futsal are reserved with
+provisional vocabularies. Additive and backwards-compatible — documents without
+a <code>sport</code> field validate as basketball.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_v1_1_1">B.2. v1.1.1</h3>
 <div class="paragraph">
 <p>Tooling and distribution fixes only; no schema shape change. Publishes the
 schema to its canonical <code>$id</code> URL (<code><a href="https://opencoachingformat.org/schema/v1.json" class="bare">https://opencoachingformat.org/schema/v1.json</a></code>),
@@ -2749,7 +2785,7 @@ valid against v1.1.0 unchanged.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_v1_1_0">B.2. v1.1.0</h3>
+<h3 id="_v1_1_0">B.3. v1.1.0</h3>
 <div class="paragraph">
 <p>Adds the <strong>External References</strong> convention and applies it twice under <code>meta</code>:
 <code>based_on_formation</code> (starting-formation registry reference with optional
@@ -2760,7 +2796,7 @@ structured data (<code>positions/{fiba,nba,ncaa,nfhs}-v1.json</code>) exported v
 </div>
 </div>
 <div class="sect2">
-<h3 id="_v1_0_0">B.3. v1.0.0</h3>
+<h3 id="_v1_0_0">B.4. v1.0.0</h3>
 <div class="paragraph">
 <p>The first stable Open Coaching Format. Semantic action model: per-player
 actions (move, cut, screen, defend, dribble, pass, shoot, rebound, pickup)
@@ -2777,7 +2813,7 @@ NBA, NCAA, NFHS) with a <code>custom</code> escape hatch, and semantic color rol
 </div>
 </div>
 <div class="sect2">
-<h3 id="_v0_1_0_2025_02_27">B.4. v0.1.0 (2025-02-27)</h3>
+<h3 id="_v0_1_0_2025_02_27">B.5. v0.1.0 (2025-02-27)</h3>
 <div class="paragraph">
 <p>Initial pre-stable draft — a line-based geometric format (movement/passing/
 screen lines, entity delta states per frame). Superseded by the v1.0.0
