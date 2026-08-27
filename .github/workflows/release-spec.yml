@@ -95,9 +95,17 @@ jobs:
         env:
           VERSION: ${{ github.ref_name }}
         run: |
+          # Version-pinned copy (immutable, for documents that pin a release).
           mkdir -p "dist/${VERSION}"
           cp schema/v1.json "dist/${VERSION}/ocf-action-v1.json"
           echo "Published schema/v1.json -> dist/${VERSION}/ocf-action-v1.json"
+          # Canonical copy at the schema's own $id URL
+          # (https://opencoachingformat.org/schema/v1.json). This is the URL every
+          # document's "$schema" points at, so it MUST resolve; it always tracks the
+          # latest v1.x release. Previously missing -> the $id URL 404'd.
+          mkdir -p dist/schema
+          cp schema/v1.json dist/schema/v1.json
+          echo "Published schema/v1.json -> dist/schema/v1.json (canonical \$id)"
 
       - name: Deploy to gh-pages (Step C)
         uses: peaceiris/actions-gh-pages@v4
