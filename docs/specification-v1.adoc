@@ -1,4 +1,4 @@
-= Open Coaching Format — Open Standard for Basketball Drill Diagrams
+= Open Coaching Format — Open Standard for Team-Sport Coaching Diagrams
 :version: 1.2.0
 :doctype: book
 :toc: left
@@ -22,7 +22,7 @@
 [abstract]
 == Abstract
 
-*{ocf} v{version}* is an open, ruleset-aware JSON schema for representing basketball drill diagrams and multi-step animations.
+*{ocf} v{version}* is an open, ruleset-aware JSON schema for representing team-sport coaching diagrams and multi-step animations — targeting invasion team sports, with basketball fully defined first.
 It defines a court coordinate system based on real-world units (meters or feet), a registry of named court positions per ruleset,
 a semantic entity model, and a frame-based animation structure.
 
@@ -40,7 +40,7 @@ The format is designed to be:
 
 === Motivation
 
-No open standard exists for basketball drill diagrams.
+No open standard exists for team-sport coaching diagrams.
 All major tools (FIBA Europe Coaching App, FastDraw, Sportplan.net) use proprietary formats with image-only export.
 This prevents programmatic drill creation, LLM-assisted coaching tools, and cross-platform interoperability.
 
@@ -1295,7 +1295,7 @@ Coordinate <|-- RelativeCoordinate
 | `area.form`     | `rectangle`, `ellipse`, `triangle`
 | `color_role`    | `offense`, `defense`, `black`, `grey`, `yellow`, `green`, `red`, `blue`, `white`
 | `unit`          | `m`, `ft`
-| Action `type` | move, cut, screen, defend, dribble, pass, shoot, rebound, pickup
+| Action `type` | move, cut, screen, defend, dribble, pass, shoot, rebound, pickup, tackle, clear, faceoff, check (valid subset depends on `sport` — see the Sport section)
 | Cut `variant` | backdoor, give_and_go, flash, v_cut, l_cut, curl, flare, fade, basket
 | Screen `variant` | ball_screen, back_screen, down_screen, flare_screen, cross_screen, pin_down
 | Defend `variant` | on_ball, deny, help, hedge, switch, box_out
