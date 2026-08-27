@@ -2,6 +2,7 @@
 .example[data-astro-cid-jon2qpe7]{margin-bottom:2.5rem}
 </style></head><body><header class="site-header" data-astro-cid-wpvy4v7s><div class="nav-bar" data-astro-cid-wpvy4v7s><a class="brand" href="/" data-astro-cid-wpvy4v7s>Open Coaching Format</a><button id="nav-toggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-drawer" aria-label="Open navigation menu" data-astro-cid-wpvy4v7s><span class="nav-toggle-icon" aria-hidden="true" data-astro-cid-wpvy4v7s></span></button><nav class="nav-inline" aria-label="Primary" data-astro-cid-wpvy4v7s><ul data-astro-cid-wpvy4v7s><li data-astro-cid-wpvy4v7s><a href="/" data-astro-cid-wpvy4v7s>Home</a></li><li data-astro-cid-wpvy4v7s><a href="/docs/" data-astro-cid-wpvy4v7s>Docs</a></li><li data-astro-cid-wpvy4v7s><a href="/examples/" data-astro-cid-wpvy4v7s>Examples</a></li><li data-astro-cid-wpvy4v7s><a href="/playground/" data-astro-cid-wpvy4v7s>Playground</a></li><li data-astro-cid-wpvy4v7s><a href="/playground/renderer/" data-astro-cid-wpvy4v7s>Renderer</a></li><li data-astro-cid-wpvy4v7s><a href="/errors/" data-astro-cid-wpvy4v7s>Error Codes</a></li><li data-astro-cid-wpvy4v7s><a href="/ecosystem/" data-astro-cid-wpvy4v7s>Ecosystem</a></li><li data-astro-cid-wpvy4v7s><a href="https://github.com/opencoachingformat/spec" data-astro-cid-wpvy4v7s>GitHub</a></li></ul></nav></div><div id="nav-drawer" class="nav-drawer" role="dialog" aria-modal="true" aria-label="Primary navigation" hidden data-astro-cid-wpvy4v7s><div class="nav-drawer-header" data-astro-cid-wpvy4v7s><span class="brand" data-astro-cid-wpvy4v7s>Open Coaching Format</span><button id="nav-close" class="nav-close" type="button" aria-label="Close navigation menu" data-astro-cid-wpvy4v7s><span aria-hidden="true" data-astro-cid-wpvy4v7s>&times;</span></button></div><ul data-astro-cid-wpvy4v7s><li data-astro-cid-wpvy4v7s><a href="/" data-astro-cid-wpvy4v7s>Home</a></li><li data-astro-cid-wpvy4v7s><a href="/docs/" data-astro-cid-wpvy4v7s>Docs</a></li><li data-astro-cid-wpvy4v7s><a href="/examples/" data-astro-cid-wpvy4v7s>Examples</a></li><li data-astro-cid-wpvy4v7s><a href="/playground/" data-astro-cid-wpvy4v7s>Playground</a></li><li data-astro-cid-wpvy4v7s><a href="/playground/renderer/" data-astro-cid-wpvy4v7s>Renderer</a></li><li data-astro-cid-wpvy4v7s><a href="/errors/" data-astro-cid-wpvy4v7s>Error Codes</a></li><li data-astro-cid-wpvy4v7s><a href="/ecosystem/" data-astro-cid-wpvy4v7s>Ecosystem</a></li><li data-astro-cid-wpvy4v7s><a href="https://github.com/opencoachingformat/spec" data-astro-cid-wpvy4v7s>GitHub</a></li></ul></div><div id="nav-backdrop" class="nav-backdrop" hidden data-astro-cid-wpvy4v7s></div></header><script type="module">var e=document.getElementById(`nav-toggle`),t=document.getElementById(`nav-drawer`),n=document.getElementById(`nav-backdrop`),r=document.getElementById(`nav-close`);if(e&&t&&n&&r){let i=`a[href], button:not([disabled])`;function a(){t.hidden=!1,n.hidden=!1,e.setAttribute(`aria-expanded`,`true`);let r=t.querySelector(i);r instanceof HTMLElement&&r.focus(),document.addEventListener(`keydown`,s)}function o(){t.hidden=!0,n.hidden=!0,e.setAttribute(`aria-expanded`,`false`),e.focus(),document.removeEventListener(`keydown`,s)}function s(e){if(e.key===`Escape`){o();return}if(e.key===`Tab`){let n=Array.from(t.querySelectorAll(i));if(n.length===0)return;let r=n.indexOf(document.activeElement);e.shiftKey&&r<=0?(e.preventDefault(),n[n.length-1].focus()):!e.shiftKey&&r===n.length-1&&(e.preventDefault(),n[0].focus())}}e.addEventListener(`click`,a),r.addEventListener(`click`,o),n.addEventListener(`click`,o)}</script><main><h1 data-astro-cid-jon2qpe7>Examples</h1><p data-astro-cid-jon2qpe7>Real OCF documents, from a fully-annotated set play to a minimal quick-mode sketch. Each one validates against the current JSON Schema.</p><section class="example" data-astro-cid-jon2qpe7><h2 id="3-man-weave" data-astro-cid-jon2qpe7>3-Man Weave</h2><p data-astro-cid-jon2qpe7>Classic 3-player weave from full court. Players pass and follow their pass, weaving across the court to finish at the basket.</p><pre tabindex="0" data-astro-cid-jon2qpe7><code data-astro-cid-jon2qpe7>{
   &quot;$schema&quot;: &quot;https://opencoachingformat.org/schema/v1.json&quot;,
+  &quot;sport&quot;: &quot;basketball&quot;,
   &quot;meta&quot;: {
     &quot;id&quot;: &quot;a3c2e1d0-9b8f-4a7e-b6c5-1d2e3f4a5b6c&quot;,
     &quot;title&quot;: &quot;3-Man Weave&quot;,
@@ -55,18 +56,19 @@
       &quot;id&quot;: &quot;frame_1&quot;,
       &quot;label&quot;: &quot;Start&quot;,
       &quot;description&quot;: &quot;offense_1 passes to offense_2 and follows the pass, cutting behind offense_2.&quot;,
-      &quot;duration_ms&quot;: 1500,
       &quot;actions&quot;: [
         {
           &quot;player&quot;: &quot;offense_1&quot;,
           &quot;type&quot;: &quot;pass&quot;,
           &quot;to_player&quot;: &quot;offense_2&quot;,
           &quot;ball_id&quot;: &quot;ball_1&quot;,
-          &quot;variant&quot;: &quot;chest&quot;
+          &quot;variant&quot;: &quot;chest&quot;,
+          &quot;intensity&quot;: &quot;normal&quot;
         },
         {
           &quot;player&quot;: &quot;offense_1&quot;,
           &quot;type&quot;: &quot;cut&quot;,
+          &quot;intensity&quot;: &quot;fast&quot;,
           &quot;moves&quot;: [
             {
               &quot;to&quot;: {
@@ -102,12 +104,12 @@
       &quot;id&quot;: &quot;frame_2&quot;,
       &quot;label&quot;: &quot;First Exchange&quot;,
       &quot;description&quot;: &quot;offense_2 dribbles to the middle and passes to offense_3, then follows the pass.&quot;,
-      &quot;duration_ms&quot;: 2000,
       &quot;actions&quot;: [
         {
           &quot;player&quot;: &quot;offense_2&quot;,
           &quot;type&quot;: &quot;dribble&quot;,
           &quot;ball_id&quot;: &quot;ball_1&quot;,
+          &quot;intensity&quot;: &quot;normal&quot;,
           &quot;moves&quot;: [
             {
               &quot;to&quot;: {
@@ -123,11 +125,13 @@
           &quot;to_player&quot;: &quot;offense_3&quot;,
           &quot;ball_id&quot;: &quot;ball_1&quot;,
           &quot;variant&quot;: &quot;chest&quot;,
+          &quot;intensity&quot;: &quot;normal&quot;,
           &quot;after&quot;: &quot;offense_2.dribble&quot;
         },
         {
           &quot;player&quot;: &quot;offense_2&quot;,
           &quot;type&quot;: &quot;cut&quot;,
+          &quot;intensity&quot;: &quot;fast&quot;,
           &quot;moves&quot;: [
             {
               &quot;to&quot;: {
@@ -141,6 +145,7 @@
         {
           &quot;player&quot;: &quot;offense_1&quot;,
           &quot;type&quot;: &quot;move&quot;,
+          &quot;intensity&quot;: &quot;normal&quot;,
           &quot;moves&quot;: [
             {
               &quot;to&quot;: {
@@ -175,12 +180,12 @@
       &quot;id&quot;: &quot;frame_3&quot;,
       &quot;label&quot;: &quot;Second Exchange&quot;,
       &quot;description&quot;: &quot;offense_3 dribbles toward the middle and passes to offense_1 cutting from the left, then follows.&quot;,
-      &quot;duration_ms&quot;: 2000,
       &quot;actions&quot;: [
         {
           &quot;player&quot;: &quot;offense_3&quot;,
           &quot;type&quot;: &quot;dribble&quot;,
           &quot;ball_id&quot;: &quot;ball_1&quot;,
+          &quot;intensity&quot;: &quot;normal&quot;,
           &quot;moves&quot;: [
             {
               &quot;to&quot;: {
@@ -196,11 +201,13 @@
           &quot;to_player&quot;: &quot;offense_1&quot;,
           &quot;ball_id&quot;: &quot;ball_1&quot;,
           &quot;variant&quot;: &quot;chest&quot;,
+          &quot;intensity&quot;: &quot;normal&quot;,
           &quot;after&quot;: &quot;offense_3.dribble&quot;
         },
         {
           &quot;player&quot;: &quot;offense_3&quot;,
           &quot;type&quot;: &quot;cut&quot;,
+          &quot;intensity&quot;: &quot;fast&quot;,
           &quot;moves&quot;: [
             {
               &quot;to&quot;: {
@@ -214,6 +221,7 @@
         {
           &quot;player&quot;: &quot;offense_1&quot;,
           &quot;type&quot;: &quot;move&quot;,
+          &quot;intensity&quot;: &quot;normal&quot;,
           &quot;moves&quot;: [
             {
               &quot;to&quot;: {
@@ -226,6 +234,7 @@
         {
           &quot;player&quot;: &quot;offense_2&quot;,
           &quot;type&quot;: &quot;move&quot;,
+          &quot;intensity&quot;: &quot;normal&quot;,
           &quot;moves&quot;: [
             {
               &quot;to&quot;: {
@@ -260,12 +269,12 @@
       &quot;id&quot;: &quot;frame_4&quot;,
       &quot;label&quot;: &quot;Finish&quot;,
       &quot;description&quot;: &quot;offense_1 attacks the basket for the layup. offense_2 fills the right wing as the kick-out option.&quot;,
-      &quot;duration_ms&quot;: 2000,
       &quot;actions&quot;: [
         {
           &quot;player&quot;: &quot;offense_1&quot;,
           &quot;type&quot;: &quot;dribble&quot;,
           &quot;ball_id&quot;: &quot;ball_1&quot;,
+          &quot;intensity&quot;: &quot;fast&quot;,
           &quot;moves&quot;: [
             {
               &quot;variant&quot;: &quot;speed&quot;,
@@ -281,11 +290,13 @@
           &quot;ball_id&quot;: &quot;ball_1&quot;,
           &quot;variant&quot;: &quot;layup&quot;,
           &quot;result&quot;: &quot;make&quot;,
+          &quot;intensity&quot;: &quot;normal&quot;,
           &quot;after&quot;: &quot;offense_1.dribble&quot;
         },
         {
           &quot;player&quot;: &quot;offense_2&quot;,
           &quot;type&quot;: &quot;move&quot;,
+          &quot;intensity&quot;: &quot;normal&quot;,
           &quot;moves&quot;: [
             {
               &quot;to&quot;: {
@@ -312,6 +323,7 @@
   ]
 }</code></pre></section><section class="example" data-astro-cid-jon2qpe7><h2 id="based-on-references" data-astro-cid-jon2qpe7>4-Out-1-In Variant with Lineage</h2><p data-astro-cid-jon2qpe7>Starts from the 4 Out 1 In formation with a tighter big, recorded as a variant of an existing play.</p><pre tabindex="0" data-astro-cid-jon2qpe7><code data-astro-cid-jon2qpe7>{
   &quot;$schema&quot;: &quot;https://opencoachingformat.org/schema/v1.json&quot;,
+  &quot;sport&quot;: &quot;basketball&quot;,
   &quot;meta&quot;: {
     &quot;id&quot;: &quot;9f8b7c6d-5e4a-4b3c-2d1e-0f9a8b7c6d5e&quot;,
     &quot;title&quot;: &quot;4-Out-1-In Variant with Lineage&quot;,
@@ -405,8 +417,326 @@
       }
     }
   ]
+}</code></pre></section><section class="example" data-astro-cid-jon2qpe7><h2 id="continuous-ball-screen" data-astro-cid-jon2qpe7>Continuous Ball Screen Set</h2><p data-astro-cid-jon2qpe7>Multi-frame offensive set with consecutive ball screens. PG passes to wing and cuts, center screens and rolls, with options to kick out or reset.</p><pre tabindex="0" data-astro-cid-jon2qpe7><code data-astro-cid-jon2qpe7>{
+  &quot;$schema&quot;: &quot;https://opencoachingformat.org/schema/v1.json&quot;,
+  &quot;sport&quot;: &quot;basketball&quot;,
+  &quot;meta&quot;: {
+    &quot;id&quot;: &quot;7f3e2a1b-9c4d-4e6f-8a2b-1d3c5e7f9a0b&quot;,
+    &quot;title&quot;: &quot;Continuous Ball Screen Set&quot;,
+    &quot;description&quot;: &quot;Multi-frame offensive set with consecutive ball screens. PG passes to wing and cuts, center screens and rolls, with options to kick out or reset.&quot;,
+    &quot;author&quot;: &quot;OCF Examples&quot;,
+    &quot;tags&quot;: [
+      &quot;offense&quot;,
+      &quot;half-court&quot;,
+      &quot;ball-screen&quot;,
+      &quot;continuous&quot;,
+      &quot;pick-and-roll&quot;
+    ],
+    &quot;difficulty&quot;: &quot;advanced&quot;
+  },
+  &quot;court&quot;: {
+    &quot;ruleset&quot;: &quot;fiba&quot;,
+    &quot;type&quot;: &quot;half_court&quot;
+  },
+  &quot;entities&quot;: [
+    {
+      &quot;type&quot;: &quot;offense&quot;,
+      &quot;nr&quot;: 1,
+      &quot;x&quot;: 0,
+      &quot;y&quot;: 7
+    },
+    {
+      &quot;type&quot;: &quot;offense&quot;,
+      &quot;nr&quot;: 2,
+      &quot;x&quot;: 6.75,
+      &quot;y&quot;: 8.6
+    },
+    {
+      &quot;type&quot;: &quot;offense&quot;,
+      &quot;nr&quot;: 3,
+      &quot;x&quot;: -6.75,
+      &quot;y&quot;: 8.6
+    },
+    {
+      &quot;type&quot;: &quot;offense&quot;,
+      &quot;nr&quot;: 4,
+      &quot;x&quot;: -2.45,
+      &quot;y&quot;: 11
+    },
+    {
+      &quot;type&quot;: &quot;offense&quot;,
+      &quot;nr&quot;: 5,
+      &quot;x&quot;: 2.45,
+      &quot;y&quot;: 11
+    }
+  ],
+  &quot;balls&quot;: [
+    {
+      &quot;id&quot;: &quot;ball_1&quot;,
+      &quot;carried_by&quot;: &quot;offense_1&quot;
+    }
+  ],
+  &quot;frames&quot;: [
+    {
+      &quot;id&quot;: &quot;frame_1&quot;,
+      &quot;label&quot;: &quot;Pass to Wing &amp; Cut&quot;,
+      &quot;description&quot;: &quot;PG (1) passes to SG (2) on right wing, then cuts through to strong corner.&quot;,
+      &quot;actions&quot;: [
+        {
+          &quot;player&quot;: &quot;offense_1&quot;,
+          &quot;type&quot;: &quot;pass&quot;,
+          &quot;to_player&quot;: &quot;offense_2&quot;,
+          &quot;variant&quot;: &quot;chest&quot;,
+          &quot;intensity&quot;: &quot;normal&quot;
+        },
+        {
+          &quot;player&quot;: &quot;offense_1&quot;,
+          &quot;type&quot;: &quot;cut&quot;,
+          &quot;moves&quot;: [
+            {
+              &quot;to&quot;: {
+                &quot;named&quot;: &quot;right_corner&quot;
+              }
+            }
+          ],
+          &quot;intensity&quot;: &quot;fast&quot;
+        }
+      ],
+      &quot;end_state&quot;: {
+        &quot;offense_1&quot;: {
+          &quot;named&quot;: &quot;right_corner&quot;
+        },
+        &quot;balls&quot;: {
+          &quot;ball_1&quot;: {
+            &quot;carried_by&quot;: &quot;offense_2&quot;
+          }
+        }
+      }
+    },
+    {
+      &quot;id&quot;: &quot;frame_2&quot;,
+      &quot;label&quot;: &quot;Center Ball Screen &amp; Roll&quot;,
+      &quot;description&quot;: &quot;C (5) sets inside ball screen for SG (2). SG penetrates into paint, C rolls to baseline. PG lifts from corner to wing.&quot;,
+      &quot;actions&quot;: [
+        {
+          &quot;player&quot;: &quot;offense_5&quot;,
+          &quot;type&quot;: &quot;screen&quot;,
+          &quot;for_player&quot;: &quot;offense_2&quot;,
+          &quot;variant&quot;: &quot;ball_screen&quot;,
+          &quot;at&quot;: {
+            &quot;x&quot;: 3,
+            &quot;y&quot;: 9.5
+          },
+          &quot;physicality&quot;: &quot;aggressive&quot;
+        },
+        {
+          &quot;player&quot;: &quot;offense_2&quot;,
+          &quot;type&quot;: &quot;dribble&quot;,
+          &quot;moves&quot;: [
+            {
+              &quot;to&quot;: {
+                &quot;x&quot;: 2,
+                &quot;y&quot;: 11.5
+              }
+            }
+          ],
+          &quot;intensity&quot;: &quot;normal&quot;
+        },
+        {
+          &quot;player&quot;: &quot;offense_5&quot;,
+          &quot;type&quot;: &quot;cut&quot;,
+          &quot;moves&quot;: [
+            {
+              &quot;to&quot;: {
+                &quot;named&quot;: &quot;right_block&quot;
+              }
+            }
+          ],
+          &quot;tags&quot;: [
+            &quot;roll&quot;
+          ],
+          &quot;intensity&quot;: &quot;fast&quot;
+        },
+        {
+          &quot;player&quot;: &quot;offense_1&quot;,
+          &quot;type&quot;: &quot;move&quot;,
+          &quot;moves&quot;: [
+            {
+              &quot;to&quot;: {
+                &quot;named&quot;: &quot;right_wing&quot;
+              }
+            }
+          ],
+          &quot;intensity&quot;: &quot;normal&quot;
+        }
+      ],
+      &quot;end_state&quot;: {
+        &quot;offense_1&quot;: {
+          &quot;named&quot;: &quot;right_wing&quot;
+        },
+        &quot;offense_2&quot;: {
+          &quot;x&quot;: 2,
+          &quot;y&quot;: 11.5
+        },
+        &quot;offense_5&quot;: {
+          &quot;named&quot;: &quot;right_block&quot;
+        },
+        &quot;balls&quot;: {
+          &quot;ball_1&quot;: {
+            &quot;carried_by&quot;: &quot;offense_2&quot;
+          }
+        }
+      }
+    },
+    {
+      &quot;id&quot;: &quot;frame_3&quot;,
+      &quot;label&quot;: &quot;Kick to Left Wing&quot;,
+      &quot;description&quot;: &quot;If no shot, SG (2) passes to SF (3) spotting up on left wing, then cuts through to left corner.&quot;,
+      &quot;actions&quot;: [
+        {
+          &quot;player&quot;: &quot;offense_2&quot;,
+          &quot;type&quot;: &quot;pass&quot;,
+          &quot;to_player&quot;: &quot;offense_3&quot;,
+          &quot;variant&quot;: &quot;chest&quot;,
+          &quot;intensity&quot;: &quot;normal&quot;
+        },
+        {
+          &quot;player&quot;: &quot;offense_2&quot;,
+          &quot;type&quot;: &quot;cut&quot;,
+          &quot;moves&quot;: [
+            {
+              &quot;to&quot;: {
+                &quot;named&quot;: &quot;left_corner&quot;
+              }
+            }
+          ],
+          &quot;intensity&quot;: &quot;fast&quot;
+        }
+      ],
+      &quot;end_state&quot;: {
+        &quot;offense_2&quot;: {
+          &quot;named&quot;: &quot;left_corner&quot;
+        },
+        &quot;balls&quot;: {
+          &quot;ball_1&quot;: {
+            &quot;carried_by&quot;: &quot;offense_3&quot;
+          }
+        }
+      }
+    },
+    {
+      &quot;id&quot;: &quot;frame_4&quot;,
+      &quot;label&quot;: &quot;Second Ball Screen&quot;,
+      &quot;description&quot;: &quot;PF (4) sets inside ball screen for SF (3). SF penetrates and can score, dump off to big, or kick out to wing.&quot;,
+      &quot;actions&quot;: [
+        {
+          &quot;player&quot;: &quot;offense_4&quot;,
+          &quot;type&quot;: &quot;screen&quot;,
+          &quot;for_player&quot;: &quot;offense_3&quot;,
+          &quot;variant&quot;: &quot;ball_screen&quot;,
+          &quot;at&quot;: {
+            &quot;x&quot;: -3,
+            &quot;y&quot;: 9.5
+          },
+          &quot;physicality&quot;: &quot;aggressive&quot;
+        },
+        {
+          &quot;player&quot;: &quot;offense_3&quot;,
+          &quot;type&quot;: &quot;dribble&quot;,
+          &quot;moves&quot;: [
+            {
+              &quot;to&quot;: {
+                &quot;x&quot;: -2,
+                &quot;y&quot;: 11.5
+              }
+            }
+          ],
+          &quot;intensity&quot;: &quot;normal&quot;
+        },
+        {
+          &quot;player&quot;: &quot;offense_4&quot;,
+          &quot;type&quot;: &quot;cut&quot;,
+          &quot;moves&quot;: [
+            {
+              &quot;to&quot;: {
+                &quot;named&quot;: &quot;left_block&quot;
+              }
+            }
+          ],
+          &quot;tags&quot;: [
+            &quot;roll&quot;
+          ],
+          &quot;intensity&quot;: &quot;fast&quot;
+        }
+      ],
+      &quot;end_state&quot;: {
+        &quot;offense_3&quot;: {
+          &quot;x&quot;: -2,
+          &quot;y&quot;: 11.5
+        },
+        &quot;offense_4&quot;: {
+          &quot;named&quot;: &quot;left_block&quot;
+        },
+        &quot;balls&quot;: {
+          &quot;ball_1&quot;: {
+            &quot;carried_by&quot;: &quot;offense_3&quot;
+          }
+        }
+      }
+    },
+    {
+      &quot;id&quot;: &quot;frame_5&quot;,
+      &quot;label&quot;: &quot;Reset to PG&quot;,
+      &quot;description&quot;: &quot;SF (3) kicks out to PG (1) on wing. PG runs pick with center to reset the continuous set.&quot;,
+      &quot;actions&quot;: [
+        {
+          &quot;player&quot;: &quot;offense_3&quot;,
+          &quot;type&quot;: &quot;pass&quot;,
+          &quot;to_player&quot;: &quot;offense_1&quot;,
+          &quot;variant&quot;: &quot;chest&quot;,
+          &quot;intensity&quot;: &quot;normal&quot;
+        },
+        {
+          &quot;player&quot;: &quot;offense_5&quot;,
+          &quot;type&quot;: &quot;move&quot;,
+          &quot;moves&quot;: [
+            {
+              &quot;to&quot;: {
+                &quot;x&quot;: 0,
+                &quot;y&quot;: 9.5
+              }
+            }
+          ],
+          &quot;intensity&quot;: &quot;normal&quot;
+        },
+        {
+          &quot;player&quot;: &quot;offense_5&quot;,
+          &quot;type&quot;: &quot;screen&quot;,
+          &quot;for_player&quot;: &quot;offense_1&quot;,
+          &quot;variant&quot;: &quot;ball_screen&quot;,
+          &quot;at&quot;: {
+            &quot;x&quot;: 0,
+            &quot;y&quot;: 9
+          },
+          &quot;physicality&quot;: &quot;aggressive&quot;
+        }
+      ],
+      &quot;end_state&quot;: {
+        &quot;offense_5&quot;: {
+          &quot;x&quot;: 0,
+          &quot;y&quot;: 9
+        },
+        &quot;balls&quot;: {
+          &quot;ball_1&quot;: {
+            &quot;carried_by&quot;: &quot;offense_1&quot;
+          }
+        }
+      }
+    }
+  ]
 }</code></pre></section><section class="example" data-astro-cid-jon2qpe7><h2 id="pick-and-roll" data-astro-cid-jon2qpe7>Basic Pick &amp; Roll</h2><p data-astro-cid-jon2qpe7>Ball handler uses a ball screen at the top of the key. Screener rolls to the basket for the finish.</p><pre tabindex="0" data-astro-cid-jon2qpe7><code data-astro-cid-jon2qpe7>{
   &quot;$schema&quot;: &quot;https://opencoachingformat.org/schema/v1.json&quot;,
+  &quot;sport&quot;: &quot;basketball&quot;,
   &quot;meta&quot;: {
     &quot;id&quot;: &quot;f47ac10b-58cc-4372-a567-0e02b2c3d479&quot;,
     &quot;title&quot;: &quot;Basic Pick &amp; Roll&quot;,
@@ -465,7 +795,6 @@
       &quot;id&quot;: &quot;frame_1&quot;,
       &quot;label&quot;: &quot;Step 1 — Screen&quot;,
       &quot;description&quot;: &quot;offense_4 moves up from the left elbow to set a ball screen for offense_1 at the top of the key.&quot;,
-      &quot;duration_ms&quot;: 1500,
       &quot;actions&quot;: [
         {
           &quot;player&quot;: &quot;offense_4&quot;,
@@ -499,7 +828,6 @@
       &quot;id&quot;: &quot;frame_2&quot;,
       &quot;label&quot;: &quot;Step 2 — Attack&quot;,
       &quot;description&quot;: &quot;offense_1 uses the screen and dribbles hard left toward the elbow; offense_4 rolls to the right block.&quot;,
-      &quot;duration_ms&quot;: 2000,
       &quot;actions&quot;: [
         {
           &quot;player&quot;: &quot;offense_1&quot;,
@@ -555,7 +883,6 @@
       &quot;id&quot;: &quot;frame_3&quot;,
       &quot;label&quot;: &quot;Step 3 — Finish&quot;,
       &quot;description&quot;: &quot;offense_1 throws a bounce pass to the rolling offense_4, who finishes with a layup.&quot;,
-      &quot;duration_ms&quot;: 1500,
       &quot;actions&quot;: [
         {
           &quot;player&quot;: &quot;offense_1&quot;,
@@ -842,6 +1169,7 @@
   ]
 }</code></pre></section><section class="example" data-astro-cid-jon2qpe7><h2 id="transition-3v2" data-astro-cid-jon2qpe7>3v2 Transition</h2><p data-astro-cid-jon2qpe7>Three offensive players attack two defenders in transition and create a quality shot through ball movement and spacing.</p><pre tabindex="0" data-astro-cid-jon2qpe7><code data-astro-cid-jon2qpe7>{
   &quot;$schema&quot;: &quot;https://opencoachingformat.org/schema/v1.json&quot;,
+  &quot;sport&quot;: &quot;basketball&quot;,
   &quot;meta&quot;: {
     &quot;id&quot;: &quot;c9d8e7f6-5a4b-3c2d-1e0f-9a8b7c6d5e4f&quot;,
     &quot;title&quot;: &quot;3v2 Transition&quot;,
@@ -906,12 +1234,12 @@
       &quot;id&quot;: &quot;frame_1&quot;,
       &quot;label&quot;: &quot;Push&quot;,
       &quot;description&quot;: &quot;offense_1 pushes the ball up the middle; offense_2 and offense_3 fill the wings at full speed.&quot;,
-      &quot;duration_ms&quot;: 2000,
       &quot;actions&quot;: [
         {
           &quot;player&quot;: &quot;offense_1&quot;,
           &quot;type&quot;: &quot;dribble&quot;,
           &quot;ball_id&quot;: &quot;ball_1&quot;,
+          &quot;intensity&quot;: &quot;fast&quot;,
           &quot;moves&quot;: [
             {
               &quot;variant&quot;: &quot;speed&quot;,
@@ -925,6 +1253,7 @@
         {
           &quot;player&quot;: &quot;offense_2&quot;,
           &quot;type&quot;: &quot;move&quot;,
+          &quot;intensity&quot;: &quot;fast&quot;,
           &quot;moves&quot;: [
             {
               &quot;to&quot;: {
@@ -936,6 +1265,7 @@
         {
           &quot;player&quot;: &quot;offense_3&quot;,
           &quot;type&quot;: &quot;move&quot;,
+          &quot;intensity&quot;: &quot;fast&quot;,
           &quot;moves&quot;: [
             {
               &quot;to&quot;: {
@@ -967,12 +1297,12 @@
       &quot;id&quot;: &quot;frame_2&quot;,
       &quot;label&quot;: &quot;Draw and Kick&quot;,
       &quot;description&quot;: &quot;offense_1 attacks defense_1 to commit the help, then kicks to offense_3 in the right corner for the shot.&quot;,
-      &quot;duration_ms&quot;: 2000,
       &quot;actions&quot;: [
         {
           &quot;player&quot;: &quot;offense_1&quot;,
           &quot;type&quot;: &quot;dribble&quot;,
           &quot;ball_id&quot;: &quot;ball_1&quot;,
+          &quot;intensity&quot;: &quot;fast&quot;,
           &quot;moves&quot;: [
             {
               &quot;to&quot;: {
@@ -986,6 +1316,7 @@
           &quot;player&quot;: &quot;offense_3&quot;,
           &quot;type&quot;: &quot;cut&quot;,
           &quot;variant&quot;: &quot;fade&quot;,
+          &quot;intensity&quot;: &quot;fast&quot;,
           &quot;moves&quot;: [
             {
               &quot;to&quot;: {
@@ -1000,6 +1331,7 @@
           &quot;to_player&quot;: &quot;offense_3&quot;,
           &quot;ball_id&quot;: &quot;ball_1&quot;,
           &quot;variant&quot;: &quot;overhead&quot;,
+          &quot;intensity&quot;: &quot;hard&quot;,
           &quot;after&quot;: &quot;offense_1.dribble&quot;
         },
         {
@@ -1007,7 +1339,8 @@
           &quot;type&quot;: &quot;shoot&quot;,
           &quot;ball_id&quot;: &quot;ball_1&quot;,
           &quot;variant&quot;: &quot;three&quot;,
-          &quot;on_catch&quot;: true
+          &quot;on_catch&quot;: true,
+          &quot;intensity&quot;: &quot;normal&quot;
         }
       ],
       &quot;end_state&quot;: {
@@ -1034,7 +1367,6 @@
       &quot;id&quot;: &quot;frame_oreb&quot;,
       &quot;label&quot;: &quot;Offensive Rebound&quot;,
       &quot;description&quot;: &quot;On a miss, offense_2 crashes from the left wing for the offensive rebound and finishes.&quot;,
-      &quot;duration_ms&quot;: 1500,
       &quot;start_state&quot;: {
         &quot;offense_2&quot;: {
           &quot;named&quot;: &quot;left_wing&quot;
@@ -1064,6 +1396,7 @@
           &quot;ball_id&quot;: &quot;ball_1&quot;,
           &quot;variant&quot;: &quot;layup&quot;,
           &quot;result&quot;: &quot;make&quot;,
+          &quot;intensity&quot;: &quot;normal&quot;,
           &quot;after&quot;: &quot;offense_2.rebound&quot;
         }
       ],
