@@ -642,6 +642,13 @@
 
     "$schema": { "type": "string", "format": "uri" },
 
+    "sport": {
+      "type": "string",
+      "enum": ["basketball", "soccer", "handball", "hockey", "futsal"],
+      "default": "basketball",
+      "$comment": "Optional, default basketball (back-compat). Intended to become required in v2.0.0. basketball is fully defined; soccer/handball/hockey/futsal carry provisional minimal action whitelists pending sport-expert review."
+    },
+
     "meta": {
       "type": "object",
       "required": ["id", "title"],
@@ -726,17 +733,137 @@
 
   "additionalProperties": false,
 
-  "if": {
-    "type": "object",
-    "properties": { "court": { "type": "object", "properties": { "ruleset": { "const": "custom" } } } }
-  },
-  "then": {
-    "type": "object",
-    "properties": {
-      "court": {
+  "allOf": [
+    {
+      "if": {
         "type": "object",
-        "required": ["custom_dimensions"]
+        "properties": { "court": { "type": "object", "properties": { "ruleset": { "const": "custom" } } } }
+      },
+      "then": {
+        "type": "object",
+        "properties": { "court": { "type": "object", "required": ["custom_dimensions"] } }
+      }
+    },
+    {
+      "$comment": "sport absent OR basketball -> basketball action whitelist (default is a non-validating annotation, so absence must be handled explicitly for back-compat)",
+      "if": {
+        "anyOf": [
+          { "not": { "required": ["sport"] } },
+          { "properties": { "sport": { "const": "basketball" } } }
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "actions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": { "type": { "enum": ["move","cut","screen","defend","dribble","pass","shoot","rebound","pickup"] } }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "required": ["sport"], "properties": { "sport": { "const": "soccer" } } },
+      "then": {
+        "type": "object",
+        "properties": {
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "actions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": { "type": { "enum": ["move","pass","shoot","defend","dribble","tackle","clear"] } }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "required": ["sport"], "properties": { "sport": { "const": "handball" } } },
+      "then": {
+        "type": "object",
+        "properties": {
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "actions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": { "type": { "enum": ["move","pass","shoot","defend","cut","screen","pickup"] } }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "required": ["sport"], "properties": { "sport": { "const": "hockey" } } },
+      "then": {
+        "type": "object",
+        "properties": {
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "actions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": { "type": { "enum": ["move","pass","shoot","defend","dribble","clear","faceoff","check"] } }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "required": ["sport"], "properties": { "sport": { "const": "futsal" } } },
+      "then": {
+        "type": "object",
+        "properties": {
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "actions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": { "type": { "enum": ["move","pass","shoot","defend","dribble","tackle","clear"] } }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
-  }
+  ]
 }
