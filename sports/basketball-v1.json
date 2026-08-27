@@ -1,0 +1,17 @@
+{
+  "$schema": "https://opencoachingformat.org/registry/sports/sport-schema-v1.json",
+  "sport": "basketball",
+  "version": "1.0.0",
+  "status": "defined",
+  "action_types": ["move","cut","screen","defend","dribble","pass","shoot","rebound","pickup"],
+  "variants": {
+    "cut": ["backdoor","give_and_go","flash","v_cut","l_cut","curl","flare","fade","basket"],
+    "screen": ["ball_screen","back_screen","down_screen","flare_screen","cross_screen","pin_down"],
+    "defend": ["on_ball","deny","help","hedge","switch","box_out"],
+    "pass": ["chest","bounce","overhead","lob","baseball","hand_off","outlet"],
+    "shoot": ["jumper","three","layup","floater","dunk","hook","free_throw"],
+    "rebound": ["offensive","defensive"]
+  },
+  "outcomes": ["make","miss","turnover","steal","foul"],
+  "rulesets": ["fiba","nba","ncaa","nfhs"]
+}

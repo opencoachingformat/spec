@@ -15,6 +15,7 @@
   "files": [
     "schema",
     "positions",
+    "sports",
     "README.md",
     "LICENSE"
   ],
@@ -24,7 +25,12 @@
     "./positions/fiba-v1.json": "./positions/fiba-v1.json",
     "./positions/nba-v1.json": "./positions/nba-v1.json",
     "./positions/ncaa-v1.json": "./positions/ncaa-v1.json",
-    "./positions/nfhs-v1.json": "./positions/nfhs-v1.json"
+    "./positions/nfhs-v1.json": "./positions/nfhs-v1.json",
+    "./sports/basketball-v1.json": "./sports/basketball-v1.json",
+    "./sports/soccer-v0.0.1.json": "./sports/soccer-v0.0.1.json",
+    "./sports/handball-v0.0.1.json": "./sports/handball-v0.0.1.json",
+    "./sports/hockey-v0.0.1.json": "./sports/hockey-v0.0.1.json",
+    "./sports/futsal-v0.0.1.json": "./sports/futsal-v0.0.1.json"
   },
   "publishConfig": {
     "access": "public"
