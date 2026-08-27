@@ -790,6 +790,12 @@
       &quot;y&quot;: 30
     },
     {
+      &quot;type&quot;: &quot;offense&quot;,
+      &quot;nr&quot;: 8,
+      &quot;x&quot;: 12,
+      &quot;y&quot;: 28
+    },
+    {
       &quot;type&quot;: &quot;defense&quot;,
       &quot;nr&quot;: 4,
       &quot;x&quot;: 0,
@@ -806,7 +812,7 @@
     {
       &quot;id&quot;: &quot;f1&quot;,
       &quot;label&quot;: &quot;Tackle&quot;,
-      &quot;description&quot;: &quot;defender challenges&quot;,
+      &quot;description&quot;: &quot;defender challenges the ball carrier, who releases a pass&quot;,
       &quot;actions&quot;: [
         {
           &quot;player&quot;: &quot;defense_4&quot;,
@@ -815,13 +821,17 @@
         {
           &quot;player&quot;: &quot;offense_9&quot;,
           &quot;type&quot;: &quot;pass&quot;,
-          &quot;to_player&quot;: &quot;offense_9&quot;
+          &quot;to_player&quot;: &quot;offense_8&quot;
         }
       ],
       &quot;end_state&quot;: {
         &quot;offense_9&quot;: {
           &quot;x&quot;: 0,
           &quot;y&quot;: 30
+        },
+        &quot;offense_8&quot;: {
+          &quot;x&quot;: 12,
+          &quot;y&quot;: 28
         },
         &quot;defense_4&quot;: {
           &quot;x&quot;: 0,
