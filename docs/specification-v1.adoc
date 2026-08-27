@@ -1,5 +1,5 @@
 = Open Coaching Format — Open Standard for Basketball Drill Diagrams
-:version: 1.1.0
+:version: 1.1.1
 :doctype: book
 :toc: left
 :toc-title: Table of Contents
@@ -1412,6 +1412,14 @@ npx ajv-cli validate \
 
 [appendix]
 == Changelog
+
+=== v1.1.1
+
+Tooling and distribution fixes only; no schema shape change. Publishes the
+schema to its canonical `$id` URL (`https://opencoachingformat.org/schema/v1.json`),
+which previously 404'd; records the schema version in a `$comment`; and adds
+provenance/repository metadata for npm trusted publishing. Documents remain
+valid against v1.1.0 unchanged.
 
 === v1.1.0
 
