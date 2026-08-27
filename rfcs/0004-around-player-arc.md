@@ -6,7 +6,7 @@
 | Title       | Explicit arc for `around_player` (`side` + `arc`) |
 | Author(s)   | opencoachingformat maintainers                    |
 | Created     | 2026-08-28                                        |
-| Status      | Draft                                             |
+| Status      | Accepted                                           |
 | Affects     | Schema + Spec                                     |
 | Version     | Targets OCF v1.3.0                                |
 
