@@ -6,7 +6,7 @@
 | Title       | Sport Scoping: `sport` field + per-sport action vocabularies |
 | Author(s)   | opencoachingformat maintainers                    |
 | Created     | 2026-08-27                                        |
-| Status      | Draft                                             |
+| Status      | Accepted                                           |
 | Affects     | Schema + Spec                                     |
 | Version     | Targets OCF v1.2.0                                |
 
