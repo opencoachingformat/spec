@@ -73,6 +73,17 @@ For accepted RFCs and non-breaking changes:
 
 ---
 
+## What Does Not Belong in the Public Repos
+
+The OCF repositories are public and hold only artifacts meant to be published:
+the schema, the specification, code, examples, and RFCs. Competitive or market
+analyses, teardowns of other tools, and internal research notes should **not**
+be committed here — keep them in a private/internal location. Conclusions drawn
+from such research may of course inform a public RFC or issue, referenced by
+their result rather than by pasting the underlying material.
+
+---
+
 ## Code of Conduct
 
 This project follows the [Contributor Covenant](https://www.contributor-covenant.org/) v2.1.
@@ -88,14 +99,20 @@ OCF follows [Semantic Versioning](https://semver.org/):
 - **Minor** (v1.x.0): Additive changes (new optional fields, new named positions, new rulesets)
 - **Major** (vX.0.0): Breaking changes to the schema
 
-All schema versions are maintained in `schema/`:
+The schema file keeps a **stable name across the whole v1 line**: `schema/v1.json`
+is the canonical file (its `$id` is `https://opencoachingformat.org/schema/v1.json`)
+and it tracks the latest backwards-compatible `1.x` release. The filename only
+changes for a breaking major (`schema/v2.json`). The current release version is
+recorded inside the schema (`$comment`) and in `package.json`.
+
+Each release is also published to an immutable, version-pinned URL so
+implementations can pin exactly:
 ```
-schema/
-├── v1.json       ← current stable
-└── v1.1.json     ← when released
+https://opencoachingformat.org/schema/v1.json          ← canonical, latest v1.x
+https://opencoachingformat.org/<version>/ocf-action-v1.json  ← e.g. /v1.1.0/, immutable
 ```
 
-Old schema versions are never deleted — implementations can pin to a specific version.
+Version-pinned copies are never removed — implementations can pin to a specific version.
 
 ---
 
