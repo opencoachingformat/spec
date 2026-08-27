@@ -5,7 +5,7 @@
 <h2 id="_abstract">1. Abstract</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>{ocf} v1.1.0</strong> is an open, ruleset-aware JSON schema for representing basketball drill diagrams and multi-step animations.
+<p><strong>{ocf} v1.1.1</strong> is an open, ruleset-aware JSON schema for representing basketball drill diagrams and multi-step animations.
 It defines a court coordinate system based on real-world units (meters or feet), a registry of named court positions per ruleset,
 a semantic entity model, and a frame-based animation structure.</p>
 </div>
@@ -2739,7 +2739,17 @@ Output only valid JSON matching https://opencoachingformat.org/schema/v1.json</c
 <h2 id="_changelog">Appendix B: Changelog</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_v1_1_0">B.1. v1.1.0</h3>
+<h3 id="_v1_1_1">B.1. v1.1.1</h3>
+<div class="paragraph">
+<p>Tooling and distribution fixes only; no schema shape change. Publishes the
+schema to its canonical <code>$id</code> URL (<code><a href="https://opencoachingformat.org/schema/v1.json" class="bare">https://opencoachingformat.org/schema/v1.json</a></code>),
+which previously 404&#8217;d; records the schema version in a <code>$comment</code>; and adds
+provenance/repository metadata for npm trusted publishing. Documents remain
+valid against v1.1.0 unchanged.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_v1_1_0">B.2. v1.1.0</h3>
 <div class="paragraph">
 <p>Adds the <strong>External References</strong> convention and applies it twice under <code>meta</code>:
 <code>based_on_formation</code> (starting-formation registry reference with optional
@@ -2750,7 +2760,7 @@ structured data (<code>positions/{fiba,nba,ncaa,nfhs}-v1.json</code>) exported v
 </div>
 </div>
 <div class="sect2">
-<h3 id="_v1_0_0">B.2. v1.0.0</h3>
+<h3 id="_v1_0_0">B.3. v1.0.0</h3>
 <div class="paragraph">
 <p>The first stable Open Coaching Format. Semantic action model: per-player
 actions (move, cut, screen, defend, dribble, pass, shoot, rebound, pickup)
@@ -2767,7 +2777,7 @@ NBA, NCAA, NFHS) with a <code>custom</code> escape hatch, and semantic color rol
 </div>
 </div>
 <div class="sect2">
-<h3 id="_v0_1_0_2025_02_27">B.3. v0.1.0 (2025-02-27)</h3>
+<h3 id="_v0_1_0_2025_02_27">B.4. v0.1.0 (2025-02-27)</h3>
 <div class="paragraph">
 <p>Initial pre-stable draft — a line-based geometric format (movement/passing/
 screen lines, entity delta states per frame). Superseded by the v1.0.0
