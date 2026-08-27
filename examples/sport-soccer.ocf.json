@@ -1,0 +1,16 @@
+{
+  "$schema": "https://opencoachingformat.org/schema/v1.json",
+  "sport": "soccer",
+  "meta": { "id": "b2c3d4e5-2222-4a6e-8f0c-2d5e9a1b3c7f", "title": "Sport-tagged soccer (provisional)", "created": "2026-08-27T10:00:00Z", "source_format": "open" },
+  "court": { "ruleset": "custom", "type": "full_court", "custom_dimensions": { "unit": "m", "length": 105, "width": 68, "basket_from_baseline": 0, "three_point_distance": 0, "paint_width": 40.3, "paint_depth": 16.5, "free_throw_distance": 11 } },
+  "entities": [
+    { "type": "offense", "nr": 9, "x": 0.0, "y": 30.0 },
+    { "type": "defense", "nr": 4, "x": 0.0, "y": 40.0 }
+  ],
+  "balls": [ { "id": "ball_1", "carried_by": "offense_9" } ],
+  "frames": [
+    { "id": "f1", "label": "Tackle", "description": "defender challenges",
+      "actions": [ { "player": "defense_4", "type": "tackle" }, { "player": "offense_9", "type": "pass", "to_player": "offense_9" } ],
+      "end_state": { "offense_9": { "x": 0.0, "y": 30.0 }, "defense_4": { "x": 0.0, "y": 38.0 } } }
+  ]
+}
