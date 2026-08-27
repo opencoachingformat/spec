@@ -56,14 +56,24 @@ jobs:
       # the package to already exist (a one-time manual `npm publish`
       # bootstraps it). Provenance is automatic with trusted publishing, no
       # --provenance flag.
+      #
+      # Idempotent: skip if this exact version is already on npm. A manual
+      # workflow_dispatch run (used to re-deploy the site/canonical schema)
+      # must not fail just because the current version was already published.
       - name: Publish to npm
-        run: npm publish
+        run: |
+          PKG_VERSION="$(node -p "require('./package.json').version")"
+          if npm view "@opencoachingformat/spec@${PKG_VERSION}" version >/dev/null 2>&1; then
+            echo "@opencoachingformat/spec@${PKG_VERSION} already published — skipping npm publish."
+          else
+            npm publish
+          fi
 
   release:
-    # Only on a real tag push: this job deploys the versioned schema and
-    # notifies ocf-validator using the tag name, which is meaningless for a
-    # manual workflow_dispatch run (github.ref_name would be a branch).
-    if: github.event_name == 'push'
+    # Runs on a tag push (full release) and on manual workflow_dispatch (deploy
+    # the site + canonical schema without cutting a new version — recovery/
+    # re-deploy path). The version-pinned copy and the ocf-validator notify are
+    # gated to tag pushes below, since they are meaningless for a manual run.
     runs-on: ubuntu-latest
     name: Publish schema + docs site
     steps:
@@ -91,18 +101,24 @@ jobs:
           cp -r site/dist/. dist/
           echo "opencoachingformat.org" > dist/CNAME
 
+      # Version-pinned, immutable copy — only on a real tag push (a manual run
+      # has no release version to pin under).
       - name: Publish versioned schema (Step A)
+        if: github.event_name == 'push'
         env:
           VERSION: ${{ github.ref_name }}
         run: |
-          # Version-pinned copy (immutable, for documents that pin a release).
           mkdir -p "dist/${VERSION}"
           cp schema/v1.json "dist/${VERSION}/ocf-action-v1.json"
           echo "Published schema/v1.json -> dist/${VERSION}/ocf-action-v1.json"
-          # Canonical copy at the schema's own $id URL
-          # (https://opencoachingformat.org/schema/v1.json). This is the URL every
-          # document's "$schema" points at, so it MUST resolve; it always tracks the
-          # latest v1.x release. Previously missing -> the $id URL 404'd.
+
+      # Canonical copy at the schema's own $id URL
+      # (https://opencoachingformat.org/schema/v1.json). This is the URL every
+      # document's "$schema" points at, so it MUST resolve; it always tracks the
+      # latest v1.x. Deployed on both tag pushes and manual runs so it can be
+      # (re)published without cutting a version. Previously missing -> $id 404'd.
+      - name: Publish canonical schema (Step A2)
+        run: |
           mkdir -p dist/schema
           cp schema/v1.json dist/schema/v1.json
           echo "Published schema/v1.json -> dist/schema/v1.json (canonical \$id)"
@@ -114,7 +130,10 @@ jobs:
           publish_dir: ./dist
           keep_files: true
 
+      # Only on a tag push: a manual run publishes no new version, so there is
+      # nothing to notify downstream about (github.ref_name would be a branch).
       - name: Notify ocf-validator (Step D)
+        if: github.event_name == 'push'
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.OCF_VALIDATOR_DISPATCH_TOKEN }}
