@@ -33,7 +33,8 @@
     "validate": "ajv validate --spec=draft7 -s schema/v1.json -d \"examples/*.ocf.json\" --all-errors --verbose -c ajv-formats",
     "test:invalid": "node scripts/check-invalid.mjs",
     "test:positions": "node --test test/positions-anchors.test.mjs",
-    "test": "npm run validate && npm run test:invalid && npm run test:positions"
+    "test:sport": "node --test test/sport-branches.test.mjs",
+    "test": "npm run validate && npm run test:invalid && npm run test:positions && npm run test:sport"
   },
   "devDependencies": {
     "ajv-cli": "^5.0.0",
