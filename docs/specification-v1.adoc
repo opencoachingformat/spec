@@ -1,5 +1,5 @@
 = Open Coaching Format — Open Standard for Basketball Drill Diagrams
-:version: 1.1.1
+:version: 1.2.0
 :doctype: book
 :toc: left
 :toc-title: Table of Contents
@@ -524,6 +524,28 @@ Rendered as a small triangle. Used as training markers or obstacles.
 ----
 
 Rendered as a numbered marker with optional description. Used for circuit training drills.
+
+---
+
+== Sport
+
+OCF targets **invasion team sports** — two teams sharing a field, ball/puck
+possession, and off-ball movement (basketball, soccer, handball, hockey,
+futsal). Basketball is fully defined; the others are reserved with provisional
+action vocabularies.
+
+The optional `sport` field declares the sport:
+
+[source,json]
+----
+"sport": "basketball"
+----
+
+`sport` is optional and defaults to `basketball` for backwards compatibility;
+it is planned to become required in v2. The declared sport determines which
+action types (and variants) are valid — e.g. `screen`/`rebound` are valid under
+`basketball`, `tackle`/`clear` under `soccer`. Documents with no `sport` field
+are treated as basketball.
 
 ---
 
@@ -1412,6 +1434,13 @@ npx ajv-cli validate \
 
 [appendix]
 == Changelog
+
+=== v1.2.0
+
+Adds the optional `sport` field and per-sport action-type scoping (RFC 0003).
+Basketball is fully defined; soccer/handball/hockey/futsal are reserved with
+provisional vocabularies. Additive and backwards-compatible — documents without
+a `sport` field validate as basketball.
 
 === v1.1.1
 

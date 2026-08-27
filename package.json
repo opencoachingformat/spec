@@ -1,8 +1,8 @@
 {
   "name": "@opencoachingformat/spec",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "type": "module",
-  "description": "Open standard for basketball drill diagrams and animations.",
+  "description": "Open standard for team-sport coaching diagrams and animations (invasion team sports; basketball first).",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/opencoachingformat/spec.git"
