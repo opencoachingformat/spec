@@ -67,6 +67,9 @@ jobs:
         working-directory: site
         run: |
           npx axe http://localhost:4321/ \
+            http://localhost:4321/learn/ \
+            http://localhost:4321/use/ \
+            http://localhost:4321/build/ \
             http://localhost:4321/docs/ \
             http://localhost:4321/docs/spec/ \
             http://localhost:4321/docs/schema/ \
