@@ -25,3 +25,12 @@ export const OCF_VALIDATOR_COMMIT = '07361d99f2433f2c715486e0894da5594160a218';
 const JSDELIVR_GH_BASE = `https://cdn.jsdelivr.net/gh/opencoachingformat/ocf-validator@${OCF_VALIDATOR_COMMIT}`;
 
 export const OCF_ERROR_CODES_URL = `${JSDELIVR_GH_BASE}/shared/error-codes.json`;
+
+// arc42 architecture docs live in the same ocf-validator repo, under
+// docs/arc42/*.md, but they are NOT part of the published npm package and can
+// be re-pinned independently of the validator bundle — so they get their own
+// commit pin (identical value today, deliberately separate). build-arc42.mjs
+// fetches each section file from this base via jsDelivr's GitHub-file CDN.
+export const OCF_ARC42_COMMIT = '07361d99f2433f2c715486e0894da5594160a218';
+
+export const OCF_ARC42_BASE_URL = `https://cdn.jsdelivr.net/gh/opencoachingformat/ocf-validator@${OCF_ARC42_COMMIT}/docs/arc42`;
