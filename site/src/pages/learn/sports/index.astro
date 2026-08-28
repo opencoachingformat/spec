@@ -1,0 +1,61 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Card from '../../../components/Card.astro';
+import sports from '../../../generated/sports.json';
+
+const descriptions = {
+  basketball:
+    'Full vocabulary today: action types, variants, outcomes, and supported rulesets.',
+  soccer:
+    'Reserved. A provisional action list is stubbed and waiting for sport experts to shape it.',
+  handball:
+    'Reserved. Court, entities, and frames carry over; the action list is open for contribution.',
+  hockey:
+    'Reserved. The shared structure applies; a hockey-specific vocabulary is yet to be defined.',
+  futsal:
+    'Reserved. Same document shape, awaiting a futsal vocabulary from the community.',
+};
+---
+<Base
+  title="Sports"
+  description="Every sport OCF supports: basketball is fully specified today; the others are reserved, with provisional vocabularies open for contribution."
+>
+  <section class="hero">
+    <h1>Sports</h1>
+    <p class="tagline">
+      OCF captures the shared shape of a team-sport play once, then lets each
+      sport add its own vocabulary. Basketball is fully specified; the other
+      sports are reserved and open for the people who know each game best.
+    </p>
+  </section>
+
+  <section>
+    <div class="card-grid">
+      {sports.map((sport) => (
+        <Card
+          title={sport.label}
+          description={descriptions[sport.sport] ?? (sport.reserved
+            ? 'Reserved. Provisional vocabulary, open for contribution.'
+            : 'Fully specified vocabulary.')}
+          href={`/learn/sports/${sport.sport}/`}
+          status={sport.statusLabel}
+        />
+      ))}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    margin-bottom: 2rem;
+  }
+  .tagline {
+    font-size: 1.15rem;
+    color: var(--text-muted);
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+</style>
