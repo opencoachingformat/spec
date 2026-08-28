@@ -14,13 +14,13 @@
 // This is a plain .mjs (not .ts) so it can be imported both by Astro pages
 // (via Vite) and directly by scripts/build-adoc.mjs, which runs under plain
 // `node` with no TypeScript loader configured.
-export const OCF_VALIDATOR_VERSION = '0.1.0';
+export const OCF_VALIDATOR_VERSION = '0.1.1';
 
 const JSDELIVR_NPM_BASE = `https://cdn.jsdelivr.net/npm/@opencoachingformat/validator@${OCF_VALIDATOR_VERSION}`;
 
 export const OCF_VALIDATOR_BROWSER_URL = `${JSDELIVR_NPM_BASE}/dist/browser/browser.js`;
 
-export const OCF_VALIDATOR_COMMIT = 'aa4b8e0a4e4629f8eec943ff33bf1e98c35946fc';
+export const OCF_VALIDATOR_COMMIT = '45a11869cfe170269d53a91890063b9ccc95f5fd';
 
 const JSDELIVR_GH_BASE = `https://cdn.jsdelivr.net/gh/opencoachingformat/ocf-validator@${OCF_VALIDATOR_COMMIT}`;
 
