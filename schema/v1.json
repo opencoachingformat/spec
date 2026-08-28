@@ -668,7 +668,12 @@
         "source_format": { "type": "string", "enum": ["fiba", "fastdraw", "open", "custom"] },
         "source_url": { "type": "string", "format": "uri" },
         "based_on_formation": { "$ref": "#/definitions/based_on_formation" },
-        "based_on_play": { "$ref": "#/definitions/based_on_play" }
+        "based_on_play": { "$ref": "#/definitions/based_on_play" },
+        "min_schema_version": {
+          "type": "string",
+          "description": "Minimum OCF schema version required to validate this document correctly. Optional; when present MUST be valid SemVer. A validator whose bundled schema is older SHOULD warn that it may be out of date rather than treat unknown newer fields as errors.",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
+        }
       },
       "additionalProperties": false
     },
