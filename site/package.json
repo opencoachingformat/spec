@@ -22,6 +22,7 @@
   "devDependencies": {
     "@asciidoctor/core": "^4.0.4",
     "@axe-core/cli": "^4.12.1",
-    "@playwright/test": "^1.52.0"
+    "@playwright/test": "^1.52.0",
+    "marked": "^18.0.11"
   }
 }
