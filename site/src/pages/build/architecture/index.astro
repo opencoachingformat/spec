@@ -1,0 +1,51 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Card from '../../../components/Card.astro';
+import arc42 from '../../../generated/arc42/index.json';
+---
+<Base
+  title="Architecture (arc42)"
+  description="The Open Coaching Format validator's architecture documented with the arc42 template: goals, constraints, context, building blocks, runtime, deployment, decisions, and quality."
+>
+  <section class="hero">
+    <h1>Architecture (arc42)</h1>
+    <p class="tagline">
+      How the reference validator is built, documented with the
+      <a href="https://arc42.org/">arc42</a> template. Pulled from the
+      <a href="https://github.com/opencoachingformat/ocf-validator">ocf-validator</a>
+      repository at a pinned commit and rendered here — diagrams included.
+    </p>
+  </section>
+
+  <section>
+    <div class="card-grid">
+      {arc42.map((entry) => (
+        <Card
+          title={entry.title}
+          description={`arc42 section: ${entry.title}.`}
+          href={`/build/architecture/${entry.slug}/`}
+        />
+      ))}
+    </div>
+  </section>
+
+  <p class="back"><a href="/build/">← Build</a></p>
+</Base>
+
+<style>
+  .hero {
+    margin-bottom: 2rem;
+  }
+  .tagline {
+    font-size: 1.15rem;
+    color: var(--text-muted);
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .back {
+    margin-top: 2rem;
+  }
+</style>
