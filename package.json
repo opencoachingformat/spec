@@ -1,6 +1,6 @@
 {
   "name": "@opencoachingformat/spec",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "type": "module",
   "description": "Open standard for team-sport coaching diagrams and animations (invasion team sports; basketball first).",
   "repository": {
