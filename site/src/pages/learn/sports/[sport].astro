@@ -1,0 +1,207 @@
+---
+import Base from '../../../layouts/Base.astro';
+import sports from '../../../generated/sports.json';
+
+export function getStaticPaths() {
+  return sports.map((sport) => ({
+    params: { sport: sport.sport },
+    props: { sport },
+  }));
+}
+
+const { sport } = Astro.props;
+const variantEntries = Object.entries(sport.variants ?? {});
+---
+<Base
+  title={`${sport.label} — Sports`}
+  description={sport.reserved
+    ? `${sport.label} is a reserved sport in OCF: the shared structure applies and a provisional action list is stubbed, open for contribution.`
+    : `${sport.label} is fully specified in OCF: action types, variants, outcomes, and supported rulesets.`}
+>
+  <section class="hero">
+    <div class="title-row">
+      <h1>{sport.label}</h1>
+      <span class={`status-badge ${sport.reserved ? 'status-reserved' : 'status-full'}`}>
+        {sport.reserved ? 'Reserved' : 'Full'}
+      </span>
+    </div>
+    <p class="tagline">
+      {sport.reserved
+        ? 'The shared OCF structure — court, entities, frames — already fits this sport. Its action vocabulary is provisional and open for contribution.'
+        : 'This sport is fully specified: the action vocabulary, outcomes, and supported rulesets below are stable.'}
+    </p>
+  </section>
+
+  <section>
+    <h2>Action types</h2>
+    {sport.action_types.length > 0 ? (
+      <ul class="chip-list">
+        {sport.action_types.map((a) => <li class="chip">{a}</li>)}
+      </ul>
+    ) : (
+      <p class="empty">No action types defined yet.</p>
+    )}
+  </section>
+
+  {!sport.reserved && (
+    <Fragment>
+      <section>
+        <h2>Variants</h2>
+        {variantEntries.length > 0 ? (
+          <dl class="variant-list">
+            {variantEntries.map(([action, variants]) => (
+              <div class="variant-row">
+                <dt>{action}</dt>
+                <dd>
+                  <ul class="chip-list">
+                    {variants.map((v) => <li class="chip">{v}</li>)}
+                  </ul>
+                </dd>
+              </div>
+            ))}
+          </dl>
+        ) : (
+          <p class="empty">No variants defined.</p>
+        )}
+      </section>
+
+      <section>
+        <h2>Outcomes</h2>
+        {sport.outcomes.length > 0 ? (
+          <ul class="chip-list">
+            {sport.outcomes.map((o) => <li class="chip">{o}</li>)}
+          </ul>
+        ) : (
+          <p class="empty">No outcomes defined.</p>
+        )}
+      </section>
+
+      <section>
+        <h2>Rulesets</h2>
+        {sport.rulesets.length > 0 ? (
+          <ul class="chip-list">
+            {sport.rulesets.map((r) => <li class="chip">{r}</li>)}
+          </ul>
+        ) : (
+          <p class="empty">No rulesets defined.</p>
+        )}
+      </section>
+    </Fragment>
+  )}
+
+  {sport.reserved && (
+    <section class="contribute">
+      <h2>Contribute</h2>
+      <p>
+        {sport.label} is reserved: the format is ready, but its action
+        vocabulary needs the people who know the game. If you coach or play
+        {` ${sport.label.toLowerCase()}`}, you can help define the actions,
+        variants, outcomes, and rulesets that make an OCF {sport.label.toLowerCase()}
+        play precise.
+      </p>
+      <ul class="contribute-list">
+        <li>
+          <strong>Sport experts wanted.</strong> Propose the action vocabulary
+          for {sport.label} through the RFC process — no code required to start
+          the conversation.
+        </li>
+        <li>
+          <strong>Open an RFC or discussion.</strong> See the
+          {' '}
+          <a href="https://github.com/opencoachingformat/spec/tree/main/rfcs">RFC process</a>
+          {' '}in the specification repository.
+        </li>
+        <li>
+          <strong>Browse the repository.</strong> The
+          {' '}
+          <a href="https://github.com/opencoachingformat/spec">opencoachingformat/spec</a>
+          {' '}repo holds the sport registry files under <code>sports/</code>.
+        </li>
+      </ul>
+    </section>
+  )}
+
+  <p class="back"><a href="/learn/sports/">← All sports</a></p>
+</Base>
+
+<style>
+  .hero {
+    margin-bottom: 2rem;
+  }
+  .title-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .status-badge {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.2rem 0.7rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+  }
+  .status-full {
+    color: #0b1220;
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .status-reserved {
+    color: var(--text-muted);
+    background: var(--bg-elevated);
+  }
+  .tagline {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+  }
+  .chip-list {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .chip {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.85rem;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg-elevated);
+  }
+  .variant-list {
+    margin: 0.5rem 0 0;
+  }
+  .variant-row {
+    margin-bottom: 0.75rem;
+  }
+  .variant-row dt {
+    font-weight: 700;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.85rem;
+  }
+  .variant-row dd {
+    margin: 0.25rem 0 0;
+  }
+  .empty {
+    color: var(--text-muted);
+  }
+  .contribute {
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    background: var(--bg-elevated);
+  }
+  .contribute-list {
+    margin: 0.75rem 0 0;
+    padding-left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .back {
+    margin-top: 2rem;
+  }
+</style>

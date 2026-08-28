@@ -32,7 +32,7 @@ jobs:
 
       - name: Diagram pipeline unit tests
         working-directory: site
-        run: node --test test/diagram.test.mjs test/replace-plantuml.test.mjs
+        run: node --test test/diagram.test.mjs test/replace-plantuml.test.mjs test/schema-versions.test.mjs test/build-sports.test.mjs
 
       - name: Build site
         working-directory: site
@@ -77,6 +77,12 @@ jobs:
             http://localhost:4321/docs/rulesets/ \
             http://localhost:4321/examples/ \
             http://localhost:4321/ecosystem/ \
-            http://localhost:4321/playground/renderer/ \
+            http://localhost:4321/use/try-it/ \
+            http://localhost:4321/learn/sports/ \
+            http://localhost:4321/learn/sports/basketball/ \
+            http://localhost:4321/learn/sports/soccer/ \
+            http://localhost:4321/learn/sports/handball/ \
+            http://localhost:4321/learn/sports/hockey/ \
+            http://localhost:4321/learn/sports/futsal/ \
             --chromedriver-path "$CHROMEDRIVER_PATH" \
             --exit
