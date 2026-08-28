@@ -85,14 +85,23 @@ One document, one editor, switchable outputs:
   `/schema/versions.json`, the validator loaded at `@latest`, and the
   error/warning list with error codes.
 
-### Diagram rendering pipeline (Kroki)
+### Diagram rendering pipeline (build-time SVG, two renderers)
 
-A build-time module renders `[plantuml]` and `[mermaid]` sources to **SVG**,
-embedded statically into the page (no client JS). Same path serves both the spec
-`.adoc`'s 4 PlantUML blocks and the arc42 (Mermaid + PlantUML). The Kroki
-endpoint is a **config constant** (default `https://kroki.io`, self-hostable
-later). If Kroki is unreachable at build time the build **fails loudly** rather
-than silently dropping diagrams.
+A build-time module renders diagram sources to **SVG**, embedded statically into
+the page (no client JS). **Verified fact (2026-08-28):** the two doc sets use
+disjoint diagram languages, and the public `kroki.io` renders PlantUML but
+returns HTTP 500 for Mermaid (its Mermaid companion is unavailable). So the
+pipeline uses two renderers, one per language:
+
+- **PlantUML → Kroki** (`https://kroki.io`, POST). Serves the spec `.adoc`'s
+  4 PlantUML blocks. Endpoint is a **config constant** (self-hostable later).
+- **Mermaid → local `@mermaid-js/mermaid-cli` (`mmdc`)**. Serves the arc42's
+  5 Mermaid blocks. No network dependency; runs headless in CI.
+
+Both go through one façade module (`renderDiagram(type, source) -> svg`) that
+dispatches by type. If a renderer fails, the build **fails loudly** rather than
+silently dropping diagrams. (A single self-hosted Kroki instance could later
+serve both and collapse this back to one renderer — noted in Open Points.)
 
 ### arc42 integration
 
@@ -117,8 +126,9 @@ Kroki, and publishes it under **Build → Architecture**.
 
 ## Components (site build)
 
-- `site/src/lib/kroki.mjs` — pure-ish helper: given diagram source + type,
-  return SVG (fetches Kroki). Endpoint is a constant; errors throw.
+- `site/src/lib/diagram.mjs` — façade `renderDiagram(type, source) -> svg`:
+  dispatches `plantuml` → Kroki (fetch), `mermaid` → local `mmdc`. Endpoint/CLI
+  are constants; any renderer error throws (build-fails-loud).
 - `site/scripts/build-adoc.mjs` — extended to route `[plantuml]`/`[mermaid]`
   blocks through `kroki.mjs`.
 - `site/scripts/build-arc42.mjs` — new: fetch arc42 markdown at the pinned
@@ -160,9 +170,11 @@ here is shared across all four.
 
 ## Open Points
 
-- **Kroki availability at build time.** Public `kroki.io` is the default and the
-  build needs network to reach it; a CI without egress would fail the diagram
-  step. Mitigation path (not built now): self-host Kroki and point the config
-  constant at it.
-- **arc42 diagram dialect coverage.** Confirm Kroki handles every Mermaid/PlantUML
-  variant the arc42 uses during Plan D; fix any unsupported block then.
+- **PlantUML needs network (Kroki) at build time.** Public `kroki.io` is the
+  default; a CI without egress would fail the PlantUML step. Mitigation (not built
+  now): self-host Kroki. Mermaid (via local `mmdc`) has no such dependency.
+- **`mmdc` runs headless Chromium.** The Mermaid CLI downloads/uses a headless
+  browser; Plan D must ensure the CI runner has it (puppeteer's bundled Chromium
+  or a system install) — verified during Plan D.
+- **Future consolidation.** A self-hosted Kroki with a working Mermaid companion
+  could render both languages, collapsing the two renderers back into one.
