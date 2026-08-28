@@ -1,0 +1,7 @@
+{
+  "sport": "basketball",
+  "meta": { "id": "3c9f7a2e-4b1d-4e6f-8a0c-2d5e9a1b3c7f", "title": "Bad side" },
+  "court": { "ruleset": "fiba", "type": "half_court" },
+  "entities": [ { "type": "offense", "nr": 2, "x": -6, "y": 13 }, { "type": "offense", "nr": 5, "x": -2, "y": 8 } ],
+  "frames": [ { "id": "f", "actions": [ { "player": "offense_2", "type": "cut", "moves": [ { "to": { "named": "right_elbow" }, "around_player": "offense_5", "side": "middle" } ] } ], "end_state": {} } ]
+}
