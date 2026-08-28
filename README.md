@@ -3,7 +3,7 @@
 **An open standard for representing team-sport coaching diagrams, drill animations, and playbooks as structured data — for invasion team sports, basketball first.**
 
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
-[![Schema Version](https://img.shields.io/badge/schema-v1.3.0-blue)](schema/v1.json)
+[![Schema Version](https://img.shields.io/badge/schema-v1.4.0-blue)](schema/v1.json)
 [![Status: Draft](https://img.shields.io/badge/status-draft-yellow)]()
 
 ---

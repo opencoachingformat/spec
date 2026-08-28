@@ -19,7 +19,7 @@ for (const file of files) {
   try {
     execFileSync(
       "npx",
-      ["ajv", "validate", "--spec=draft7", "-s", "schema/v1.json", "-d", filePath, "-c", "ajv-formats"],
+      ["ajv", "validate", "--spec=draft7", "--strict-schema=false", "-s", "schema/v1.json", "-d", filePath, "-c", "ajv-formats"],
       { stdio: "pipe" }
     );
     validated = true; // ajv exited 0 => it accepted the bad fixture

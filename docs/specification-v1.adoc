@@ -1,5 +1,5 @@
 = Open Coaching Format — Open Standard for Team-Sport Coaching Diagrams
-:version: 1.3.0
+:version: 1.4.0
 :doctype: book
 :toc: left
 :toc-title: Table of Contents
@@ -1144,6 +1144,20 @@ is the derivative. A single optional reference (not an array).
 }
 ----
 
+=== `meta.min_schema_version`
+
+`min_schema_version` (optional, SemVer) declares the minimum schema version
+needed to validate the document correctly. Set it when the document uses a field
+introduced in a specific minor, so a validator whose bundled schema is older can
+warn that it may be out of date rather than reporting the newer fields as errors.
+Omit it otherwise. It never changes how a current validator validates a document
+— it is a signal for version-skew diagnostics.
+
+[source,json]
+----
+"meta": { "id": "...", "title": "...", "min_schema_version": "1.4.0" }
+----
+
 ---
 
 == Schema Reference
@@ -1181,6 +1195,7 @@ class Meta {
   +difficulty: enum?
   +created: datetime?
   +source_format: enum?
+  +min_schema_version: semver?
 }
 
 class Court {
@@ -1443,6 +1458,13 @@ npx ajv-cli validate \
 
 [appendix]
 == Changelog
+
+=== v1.4.0
+
+Adds schema version signals (RFC 0005): optional `min_schema_version` in `meta`,
+a machine-readable `x-ocf-version` keyword, and a published `versions.json`
+manifest. All additive and backwards-compatible; documents without the new field
+are unchanged.
 
 === v1.3.0
 
