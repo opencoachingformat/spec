@@ -60,4 +60,15 @@ import toc from '../../generated/toc.json';
       position: static;
     }
   }
+  /* Diagram SVGs are injected via set:html, so they need :global() to be
+     styled from this scoped block. Large + responsive (replaces the tiny
+     default). */
+  .spec-content :global(.diagram-svg) {
+    margin: 1.5rem 0;
+    text-align: center;
+  }
+  .spec-content :global(.diagram-svg svg) {
+    max-width: 100%;
+    height: auto;
+  }
 </style>
