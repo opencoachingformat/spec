@@ -108,6 +108,8 @@
                 "named": "left_elbow"
               },
               "around_player": "defense_1",
+              "side": "left",
+              "arc": "tight",
               "intensity": "explosive"
             }
           ]

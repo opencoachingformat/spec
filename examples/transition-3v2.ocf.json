@@ -139,7 +139,9 @@
               "to": {
                 "named": "left_elbow"
               },
-              "around_player": "defense_1"
+              "around_player": "defense_1",
+              "side": "right",
+              "arc": "wide"
             }
           ]
         },
