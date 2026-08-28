@@ -1,0 +1,7 @@
+{
+  "sport": "basketball",
+  "meta": { "id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d", "title": "Bad min version", "min_schema_version": "1.4" },
+  "court": { "ruleset": "fiba", "type": "half_court" },
+  "entities": [ { "type": "offense", "nr": 2, "x": -6, "y": 13 } ],
+  "frames": [ { "id": "f", "actions": [ { "player": "offense_2", "type": "move", "moves": [ { "to": { "named": "right_wing" } } ] } ], "end_state": { "offense_2": { "named": "right_wing" } } } ]
+}
