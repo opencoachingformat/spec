@@ -5,7 +5,7 @@
 <h2 id="_abstract">1. Abstract</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>{ocf} v1.3.0</strong> is an open, ruleset-aware JSON schema for representing team-sport coaching diagrams and multi-step animations — targeting invasion team sports, with basketball fully defined first.
+<p><strong>{ocf} v1.4.0</strong> is an open, ruleset-aware JSON schema for representing team-sport coaching diagrams and multi-step animations — targeting invasion team sports, with basketball fully defined first.
 It defines a court coordinate system based on real-world units (meters or feet), a registry of named court positions per ruleset,
 a semantic entity model, and a frame-based animation structure.</p>
 </div>
@@ -2147,6 +2147,22 @@ is the derivative. A single optional reference (not an array).</p>
 }</code></pre>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_meta_min_schema_version">14.3. <code>meta.min_schema_version</code></h3>
+<div class="paragraph">
+<p><code>min_schema_version</code> (optional, SemVer) declares the minimum schema version
+needed to validate the document correctly. Set it when the document uses a field
+introduced in a specific minor, so a validator whose bundled schema is older can
+warn that it may be out of date rather than reporting the newer fields as errors.
+Omit it otherwise. It never changes how a current validator validates a document
+— it is a signal for version-skew diagnostics.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"meta": { "id": "...", "title": "...", "min_schema_version": "1.4.0" }</code></pre>
+</div>
+</div>
 <hr>
 </div>
 </div>
@@ -2187,6 +2203,7 @@ class Meta {
   +difficulty: enum?
   +created: datetime?
   +source_format: enum?
+  +min_schema_version: semver?
 }
 
 class Court {
@@ -2776,7 +2793,16 @@ Output only valid JSON matching https://opencoachingformat.org/schema/v1.json</c
 <h2 id="_changelog">Appendix B: Changelog</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_v1_3_0">B.1. v1.3.0</h3>
+<h3 id="_v1_4_0">B.1. v1.4.0</h3>
+<div class="paragraph">
+<p>Adds schema version signals (RFC 0005): optional <code>min_schema_version</code> in <code>meta</code>,
+a machine-readable <code>x-ocf-version</code> keyword, and a published <code>versions.json</code>
+manifest. All additive and backwards-compatible; documents without the new field
+are unchanged.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_v1_3_0">B.2. v1.3.0</h3>
 <div class="paragraph">
 <p>Adds optional <code>side</code> (<code>left</code>/<code>right</code>) and <code>arc</code> (<code>tight</code>/<code>normal</code>/<code>wide</code>) fields
 to movement steps (and the <code>cut</code> action) to make an <code>around_player</code> detour&#8217;s
@@ -2785,7 +2811,7 @@ backwards-compatible.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_v1_2_0">B.2. v1.2.0</h3>
+<h3 id="_v1_2_0">B.3. v1.2.0</h3>
 <div class="paragraph">
 <p>Adds the optional <code>sport</code> field and per-sport action-type scoping (RFC 0003).
 Basketball is fully defined; soccer/handball/hockey/futsal are reserved with
@@ -2794,7 +2820,7 @@ a <code>sport</code> field validate as basketball.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_v1_1_1">B.3. v1.1.1</h3>
+<h3 id="_v1_1_1">B.4. v1.1.1</h3>
 <div class="paragraph">
 <p>Tooling and distribution fixes only; no schema shape change. Publishes the
 schema to its canonical <code>$id</code> URL (<code><a href="https://opencoachingformat.org/schema/v1.json" class="bare">https://opencoachingformat.org/schema/v1.json</a></code>),
@@ -2804,7 +2830,7 @@ valid against v1.1.0 unchanged.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_v1_1_0">B.4. v1.1.0</h3>
+<h3 id="_v1_1_0">B.5. v1.1.0</h3>
 <div class="paragraph">
 <p>Adds the <strong>External References</strong> convention and applies it twice under <code>meta</code>:
 <code>based_on_formation</code> (starting-formation registry reference with optional
@@ -2815,7 +2841,7 @@ structured data (<code>positions/{fiba,nba,ncaa,nfhs}-v1.json</code>) exported v
 </div>
 </div>
 <div class="sect2">
-<h3 id="_v1_0_0">B.5. v1.0.0</h3>
+<h3 id="_v1_0_0">B.6. v1.0.0</h3>
 <div class="paragraph">
 <p>The first stable Open Coaching Format. Semantic action model: per-player
 actions (move, cut, screen, defend, dribble, pass, shoot, rebound, pickup)
@@ -2832,7 +2858,7 @@ NBA, NCAA, NFHS) with a <code>custom</code> escape hatch, and semantic color rol
 </div>
 </div>
 <div class="sect2">
-<h3 id="_v0_1_0_2025_02_27">B.6. v0.1.0 (2025-02-27)</h3>
+<h3 id="_v0_1_0_2025_02_27">B.7. v0.1.0 (2025-02-27)</h3>
 <div class="paragraph">
 <p>Initial pre-stable draft — a line-based geometric format (movement/passing/
 screen lines, entity delta states per frame). Superseded by the v1.0.0

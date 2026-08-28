@@ -801,6 +801,50 @@
       }
     }
   ]
+}</code></pre></section><section class="example" data-astro-cid-jon2qpe7><h2 id="min-schema-version" data-astro-cid-jon2qpe7>Declares a minimum schema version</h2><p data-astro-cid-jon2qpe7></p><pre tabindex="0" data-astro-cid-jon2qpe7><code data-astro-cid-jon2qpe7>{
+  &quot;$schema&quot;: &quot;https://opencoachingformat.org/schema/v1.json&quot;,
+  &quot;sport&quot;: &quot;basketball&quot;,
+  &quot;meta&quot;: {
+    &quot;id&quot;: &quot;a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d&quot;,
+    &quot;title&quot;: &quot;Declares a minimum schema version&quot;,
+    &quot;min_schema_version&quot;: &quot;1.4.0&quot;
+  },
+  &quot;court&quot;: {
+    &quot;ruleset&quot;: &quot;fiba&quot;,
+    &quot;type&quot;: &quot;half_court&quot;
+  },
+  &quot;entities&quot;: [
+    {
+      &quot;type&quot;: &quot;offense&quot;,
+      &quot;nr&quot;: 2,
+      &quot;x&quot;: -6.75,
+      &quot;y&quot;: 13.98
+    }
+  ],
+  &quot;frames&quot;: [
+    {
+      &quot;id&quot;: &quot;f1&quot;,
+      &quot;label&quot;: &quot;Static&quot;,
+      &quot;actions&quot;: [
+        {
+          &quot;player&quot;: &quot;offense_2&quot;,
+          &quot;type&quot;: &quot;move&quot;,
+          &quot;moves&quot;: [
+            {
+              &quot;to&quot;: {
+                &quot;named&quot;: &quot;right_wing&quot;
+              }
+            }
+          ]
+        }
+      ],
+      &quot;end_state&quot;: {
+        &quot;offense_2&quot;: {
+          &quot;named&quot;: &quot;right_wing&quot;
+        }
+      }
+    }
+  ]
 }</code></pre></section><section class="example" data-astro-cid-jon2qpe7><h2 id="pick-and-roll" data-astro-cid-jon2qpe7>Basic Pick &amp; Roll</h2><p data-astro-cid-jon2qpe7>Ball handler uses a ball screen at the top of the key. Screener rolls to the basket for the finish.</p><pre tabindex="0" data-astro-cid-jon2qpe7><code data-astro-cid-jon2qpe7>{
   &quot;$schema&quot;: &quot;https://opencoachingformat.org/schema/v1.json&quot;,
   &quot;sport&quot;: &quot;basketball&quot;,
