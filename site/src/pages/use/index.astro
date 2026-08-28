@@ -1,0 +1,56 @@
+---
+import Base from '../../layouts/Base.astro';
+import Card from '../../components/Card.astro';
+---
+<Base
+  title="Use"
+  description="Put OCF to work: validate and render your own documents in the browser, and see the supported rulesets."
+>
+  <section class="hero">
+    <h1>Use</h1>
+    <p class="tagline">
+      Try OCF on your own documents. Validation and rendering run in your
+      browser — nothing is uploaded.
+    </p>
+  </section>
+
+  <section>
+    <div class="card-grid">
+      <Card
+        title="Playground"
+        description="Paste or edit an OCF document and validate it instantly against the reference validator."
+        href="/playground/"
+      />
+      <Card
+        title="Renderer"
+        description="See an OCF document drawn as a diagram, straight from the JSON."
+        href="/playground/renderer/"
+      />
+      <Card
+        title="Rulesets"
+        description="The playing surfaces OCF supports, with their coordinate systems and markings."
+        href="/docs/rulesets/"
+      />
+      <Card
+        title="Error codes"
+        description="What each validation error and warning means, so you can fix a document quickly."
+        href="/errors/"
+      />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    margin-bottom: 2rem;
+  }
+  .tagline {
+    font-size: 1.15rem;
+    color: var(--text-muted);
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+</style>

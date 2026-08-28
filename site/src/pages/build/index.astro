@@ -1,0 +1,56 @@
+---
+import Base from '../../layouts/Base.astro';
+import Card from '../../components/Card.astro';
+---
+<Base
+  title="Build"
+  description="Build on OCF: the full specification, the JSON Schema, the error-code catalogue, and the surrounding ecosystem of tools."
+>
+  <section class="hero">
+    <h1>Build</h1>
+    <p class="tagline">
+      Everything you need to implement OCF or build a tool on top of it: the
+      normative spec, the schema, and the ecosystem.
+    </p>
+  </section>
+
+  <section>
+    <div class="card-grid">
+      <Card
+        title="Specification"
+        description="The full, normative Open Coaching Format specification."
+        href="/docs/spec/"
+      />
+      <Card
+        title="JSON Schema"
+        description="The machine-readable JSON Schema you validate documents against."
+        href="/docs/schema/"
+      />
+      <Card
+        title="Error codes"
+        description="The catalogue of validation error and warning codes with their meanings."
+        href="/errors/"
+      />
+      <Card
+        title="Ecosystem"
+        description="Validator, renderer, and editor projects built on OCF, plus the roadmap."
+        href="/ecosystem/"
+      />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    margin-bottom: 2rem;
+  }
+  .tagline {
+    font-size: 1.15rem;
+    color: var(--text-muted);
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+</style>
