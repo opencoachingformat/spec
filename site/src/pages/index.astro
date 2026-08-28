@@ -2,27 +2,38 @@
 import Base from '../layouts/Base.astro';
 import Card from '../components/Card.astro';
 
-const quickExample = `{
-  "court": { "ruleset": "fiba", "type": "half_court" },
-  "entities": [
-    { "type": "offense", "nr": 1, "x": -3.0, "y": 6.0 },
-    { "type": "offense", "nr": 2, "x": 3.0, "y": 6.0 }
-  ],
-  "balls": [ { "id": "ball_1", "carried_by": "offense_1" } ],
-  "frames": [
-    {
-      "id": "frame_1",
-      "actions": [
-        { "player": "offense_1", "type": "pass", "to_player": "offense_2" },
-        { "player": "offense_1", "type": "cut", "moves": [ { "to": { "named": "basket" } } ] }
-      ],
-      "end_state": {
-        "offense_1": { "named": "basket" },
-        "balls": { "ball_1": { "carried_by": "offense_2" } }
-      }
-    }
-  ]
-}`;
+const sports = [
+  {
+    title: 'Basketball',
+    description:
+      'Full vocabulary today: actions, rulesets, named positions, and worked example drills.',
+    status: 'Full',
+  },
+  {
+    title: 'Soccer',
+    description:
+      'Reserved. A provisional vocabulary is stubbed and waiting for sport experts to shape it.',
+    status: 'Reserved',
+  },
+  {
+    title: 'Handball',
+    description:
+      'Reserved. Court, entities, and frames carry over; the action list is open for contribution.',
+    status: 'Reserved',
+  },
+  {
+    title: 'Hockey',
+    description:
+      'Reserved. The shared structure applies; a hockey-specific action set is yet to be defined.',
+    status: 'Reserved',
+  },
+  {
+    title: 'Futsal',
+    description:
+      'Reserved. Same document shape, awaiting a futsal vocabulary from the community.',
+    status: 'Reserved',
+  },
+];
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -46,63 +57,114 @@ const jsonLd = {
   <section class="hero">
     <h1>Open Coaching Format</h1>
     <p class="tagline">
-      An open standard for representing sports coaching diagrams, drill
-      animations, and playbooks as structured data.
+      An open standard for sports coaching diagrams, drill animations, and
+      playbooks — written as plain, readable data instead of pictures.
+    </p>
+  </section>
+
+  <section>
+    <h2>Locked in proprietary apps</h2>
+    <p>
+      Coaches draw plays every day, but the diagrams live inside closed tools —
+      the FIBA Europe Coaching App, FastDraw, Sportplan.net, and dozens of
+      others. Each one stores plays in its own private format and lets you
+      export only a flat image: a PNG or a PDF.
     </p>
     <p>
-      No open standard for this exists today — coaching tools like the FIBA
-      Europe Coaching App, FastDraw, and Sportplan.net all use proprietary,
-      image-only formats. OCF is a JSON-based alternative any tool can read,
-      write, and render.
+      An image can be viewed, but it cannot be understood by another program.
+      You cannot search it, replay the movement, translate the labels, restyle
+      it for a handout, or move a play from one app to another. The moment a
+      drill leaves the app that drew it, it stops being data and becomes a
+      picture.
     </p>
   </section>
 
   <section>
-    <h2>Quick example</h2>
-    <p>A pass followed by a cut to the basket, in half-court FIBA coordinates:</p>
-    <pre tabindex="0"><code>{quickExample}</code></pre>
+    <h2>What OCF is</h2>
+    <p>
+      The Open Coaching Format is an open standard that stores a coaching
+      diagram — or a whole animated drill — as readable JSON. JSON is a simple,
+      text-based way of describing information that both people and software can
+      read. Because an OCF play is data rather than an image, any tool can open
+      it, render it, animate it, or convert it.
+    </p>
+    <p>
+      The same file can drive a static diagram for a printed playbook and a
+      frame-by-frame animation on screen. Nothing is locked to one vendor: the
+      format is public, and anyone can build a reader, an editor, or a renderer
+      on top of it.
+    </p>
   </section>
 
   <section>
-    <h2>Explore</h2>
+    <h2>One format, every sport</h2>
+    <p>
+      OCF is not basketball-only. A play in any team sport is the same kind of
+      thing: players positioned on a marked surface, moving and passing over
+      time. OCF captures that shared shape once, then lets each sport add its
+      own vocabulary of actions on top.
+    </p>
+    <p>
+      Basketball is fully specified today. The other sports are reserved:
+      the structure already fits them, and their action vocabularies are open
+      for the people who know each game best.
+    </p>
     <div class="card-grid">
-      <Card
-        title="Docs"
-        description="Full specification, JSON Schema, key features, and supported rulesets."
-        href="/docs/"
-      />
-      <Card
-        title="Examples"
-        description="Worked OCF drills: pick and roll, 3-man weave, transition offense, and more."
-        href="/examples/"
-      />
-      <Card
-        title="Ecosystem"
-        description="Validator, renderer, and editor projects built on top of OCF, plus the roadmap."
-        href="/ecosystem/"
-      />
+      {sports.map((sport) => (
+        <Card
+          title={sport.title}
+          description={sport.description}
+          href="/learn/"
+          status={sport.status}
+        />
+      ))}
     </div>
   </section>
 
   <section>
-    <h2>Using the Validator</h2>
+    <h2>How an OCF document is shaped</h2>
     <p>
-      Try the reference validator instantly in the <a href="/playground/">browser
-      playground</a> — nothing is uploaded, validation runs client-side. Its
-      <a href="/errors/">error codes</a> are documented separately.
+      You do not need to read JSON to get the idea. An OCF play is built from a
+      few plain parts:
     </p>
-    <p>
-      <a href="https://github.com/opencoachingformat/ocf-validator">ocf-validator</a>
-      is not yet published to npm or PyPI. Run it from source instead:
-    </p>
-    <pre><code>git clone https://github.com/opencoachingformat/ocf-validator
-cd ocf-validator/packages/ts
-npm install && npm run build
-node dist/cli.js path/to/your-file.ocf.json</code></pre>
-    <p>
-      A Python implementation with matching validation behavior is available
-      under <code>packages/py</code> in the same repository.
-    </p>
+    <ul class="structure-list">
+      <li>
+        <strong>Court coordinates.</strong> A chosen ruleset fixes the size and
+        markings of the playing surface, so every position is measured in real
+        units — a spot on the floor means the same thing to every tool.
+      </li>
+      <li>
+        <strong>Entities and actions.</strong> Players, defenders, and balls are
+        the entities. What they do — pass, cut, screen, dribble — are the
+        actions, drawn from a sport's vocabulary.
+      </li>
+      <li>
+        <strong>Frames and animation.</strong> A play is a sequence of frames.
+        Each frame lists the actions that happen and where everything ends up,
+        which is what turns a static diagram into a replayable animation.
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Where to go next</h2>
+    <div class="card-grid">
+      <Card
+        title="Learn"
+        description="Understand the concepts and browse the format sport by sport."
+        href="/learn/"
+      />
+      <Card
+        title="Use"
+        description="Validate and render your own OCF documents, and see the supported rulesets."
+        href="/use/"
+      />
+      <Card
+        title="Build"
+        description="The specification, JSON Schema, error codes, and the tools built on OCF."
+        href="/build/"
+      />
+    </div>
   </section>
 </Base>
 
@@ -119,5 +181,12 @@ node dist/cli.js path/to/your-file.ocf.json</code></pre>
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1rem;
     margin-top: 1rem;
+  }
+  .structure-list {
+    margin-top: 0.5rem;
+    padding-left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
   }
 </style>
