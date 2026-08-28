@@ -321,6 +321,73 @@
       }
     }
   ]
+}</code></pre></section><section class="example" data-astro-cid-jon2qpe7><h2 id="around-player-arc" data-astro-cid-jon2qpe7>Curl around a screen (side + arc)</h2><p data-astro-cid-jon2qpe7>Shooter curls tight around a down-screen; the action-level defaults are overridden on the curl step.</p><pre tabindex="0" data-astro-cid-jon2qpe7><code data-astro-cid-jon2qpe7>{
+  &quot;$schema&quot;: &quot;https://opencoachingformat.org/schema/v1.json&quot;,
+  &quot;sport&quot;: &quot;basketball&quot;,
+  &quot;meta&quot;: {
+    &quot;id&quot;: &quot;3c9f7a2e-4b1d-4e6f-8a0c-2d5e9a1b3c7f&quot;,
+    &quot;title&quot;: &quot;Curl around a screen (side + arc)&quot;,
+    &quot;description&quot;: &quot;Shooter curls tight around a down-screen; the action-level defaults are overridden on the curl step.&quot;,
+    &quot;created&quot;: &quot;2026-08-28T10:00:00Z&quot;,
+    &quot;source_format&quot;: &quot;open&quot;
+  },
+  &quot;court&quot;: {
+    &quot;ruleset&quot;: &quot;fiba&quot;,
+    &quot;type&quot;: &quot;half_court&quot;,
+    &quot;drill_focus&quot;: &quot;offense&quot;
+  },
+  &quot;entities&quot;: [
+    {
+      &quot;type&quot;: &quot;offense&quot;,
+      &quot;nr&quot;: 2,
+      &quot;x&quot;: -6.75,
+      &quot;y&quot;: 13.98
+    },
+    {
+      &quot;type&quot;: &quot;offense&quot;,
+      &quot;nr&quot;: 5,
+      &quot;x&quot;: -2.45,
+      &quot;y&quot;: 8.2
+    }
+  ],
+  &quot;balls&quot;: [
+    {
+      &quot;id&quot;: &quot;ball_1&quot;,
+      &quot;carried_by&quot;: &quot;offense_2&quot;
+    }
+  ],
+  &quot;frames&quot;: [
+    {
+      &quot;id&quot;: &quot;f1&quot;,
+      &quot;label&quot;: &quot;Curl&quot;,
+      &quot;description&quot;: &quot;offense_2 curls tightly around offense_5&#39;s screen, passing on the right of the screener.&quot;,
+      &quot;actions&quot;: [
+        {
+          &quot;player&quot;: &quot;offense_2&quot;,
+          &quot;type&quot;: &quot;cut&quot;,
+          &quot;variant&quot;: &quot;curl&quot;,
+          &quot;side&quot;: &quot;left&quot;,
+          &quot;arc&quot;: &quot;normal&quot;,
+          &quot;moves&quot;: [
+            {
+              &quot;to&quot;: {
+                &quot;named&quot;: &quot;right_elbow&quot;
+              },
+              &quot;around_player&quot;: &quot;offense_5&quot;,
+              &quot;side&quot;: &quot;right&quot;,
+              &quot;arc&quot;: &quot;tight&quot;,
+              &quot;intensity&quot;: &quot;fast&quot;
+            }
+          ]
+        }
+      ],
+      &quot;end_state&quot;: {
+        &quot;offense_2&quot;: {
+          &quot;named&quot;: &quot;right_elbow&quot;
+        }
+      }
+    }
+  ]
 }</code></pre></section><section class="example" data-astro-cid-jon2qpe7><h2 id="based-on-references" data-astro-cid-jon2qpe7>4-Out-1-In Variant with Lineage</h2><p data-astro-cid-jon2qpe7>Starts from the 4 Out 1 In formation with a tighter big, recorded as a variant of an existing play.</p><pre tabindex="0" data-astro-cid-jon2qpe7><code data-astro-cid-jon2qpe7>{
   &quot;$schema&quot;: &quot;https://opencoachingformat.org/schema/v1.json&quot;,
   &quot;sport&quot;: &quot;basketball&quot;,
@@ -844,6 +911,8 @@
                 &quot;named&quot;: &quot;left_elbow&quot;
               },
               &quot;around_player&quot;: &quot;defense_1&quot;,
+              &quot;side&quot;: &quot;left&quot;,
+              &quot;arc&quot;: &quot;tight&quot;,
               &quot;intensity&quot;: &quot;explosive&quot;
             }
           ]
@@ -1308,7 +1377,9 @@
               &quot;to&quot;: {
                 &quot;named&quot;: &quot;left_elbow&quot;
               },
-              &quot;around_player&quot;: &quot;defense_1&quot;
+              &quot;around_player&quot;: &quot;defense_1&quot;,
+              &quot;side&quot;: &quot;right&quot;,
+              &quot;arc&quot;: &quot;wide&quot;
             }
           ]
         },

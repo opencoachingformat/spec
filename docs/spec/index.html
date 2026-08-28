@@ -5,7 +5,7 @@
 <h2 id="_abstract">1. Abstract</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>{ocf} v1.2.0</strong> is an open, ruleset-aware JSON schema for representing team-sport coaching diagrams and multi-step animations — targeting invasion team sports, with basketball fully defined first.
+<p><strong>{ocf} v1.3.0</strong> is an open, ruleset-aware JSON schema for representing team-sport coaching diagrams and multi-step animations — targeting invasion team sports, with basketball fully defined first.
 It defines a court coordinate system based on real-world units (meters or feet), a registry of named court positions per ruleset,
 a semantic entity model, and a frame-based animation structure.</p>
 </div>
@@ -1114,7 +1114,7 @@ sketch quickly or annotate in full detail.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>cut</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>moves[]</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>variant</code> (backdoor, give_and_go, flash, v_cut, l_cut, curl, flare, fade, basket); <code>intensity</code>; per-move <code>around_player</code>, <code>off_screen_by</code>, <code>intensity</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>variant</code> (backdoor, give_and_go, flash, v_cut, l_cut, curl, flare, fade, basket); <code>intensity</code>; action-level <code>side</code>, <code>arc</code> (defaults); per-move <code>around_player</code>, <code>off_screen_by</code>, <code>intensity</code>, <code>side</code>, <code>arc</code></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>screen</code></p></td>
@@ -1237,6 +1237,16 @@ position in the frame <code>end_state</code>. Reference fields (<code>around_pla
   ]
 }</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>When a movement step goes <code>around_player</code>, two optional fields shape the detour:
+<code>side</code> (<code>left</code>/<code>right</code>, relative to the player&#8217;s direction of travel) chooses
+which side to pass on, and <code>arc</code> (<code>tight</code>/<code>normal</code>/<code>wide</code>) how closely the path
+wraps the obstacle — <code>tight</code> reads as a curl, <code>wide</code> as a flare. Both may be set
+on the <code>cut</code> action as defaults and overridden per step. When omitted, the
+renderer chooses (for a <code>cut</code>, it may derive the arc from the <code>variant</code> —
+<code>curl</code>→tight, <code>flare</code>/<code>fade</code>→wide). <code>arc</code> is a semantic enum, not a radius; the
+renderer owns the enum-to-distance mapping and may expose it as configuration.</p>
 </div>
 </div>
 <div class="sect2">
@@ -2766,7 +2776,16 @@ Output only valid JSON matching https://opencoachingformat.org/schema/v1.json</c
 <h2 id="_changelog">Appendix B: Changelog</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_v1_2_0">B.1. v1.2.0</h3>
+<h3 id="_v1_3_0">B.1. v1.3.0</h3>
+<div class="paragraph">
+<p>Adds optional <code>side</code> (<code>left</code>/<code>right</code>) and <code>arc</code> (<code>tight</code>/<code>normal</code>/<code>wide</code>) fields
+to movement steps (and the <code>cut</code> action) to make an <code>around_player</code> detour&#8217;s
+side and tightness explicit instead of renderer-guessed (RFC 0004). Additive and
+backwards-compatible.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_v1_2_0">B.2. v1.2.0</h3>
 <div class="paragraph">
 <p>Adds the optional <code>sport</code> field and per-sport action-type scoping (RFC 0003).
 Basketball is fully defined; soccer/handball/hockey/futsal are reserved with
@@ -2775,7 +2794,7 @@ a <code>sport</code> field validate as basketball.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_v1_1_1">B.2. v1.1.1</h3>
+<h3 id="_v1_1_1">B.3. v1.1.1</h3>
 <div class="paragraph">
 <p>Tooling and distribution fixes only; no schema shape change. Publishes the
 schema to its canonical <code>$id</code> URL (<code><a href="https://opencoachingformat.org/schema/v1.json" class="bare">https://opencoachingformat.org/schema/v1.json</a></code>),
@@ -2785,7 +2804,7 @@ valid against v1.1.0 unchanged.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_v1_1_0">B.3. v1.1.0</h3>
+<h3 id="_v1_1_0">B.4. v1.1.0</h3>
 <div class="paragraph">
 <p>Adds the <strong>External References</strong> convention and applies it twice under <code>meta</code>:
 <code>based_on_formation</code> (starting-formation registry reference with optional
@@ -2796,7 +2815,7 @@ structured data (<code>positions/{fiba,nba,ncaa,nfhs}-v1.json</code>) exported v
 </div>
 </div>
 <div class="sect2">
-<h3 id="_v1_0_0">B.4. v1.0.0</h3>
+<h3 id="_v1_0_0">B.5. v1.0.0</h3>
 <div class="paragraph">
 <p>The first stable Open Coaching Format. Semantic action model: per-player
 actions (move, cut, screen, defend, dribble, pass, shoot, rebound, pickup)
@@ -2813,7 +2832,7 @@ NBA, NCAA, NFHS) with a <code>custom</code> escape hatch, and semantic color rol
 </div>
 </div>
 <div class="sect2">
-<h3 id="_v0_1_0_2025_02_27">B.5. v0.1.0 (2025-02-27)</h3>
+<h3 id="_v0_1_0_2025_02_27">B.6. v0.1.0 (2025-02-27)</h3>
 <div class="paragraph">
 <p>Initial pre-stable draft — a line-based geometric format (movement/passing/
 screen lines, entity delta states per frame). Superseded by the v1.0.0
