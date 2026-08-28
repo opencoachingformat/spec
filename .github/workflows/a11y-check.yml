@@ -12,6 +12,7 @@ on:
       - 'site/package-lock.json'
       - 'site/scripts/**'
       - 'site/src/lib/**'
+      - 'site/test/**'
 
 jobs:
   axe:
@@ -28,6 +29,10 @@ jobs:
       - name: Install dependencies
         working-directory: site
         run: npm ci
+
+      - name: Diagram pipeline unit tests
+        working-directory: site
+        run: node --test test/diagram.test.mjs test/replace-plantuml.test.mjs
 
       - name: Build site
         working-directory: site
