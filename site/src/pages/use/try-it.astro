@@ -4,6 +4,7 @@ import examples from '../../generated/examples.json';
 import { OCF_VALIDATOR_VERSION, OCF_VALIDATOR_BROWSER_URL } from '../../lib/validator-version.mjs';
 import { OCF_RENDERER_VERSION } from '../../lib/renderer-version.mjs';
 import { buildDiscussionUrl } from '../../lib/discussions.mjs';
+import { SCHEMA_VERSIONS_URL } from '../../lib/schema-versions.mjs';
 import rendererModuleUrl from '../../generated/renderer/index.js?url';
 
 const CATEGORY_CONFIG = {
@@ -588,18 +589,20 @@ const seedJson = seedExample ? seedExample.json : '{}';
   seedJson,
   examples: examples.map((e) => ({ slug: e.slug, json: e.json })),
   categoryConfig: CATEGORY_CONFIG,
+  schemaVersionsUrl: SCHEMA_VERSIONS_URL,
 }}>
-  window.__OCF_RENDERER_PLAYGROUND_VARS__ = { validatorUrl, rendererUrl, seedJson, examples, categoryConfig };
+  window.__OCF_RENDERER_PLAYGROUND_VARS__ = { validatorUrl, rendererUrl, seedJson, examples, categoryConfig, schemaVersionsUrl };
 </script>
 <script>
   import { parseDocument, clampFrameIndex, canRender, sanitizeErrorMessage, buildFeedbackMarkdown } from '../../lib/renderer-playground.mjs';
   import { buildDiscussionUrl } from '../../lib/discussions.mjs';
+  import { isNewerVersion, fetchLatestSchemaVersion } from '../../lib/schema-versions.mjs';
 
   const __vars = window.__OCF_RENDERER_PLAYGROUND_VARS__;
   if (!__vars) {
     throw new Error('OCF renderer playground vars not found — inline script may not have executed.');
   }
-  const { validatorUrl, rendererUrl, seedJson, examples, categoryConfig } = __vars;
+  const { validatorUrl, rendererUrl, seedJson, examples, categoryConfig, schemaVersionsUrl } = __vars;
   // Clean up the global after reading to avoid leaking it on the window.
   delete window.__OCF_RENDERER_PLAYGROUND_VARS__;
 
@@ -625,6 +628,29 @@ const seedJson = seedExample ? seedExample.json : '{}';
   const feedbackCopyOpenBtn = document.getElementById('rp-feedback-copy-open-btn');
   const feedbackOpenBtn = document.getElementById('rp-feedback-open-btn');
   const feedbackClipboardError = document.getElementById('rp-feedback-clipboard-error');
+
+  const workspace = document.querySelector('.workspace');
+  const tabValidation = document.getElementById('rp-tab-validation');
+  const tabDiagram = document.getElementById('rp-tab-diagram');
+  const panelValidation = document.getElementById('rp-panel-validation');
+  const panelDiagram = document.getElementById('rp-panel-diagram');
+  const fullscreenBtn = document.getElementById('rp-fullscreen-btn');
+  const schemaBadge = document.getElementById('rp-schema-badge');
+  const schemaValidated = document.getElementById('rp-schema-validated');
+  const schemaNewer = document.getElementById('rp-schema-newer');
+
+  // Cache the latest published schema version (fetched once, fail-soft).
+  let latestSchemaVersionPromise = null;
+  function getLatestSchemaVersion() {
+    if (!latestSchemaVersionPromise) {
+      // Pass the bridged versions.json URL as the injected fetch, so the module
+      // stays free of a hard-coded URL. fetchLatestSchemaVersion calls its
+      // fetchImpl with SCHEMA_VERSIONS_URL (identical to schemaVersionsUrl), so
+      // we ignore that argument and hit the bridged URL directly.
+      latestSchemaVersionPromise = fetchLatestSchemaVersion(() => fetch(schemaVersionsUrl));
+    }
+    return latestSchemaVersionPromise;
+  }
 
   let lastValidation = null;
   let currentRenderer = null;
@@ -741,6 +767,59 @@ const seedJson = seedExample ? seedExample.json : '{}';
     }
   }
 
+  function activateTab(which) {
+    const isDiagram = which === 'diagram';
+    tabValidation.setAttribute('aria-selected', String(!isDiagram));
+    tabDiagram.setAttribute('aria-selected', String(isDiagram));
+    panelValidation.hidden = isDiagram;
+    panelDiagram.hidden = !isDiagram;
+    fullscreenBtn.hidden = !isDiagram;
+    if (workspace) workspace.setAttribute('data-active-tab', isDiagram ? 'diagram' : 'validation');
+    // Re-fit the canvas to its (now full-width) container when showing it.
+    if (isDiagram && hasRendered) renderFrame();
+  }
+
+  tabValidation.addEventListener('click', () => activateTab('validation'));
+  tabDiagram.addEventListener('click', () => activateTab('diagram'));
+
+  fullscreenBtn.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else if (panelDiagram.requestFullscreen) {
+        await panelDiagram.requestFullscreen();
+      } else {
+        // Fallback for browsers without the Fullscreen API: CSS-only overlay.
+        panelDiagram.classList.toggle('is-fullscreen');
+        if (hasRendered) renderFrame();
+      }
+    } catch {
+      panelDiagram.classList.toggle('is-fullscreen');
+      if (hasRendered) renderFrame();
+    }
+  });
+
+  document.addEventListener('fullscreenchange', () => {
+    fullscreenBtn.textContent = document.fullscreenElement ? 'Exit fullscreen' : 'Fullscreen';
+    if (hasRendered) renderFrame();
+  });
+
+  async function updateSchemaBadge(result) {
+    const validatedAgainst = result && result.schema && result.schema.validatedAgainst;
+    if (!validatedAgainst) {
+      schemaBadge.hidden = true;
+      return;
+    }
+    schemaValidated.textContent = `validated against ${validatedAgainst}`;
+    schemaBadge.hidden = false;
+    schemaNewer.hidden = true;
+    const latest = await getLatestSchemaVersion();
+    if (latest && isNewerVersion(latest, validatedAgainst)) {
+      schemaNewer.textContent = `newer schema available: ${latest}`;
+      schemaNewer.hidden = false;
+    }
+  }
+
   exampleSelect.addEventListener('change', () => {
     const selected = examples.find((e) => e.slug === exampleSelect.value);
     if (selected) {
@@ -750,6 +829,7 @@ const seedJson = seedExample ? seedExample.json : '{}';
     renderBtn.disabled = true;
     validationOutput.textContent = 'Click Validate to check the document.';
     hidePreview();
+    schemaBadge.hidden = true;
   });
 
   validateBtn.addEventListener('click', async () => {
@@ -769,6 +849,7 @@ const seedJson = seedExample ? seedExample.json : '{}';
       const result = validate(parsed.value);
       lastValidation = result;
       showValidationResult(result);
+      updateSchemaBadge(result);
       renderBtn.disabled = !canRender(result);
 
       if (canRender(result)) {
@@ -789,6 +870,7 @@ const seedJson = seedExample ? seedExample.json : '{}';
     try {
       const { OCFRenderer } = await loadRenderer();
       currentRenderer = new OCFRenderer(currentDoc);
+      activateTab('diagram');
       frameIndex = 0;
       await renderFrame();
     } catch (err) {
@@ -806,6 +888,7 @@ const seedJson = seedExample ? seedExample.json : '{}';
     renderBtn.disabled = true;
     validationOutput.textContent = 'Click Validate to check the document.';
     hidePreview();
+    schemaBadge.hidden = true;
     clearCanvas();
   });
 
