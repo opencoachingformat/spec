@@ -1,0 +1,51 @@
+---
+import Base from '../../layouts/Base.astro';
+import Card from '../../components/Card.astro';
+---
+<Base
+  title="Learn"
+  description="Understand the Open Coaching Format: the core concepts, key features, and worked example drills."
+>
+  <section class="hero">
+    <h1>Learn</h1>
+    <p class="tagline">
+      Start here to understand what OCF describes and how a play is put
+      together, then see it applied in real drills.
+    </p>
+  </section>
+
+  <section>
+    <div class="card-grid">
+      <Card
+        title="Documentation"
+        description="The concepts behind OCF: the document model, court, entities, actions, and frames."
+        href="/docs/"
+      />
+      <Card
+        title="Key features"
+        description="The ideas that make OCF expressive — named positions, coordinates, and animation."
+        href="/docs/features/"
+      />
+      <Card
+        title="Examples"
+        description="Worked OCF drills: pick and roll, three-man weave, transition offense, and more."
+        href="/examples/"
+      />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    margin-bottom: 2rem;
+  }
+  .tagline {
+    font-size: 1.15rem;
+    color: var(--text-muted);
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+</style>
