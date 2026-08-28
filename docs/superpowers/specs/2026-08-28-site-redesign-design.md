@@ -85,23 +85,31 @@ One document, one editor, switchable outputs:
   `/schema/versions.json`, the validator loaded at `@latest`, and the
   error/warning list with error codes.
 
-### Diagram rendering pipeline (build-time SVG, two renderers)
+### Diagram rendering pipeline (PlantUML build-time, Mermaid client-side)
 
-A build-time module renders diagram sources to **SVG**, embedded statically into
-the page (no client JS). **Verified fact (2026-08-28):** the two doc sets use
-disjoint diagram languages, and the public `kroki.io` renders PlantUML but
-returns HTTP 500 for Mermaid (its Mermaid companion is unavailable). So the
-pipeline uses two renderers, one per language:
+**Verified facts (2026-08-28):** the two doc sets use disjoint diagram
+languages (spec `.adoc` → PlantUML only; arc42 → Mermaid only). Public
+`kroki.io` renders PlantUML fine but returns HTTP 500 for Mermaid. And
+`@mermaid-js/mermaid-cli` (`mmdc`) is a **fragile, heavyweight build dependency**:
+its install downloads a headless Chromium and failed outright in this
+environment (`node install.mjs` errored), and the deploy workflow has no browser
+set up. So the two languages render by different, each-verified means:
 
-- **PlantUML → Kroki** (`https://kroki.io`, POST). Serves the spec `.adoc`'s
-  4 PlantUML blocks. Endpoint is a **config constant** (self-hostable later).
-- **Mermaid → local `@mermaid-js/mermaid-cli` (`mmdc`)**. Serves the arc42's
-  5 Mermaid blocks. No network dependency; runs headless in CI.
+- **PlantUML → Kroki, build-time SVG** (`https://kroki.io`, POST). Serves the
+  spec `.adoc` blocks. Embedded statically, no client JS. Endpoint is a config
+  constant (self-hostable later). *(Already shipped in Plan A.)*
+- **Mermaid → client-side** via `mermaid@11` ESM from jsDelivr (verified: 200,
+  CORS `*`). The arc42 pages emit `<pre class="mermaid">…</pre>` blocks and a
+  small module script calls `mermaid.run()` in the browser. No build-time
+  Chromium, no fragile post-install. This is a deliberate, fact-driven revision
+  of the original "no client JS" goal: mmdc's unreliability makes client-side the
+  robust choice for Mermaid specifically. PlantUML stays build-time SVG.
 
-Both go through one façade module (`renderDiagram(type, source) -> svg`) that
-dispatches by type. If a renderer fails, the build **fails loudly** rather than
-silently dropping diagrams. (A single self-hosted Kroki instance could later
-serve both and collapse this back to one renderer — noted in Open Points.)
+The PlantUML path stays behind the Plan A façade (`renderDiagram`); the Mermaid
+path is a thin arc42-only concern. If the PlantUML renderer fails, the build
+**fails loudly** rather than silently dropping diagrams. (A single self-hosted
+Kroki instance with a working Mermaid companion could later move Mermaid
+build-time too and collapse this back to one build-time path — noted in Open Points.)
 
 ### arc42 integration
 
