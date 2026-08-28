@@ -3,6 +3,30 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { load } from '@asciidoctor/core';
 import { OCF_ERROR_CODES_URL } from '../src/lib/validator-version.mjs';
+import { renderDiagram } from '../src/lib/diagram.mjs';
+
+// Replace asciidoctor literalblocks that hold a PlantUML source
+// (<pre>@startuml…</pre>) with rendered inline SVG. Pure w.r.t. I/O: the
+// renderer is injected so it is unit-testable without network.
+export async function replacePlantumlBlocks(html, render = renderDiagram) {
+  const blockRe =
+    /<div class="literalblock">\s*<div class="content">\s*<pre>(@startuml[\s\S]*?)<\/pre>\s*<\/div>\s*<\/div>/g;
+  const matches = [...html.matchAll(blockRe)];
+  let out = html;
+  for (const m of matches) {
+    const source = decodeHtmlEntities(m[1]);
+    const svg = await render('plantuml', source);
+    out = out.replace(m[0], `<div class="diagram-svg">${svg}</div>`);
+  }
+  return out;
+}
+
+function decodeHtmlEntities(s) {
+  return s
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"').replace(/&#8217;/g, '’')
+    .replace(/&amp;/g, '&');
+}
 
 const siteRoot = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const repoRoot = path.dirname(siteRoot);
@@ -22,7 +46,8 @@ const doc = await load(adocSource, {
     'toc!': '',
   },
 });
-const specHtml = await doc.convert();
+const specHtmlRaw = await doc.convert();
+const specHtml = await replacePlantumlBlocks(specHtmlRaw);
 const toc = doc.getSections().map((section) => ({
   id: section.getId(),
   title: section.getTitle(),
