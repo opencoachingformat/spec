@@ -134,9 +134,11 @@ Kroki, and publishes it under **Build → Architecture**.
 
 ## Components (site build)
 
-- `site/src/lib/diagram.mjs` — façade `renderDiagram(type, source) -> svg`:
-  dispatches `plantuml` → Kroki (fetch), `mermaid` → local `mmdc`. Endpoint/CLI
-  are constants; any renderer error throws (build-fails-loud).
+- `site/src/lib/diagram.mjs` — façade `renderDiagram(type, source) -> svg` for
+  the **build-time** path: `plantuml` → Kroki (fetch); errors throw
+  (build-fails-loud). Mermaid is **not** in this façade — it renders client-side
+  (see the pipeline section), so arc42 pages emit `<pre class="mermaid">` + a
+  `mermaid@11` module script instead.
 - `site/scripts/build-adoc.mjs` — extended to route `[plantuml]`/`[mermaid]`
   blocks through `kroki.mjs`.
 - `site/scripts/build-arc42.mjs` — new: fetch arc42 markdown at the pinned
@@ -180,9 +182,12 @@ here is shared across all four.
 
 - **PlantUML needs network (Kroki) at build time.** Public `kroki.io` is the
   default; a CI without egress would fail the PlantUML step. Mitigation (not built
-  now): self-host Kroki. Mermaid (via local `mmdc`) has no such dependency.
-- **`mmdc` runs headless Chromium.** The Mermaid CLI downloads/uses a headless
-  browser; Plan D must ensure the CI runner has it (puppeteer's bundled Chromium
-  or a system install) — verified during Plan D.
+  now): self-host Kroki.
+- **Mermaid renders client-side.** The arc42 pages load `mermaid@11` from
+  jsDelivr in the visitor's browser (verified: 200, CORS `*`), so there is no
+  build-time Chromium dependency. Trade-off: the diagrams need JS to appear, and
+  the axe a11y check runs only the mermaid-free overview page (section pages are
+  excluded to avoid flaky client-render timing).
 - **Future consolidation.** A self-hosted Kroki with a working Mermaid companion
-  could render both languages, collapsing the two renderers back into one.
+  could render Mermaid build-time too, moving arc42 diagrams to static SVG and
+  removing the client-side dependency.
