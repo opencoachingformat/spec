@@ -81,6 +81,9 @@ This prevents programmatic drill creation, LLM-assisted coaching tools, and cros
 
 | *Registry over fixed enum*
 | Named positions use a known-good standard catalog + user-extensible custom block.
+
+| *JSON Schema draft-07*
+| The schema targets draft-07 for the v1 line. OCF's variance is conditional (`if/then` on `sport`), not recursive, so newer-dialect features like `$dynamicRef`/`unevaluatedProperties` add no expressive value here — while draft-07 maximizes tooling support and keeps the TypeScript and Python reference validators in lockstep. Reconsider only for a genuinely recursive-polymorphic feature, or at a v2 major bump.
 |===
 
 ---
