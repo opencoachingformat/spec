@@ -1,0 +1,93 @@
+name: Sync tool version into the site
+
+# When ocf-renderer or ocf-validator publishes a release, it fires a
+# repository_dispatch here. This workflow bumps the matching pinned constant in
+# site/src/lib/<tool>-version.mjs and opens a PR (human-reviewed, never
+# auto-merged) so the Try-it page picks up the new tool version.
+on:
+  repository_dispatch:
+    types: [renderer_released, validator_released]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          # Avoid a lingering Authorization header; create-pull-request adds its
+          # own (two headers -> push fails with Duplicate header: Authorization).
+          persist-credentials: false
+
+      - name: Resolve tool + version from the dispatch
+        id: vars
+        env:
+          EVENT: ${{ github.event.action }}
+          VERSION: ${{ github.event.client_payload.version }}
+        run: |
+          # Version arrives as a tag like v0.4.0; strip a leading v.
+          VER="${VERSION#v}"
+          if [ -z "$VER" ]; then
+            echo "::error::client_payload.version is empty — refusing to sync"
+            exit 1
+          fi
+          # Validate it looks like a semver (defensive: this value drives a sed).
+          if ! printf '%s' "$VER" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+([-+][0-9A-Za-z.-]+)?$'; then
+            echo "::error::version '$VER' is not a valid semver"
+            exit 1
+          fi
+          case "$EVENT" in
+            renderer_released) TOOL=renderer; CONST=OCF_RENDERER_VERSION ;;
+            validator_released) TOOL=validator; CONST=OCF_VALIDATOR_VERSION ;;
+            *) echo "::error::unexpected event $EVENT"; exit 1 ;;
+          esac
+          echo "tool=$TOOL"   >> "$GITHUB_OUTPUT"
+          echo "const=$CONST" >> "$GITHUB_OUTPUT"
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+
+      - name: Bump the pinned constant
+        id: bump
+        env:
+          FILE: site/src/lib/${{ steps.vars.outputs.tool }}-version.mjs
+          CONST: ${{ steps.vars.outputs.const }}
+          VER: ${{ steps.vars.outputs.version }}
+        run: |
+          CURRENT=$(grep -oE "$CONST = '[^']*'" "$FILE" | grep -oE "'[^']*'" | tr -d "'")
+          echo "current=$CURRENT new=$VER"
+          if [ "$CURRENT" = "$VER" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Already at $VER; nothing to do."
+            exit 0
+          fi
+          # Replace only the pinned literal for this constant.
+          python3 - "$FILE" "$CONST" "$VER" <<'PY'
+          import re, sys
+          path, const, ver = sys.argv[1], sys.argv[2], sys.argv[3]
+          text = open(path).read()
+          new = re.sub(rf"({re.escape(const)} = ')[^']*(')", rf"\g<1>{ver}\g<2>", text, count=1)
+          assert new != text, "constant not found / unchanged"
+          open(path, "w").write(new)
+          PY
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Open pull request
+        if: steps.bump.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ github.token }}
+          commit-message: "chore(site): pin ${{ steps.vars.outputs.tool }} to ${{ steps.vars.outputs.version }}"
+          title: "chore(site): pin ${{ steps.vars.outputs.tool }} to ${{ steps.vars.outputs.version }}"
+          body: |
+            Automated bump of `OCF_${{ steps.vars.outputs.tool == 'renderer' && 'RENDERER' || 'VALIDATOR' }}_VERSION`
+            to `${{ steps.vars.outputs.version }}`, triggered by an
+            `${{ github.event.action }}` repository_dispatch from the tool's release.
+
+            The Try-it page fetches the tool's browser bundle from jsDelivr at
+            this exact version. Review + merge to update the live site. CI (a11y +
+            build) will fetch and build against the new bundle before merge.
+          branch: "auto/pin-${{ steps.vars.outputs.tool }}-${{ steps.vars.outputs.version }}"
+          delete-branch: true
