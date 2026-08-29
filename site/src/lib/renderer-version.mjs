@@ -12,7 +12,7 @@
 // (via Vite) and directly by scripts/build-renderer.mjs under plain Node
 // with no TypeScript loader.
 export const OCF_RENDERER_REPOSITORY = 'opencoachingformat/ocf-renderer';
-export const OCF_RENDERER_VERSION = '0.1.0';
+export const OCF_RENDERER_VERSION = '0.4.0';
 
 const JSDELIVR_NPM_BASE = `https://cdn.jsdelivr.net/npm/@opencoachingformat/renderer@${OCF_RENDERER_VERSION}`;
 
