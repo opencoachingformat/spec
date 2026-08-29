@@ -7,11 +7,15 @@
     "build:adoc": "node scripts/build-adoc.mjs",
     "build:renderer": "node scripts/build-renderer.mjs",
     "build:sports": "node scripts/build-sports.mjs",
-    "build": "npm run build:adoc && npm run build:renderer && npm run build:sports && astro build",
-    "dev": "npm run build:adoc && npm run build:renderer && npm run build:sports && astro dev",
+    "build:arc42": "node scripts/build-arc42.mjs",
+    "build": "npm run build:adoc && npm run build:renderer && npm run build:sports && npm run build:arc42 && astro build",
+    "dev": "npm run build:adoc && npm run build:renderer && npm run build:sports && npm run build:arc42 && astro dev",
     "test:renderer-build": "node scripts/build-renderer.test.mjs",
     "test:renderer-playground": "node src/lib/renderer-playground.test.mjs",
-    "test:diagram": "node --test test/diagram.test.mjs"
+    "test:diagram": "node --test test/diagram.test.mjs",
+    "test:schema-versions": "node --test test/schema-versions.test.mjs",
+    "test:sports": "node --test test/build-sports.test.mjs",
+    "test:arc42": "node --test test/mermaid-marked.test.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
@@ -20,6 +24,7 @@
   "devDependencies": {
     "@asciidoctor/core": "^4.0.4",
     "@axe-core/cli": "^4.12.1",
-    "@playwright/test": "^1.52.0"
+    "@playwright/test": "^1.52.0",
+    "marked": "^18.0.11"
   }
 }
