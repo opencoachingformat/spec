@@ -1,0 +1,80 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>7. Deployment View — Architecture — Open Coaching Format</title><meta name="description" content="arc42 architecture documentation for the OCF validator: 7. Deployment View."><link rel="canonical" href="https://opencoachingformat.org/build/architecture/07-deployment-view/"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta property="og:type" content="website"><meta property="og:title" content="7. Deployment View — Architecture — Open Coaching Format"><meta property="og:description" content="arc42 architecture documentation for the OCF validator: 7. Deployment View."><meta property="og:image" content="https://opencoachingformat.org/og-banner.svg"><meta property="og:url" content="https://opencoachingformat.org/build/architecture/07-deployment-view/"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="7. Deployment View — Architecture — Open Coaching Format"><meta name="twitter:description" content="arc42 architecture documentation for the OCF validator: 7. Deployment View."><meta name="twitter:image" content="https://opencoachingformat.org/og-banner.svg"><style>:root{color-scheme:dark;--bg-page:#0b1220;--bg-elevated:#0f172a;--border:#1e293b;--text-primary:#f1f5f9;--text-muted:#cbd5e1;--link:#93c5fd;--accent:#60a5fa;--code-bg:#111c30;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif}*{box-sizing:border-box}html,body{background:var(--bg-page);color:var(--text-primary);margin:0;padding:0}body{line-height:1.6}a{color:var(--link)}main{max-width:860px;margin:0 auto;padding:2rem 1.5rem 4rem}main.wide{max-width:1100px}pre{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:1rem;overflow-x:auto}code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}table{border-collapse:collapse;width:100%}th,td{border:1px solid var(--border);text-align:left;padding:.4rem .6rem}:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.site-header[data-astro-cid-wpvy4v7s]{background:var(--bg-elevated);border-bottom:1px solid var(--border)}.nav-bar[data-astro-cid-wpvy4v7s]{justify-content:space-between;align-items:center;max-width:1100px;margin:0 auto;padding:.75rem 1.5rem;display:flex}.brand[data-astro-cid-wpvy4v7s]{color:var(--text-primary);font-size:1.05rem;font-weight:700;text-decoration:none}.nav-inline[data-astro-cid-wpvy4v7s] ul[data-astro-cid-wpvy4v7s]{gap:.25rem;margin:0;padding:0;list-style:none;display:flex}.nav-inline[data-astro-cid-wpvy4v7s] a[data-astro-cid-wpvy4v7s]{min-height:44px;color:var(--link);border-radius:4px;align-items:center;padding:0 .9rem;font-weight:600;text-decoration:none;display:inline-flex}.nav-inline[data-astro-cid-wpvy4v7s] a[data-astro-cid-wpvy4v7s]:hover{text-decoration:underline}.nav-toggle[data-astro-cid-wpvy4v7s]{border:1px solid var(--border);cursor:pointer;background:0 0;border-radius:4px;width:44px;height:44px;padding:0;display:none}.nav-toggle-icon[data-astro-cid-wpvy4v7s],.nav-toggle-icon[data-astro-cid-wpvy4v7s]:before,.nav-toggle-icon[data-astro-cid-wpvy4v7s]:after{background:var(--text-primary);width:20px;height:2px;margin:0 auto;display:block}.nav-toggle-icon[data-astro-cid-wpvy4v7s]:before,.nav-toggle-icon[data-astro-cid-wpvy4v7s]:after{content:"";position:relative}.nav-toggle-icon[data-astro-cid-wpvy4v7s]:before{top:-6px}.nav-toggle-icon[data-astro-cid-wpvy4v7s]:after{top:4px}.nav-drawer[data-astro-cid-wpvy4v7s]{background:var(--bg-elevated);border-left:1px solid var(--border);z-index:30;width:min(320px,85vw);height:100%;padding:1rem 1.5rem;position:fixed;top:0;right:0;overflow-y:auto}.nav-drawer[data-astro-cid-wpvy4v7s][hidden]{display:none}.nav-drawer-header[data-astro-cid-wpvy4v7s]{justify-content:space-between;align-items:center;margin-bottom:1rem;display:flex}.nav-drawer[data-astro-cid-wpvy4v7s] ul[data-astro-cid-wpvy4v7s]{flex-direction:column;gap:.25rem;margin:0;padding:0;list-style:none;display:flex}.nav-drawer[data-astro-cid-wpvy4v7s] a[data-astro-cid-wpvy4v7s]{min-height:44px;color:var(--link);border-radius:4px;align-items:center;padding:0 .5rem;font-weight:600;text-decoration:none;display:flex}.nav-close[data-astro-cid-wpvy4v7s]{border:1px solid var(--border);width:44px;height:44px;color:var(--text-primary);cursor:pointer;background:0 0;border-radius:4px;font-size:1.25rem;line-height:1}.nav-backdrop[data-astro-cid-wpvy4v7s]{z-index:20;background:#02060f99;position:fixed;inset:0}.nav-backdrop[data-astro-cid-wpvy4v7s][hidden]{display:none}@media (width<=720px){.nav-inline[data-astro-cid-wpvy4v7s]{display:none}.nav-toggle[data-astro-cid-wpvy4v7s]{display:block}}
+.crumbs[data-astro-cid-pyycvuw4]{color:var(--text-muted);align-items:center;gap:.5rem;margin-bottom:1rem;font-size:.9rem;display:flex}.arc42-content[data-astro-cid-pyycvuw4]{max-width:72ch}.arc42-content[data-astro-cid-pyycvuw4] pre.mermaid{text-align:center;background:0 0;margin:1.5rem 0;overflow-x:auto}.arc42-content[data-astro-cid-pyycvuw4] pre.mermaid svg{max-width:100%;height:auto}.arc42-content[data-astro-cid-pyycvuw4] pre{overflow-x:auto}.arc42-content[data-astro-cid-pyycvuw4] img{max-width:100%;height:auto}.arc42-content[data-astro-cid-pyycvuw4] table{border-collapse:collapse}.arc42-content[data-astro-cid-pyycvuw4] th,.arc42-content[data-astro-cid-pyycvuw4] td{border:1px solid var(--border);padding:.4rem .6rem}.section-nav[data-astro-cid-pyycvuw4]{border-top:1px solid var(--border);justify-content:space-between;gap:1rem;margin-top:2.5rem;padding-top:1rem;display:flex}.section-nav[data-astro-cid-pyycvuw4] a[data-astro-cid-pyycvuw4]{font-weight:600}.back[data-astro-cid-pyycvuw4]{margin-top:1.5rem}
+</style></head><body><header class="site-header" data-astro-cid-wpvy4v7s><div class="nav-bar" data-astro-cid-wpvy4v7s><a class="brand" href="/" data-astro-cid-wpvy4v7s>Open Coaching Format</a><button id="nav-toggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-drawer" aria-label="Open navigation menu" data-astro-cid-wpvy4v7s><span class="nav-toggle-icon" aria-hidden="true" data-astro-cid-wpvy4v7s></span></button><nav class="nav-inline" aria-label="Primary" data-astro-cid-wpvy4v7s><ul data-astro-cid-wpvy4v7s><li data-astro-cid-wpvy4v7s><a href="/" data-astro-cid-wpvy4v7s>Home</a></li><li data-astro-cid-wpvy4v7s><a href="/learn/" data-astro-cid-wpvy4v7s>Learn</a></li><li data-astro-cid-wpvy4v7s><a href="/use/" data-astro-cid-wpvy4v7s>Use</a></li><li data-astro-cid-wpvy4v7s><a href="/build/" data-astro-cid-wpvy4v7s>Build</a></li><li data-astro-cid-wpvy4v7s><a href="https://github.com/opencoachingformat/spec" data-astro-cid-wpvy4v7s>GitHub</a></li></ul></nav></div><div id="nav-drawer" class="nav-drawer" role="dialog" aria-modal="true" aria-label="Primary navigation" hidden data-astro-cid-wpvy4v7s><div class="nav-drawer-header" data-astro-cid-wpvy4v7s><span class="brand" data-astro-cid-wpvy4v7s>Open Coaching Format</span><button id="nav-close" class="nav-close" type="button" aria-label="Close navigation menu" data-astro-cid-wpvy4v7s><span aria-hidden="true" data-astro-cid-wpvy4v7s>&times;</span></button></div><ul data-astro-cid-wpvy4v7s><li data-astro-cid-wpvy4v7s><a href="/" data-astro-cid-wpvy4v7s>Home</a></li><li data-astro-cid-wpvy4v7s><a href="/learn/" data-astro-cid-wpvy4v7s>Learn</a></li><li data-astro-cid-wpvy4v7s><a href="/use/" data-astro-cid-wpvy4v7s>Use</a></li><li data-astro-cid-wpvy4v7s><a href="/build/" data-astro-cid-wpvy4v7s>Build</a></li><li data-astro-cid-wpvy4v7s><a href="https://github.com/opencoachingformat/spec" data-astro-cid-wpvy4v7s>GitHub</a></li></ul></div><div id="nav-backdrop" class="nav-backdrop" hidden data-astro-cid-wpvy4v7s></div></header><script type="module">var e=document.getElementById(`nav-toggle`),t=document.getElementById(`nav-drawer`),n=document.getElementById(`nav-backdrop`),r=document.getElementById(`nav-close`);if(e&&t&&n&&r){let i=`a[href], button:not([disabled])`;function a(){t.hidden=!1,n.hidden=!1,e.setAttribute(`aria-expanded`,`true`);let r=t.querySelector(i);r instanceof HTMLElement&&r.focus(),document.addEventListener(`keydown`,s)}function o(){t.hidden=!0,n.hidden=!0,e.setAttribute(`aria-expanded`,`false`),e.focus(),document.removeEventListener(`keydown`,s)}function s(e){if(e.key===`Escape`){o();return}if(e.key===`Tab`){let n=Array.from(t.querySelectorAll(i));if(n.length===0)return;let r=n.indexOf(document.activeElement);e.shiftKey&&r<=0?(e.preventDefault(),n[n.length-1].focus()):!e.shiftKey&&r===n.length-1&&(e.preventDefault(),n[0].focus())}}e.addEventListener(`click`,a),r.addEventListener(`click`,o),n.addEventListener(`click`,o)}</script><main class="wide"><nav class="crumbs" aria-label="Breadcrumb" data-astro-cid-pyycvuw4><a href="/build/" data-astro-cid-pyycvuw4>Build</a><span aria-hidden="true" data-astro-cid-pyycvuw4>/</span><a href="/build/architecture/" data-astro-cid-pyycvuw4>Architecture</a></nav><article class="arc42-content" data-astro-cid-pyycvuw4><h1>7. Deployment View</h1>
+<p>The OCF Validator is not a deployed service — it is distributed as <strong>two
+consumable packages</strong> plus <strong>CI automation</strong>. There is no runtime server
+component.</p>
+<h2>7.1 Distribution</h2>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Distribution mechanism</th>
+<th>Consumers</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>packages/ts</code></td>
+<td>npm package (<code>@opencoachingformat/validator</code>), used as a library import or via its <code>bin</code> entry (<code>npx ocf-validate</code>)</td>
+<td>Node/TS/web tooling: editor, renderer, generation pipelines written in TS</td>
+</tr>
+<tr>
+<td><code>packages/py</code></td>
+<td>Python package (<code>ocf_validator</code>), installed via <code>pip install -e .</code> in CI / <code>pip install ocf-validator</code> when published; console script <code>ocf-validate</code></td>
+<td>Python-based analysis/generation tooling</td>
+</tr>
+</tbody></table>
+<p><code>packages/ts</code> is published to npm on every <code>v*</code> tag (§7.2, <code>release-ts.yml</code>);
+<code>packages/py</code> is not yet published to PyPI. Both are versioned and released
+independently per language ecosystem convention, though kept in lockstep in
+practice since they share <code>shared/</code> and CI enforces conformance parity on
+every commit.</p>
+<h2>7.2 CI/Automation Environment</h2>
+<table>
+<thead>
+<tr>
+<th>Workflow</th>
+<th>Trigger</th>
+<th>Runner</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ci.yml</code></td>
+<td><code>push</code>, <code>pull_request</code> (any branch)</td>
+<td><code>ubuntu-latest</code> (two parallel jobs: <code>ts</code>, <code>py</code>)</td>
+<td>Builds and tests both packages against <code>shared/conformance</code>. This is the parity enforcement mechanism (§2, §4).</td>
+</tr>
+<tr>
+<td><code>sync-from-spec.yml</code></td>
+<td><code>repository_dispatch</code> with type <code>spec_released</code>, carrying <code>client_payload.version</code></td>
+<td><code>ubuntu-latest</code></td>
+<td>Fetches <code>schema/v1.json</code> from <code>opencoachingformat/spec</code> at the released ref via the GitHub Contents API, diffs it against the vendored copy, and — only if changed — opens a PR updating <code>shared/schema/ocf-action-v1.json</code> + <code>PROVENANCE.md</code>. Never merges automatically; <code>ci.yml</code> still gates the resulting PR.</td>
+</tr>
+<tr>
+<td><code>release-ts.yml</code></td>
+<td><code>push</code> of a <code>v*</code> tag</td>
+<td><code>ubuntu-latest</code></td>
+<td>Verifies the tag matches <code>packages/ts/package.json</code>&#39;s version, rebuilds (re-checking <code>dist/browser</code> is committed and up to date), then <code>npm publish</code>. Authenticates via OIDC trusted publishing — npm trusts this exact repo + workflow file combination directly, no <code>NPM_TOKEN</code> secret involved.</td>
+</tr>
+</tbody></table>
+<h2>7.3 External Dependencies at Runtime (validation time)</h2>
+<p>None beyond the language runtime and the schema-validation library (AJV /
+<code>jsonschema</code>) already bundled with each package. Validation is fully
+offline-capable: the schema is vendored (§2), not fetched.</p>
+<h2>7.4 External Dependencies at CI/Sync time only</h2>
+<ul>
+<li><strong>GitHub Contents API</strong> (<code>repos/opencoachingformat/spec/contents/...</code>) —
+used exclusively by <code>sync-from-spec.yml</code>, authenticated via
+<code>secrets.SPEC_REPO_TOKEN</code> (falling back to <code>github.token</code>) if the spec repo
+requires elevated read access, or the default token otherwise.</li>
+<li><strong><code>repository_dispatch</code> webhook</strong> — the spec repo&#39;s release automation (or
+a maintainer manually) must send this event for the sync workflow to ever
+fire; there is no polling fallback.</li>
+<li><strong>npm registry OIDC trust</strong> (<code>release-ts.yml</code> only) — requires a Trusted
+Publisher configured on the <code>@opencoachingformat/validator</code> npm package
+(npmjs.com package settings) naming this repo and <code>release-ts.yml</code>
+explicitly; without it, <code>npm publish</code> fails even with a correctly tagged,
+passing build.</li>
+</ul>
+</article><nav class="section-nav" aria-label="Section navigation" data-astro-cid-pyycvuw4><a class="prev" href="/build/architecture/06-runtime-view/" data-astro-cid-pyycvuw4>← 6. Runtime View</a><a class="next" href="/build/architecture/08-crosscutting-concepts/" data-astro-cid-pyycvuw4>8. Crosscutting Concepts →</a></nav><p class="back" data-astro-cid-pyycvuw4><a href="/build/architecture/" data-astro-cid-pyycvuw4>← All sections</a></p></main></body></html>

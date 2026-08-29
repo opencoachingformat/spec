@@ -1,0 +1,118 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>8. Crosscutting Concepts — Architecture — Open Coaching Format</title><meta name="description" content="arc42 architecture documentation for the OCF validator: 8. Crosscutting Concepts."><link rel="canonical" href="https://opencoachingformat.org/build/architecture/08-crosscutting-concepts/"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta property="og:type" content="website"><meta property="og:title" content="8. Crosscutting Concepts — Architecture — Open Coaching Format"><meta property="og:description" content="arc42 architecture documentation for the OCF validator: 8. Crosscutting Concepts."><meta property="og:image" content="https://opencoachingformat.org/og-banner.svg"><meta property="og:url" content="https://opencoachingformat.org/build/architecture/08-crosscutting-concepts/"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="8. Crosscutting Concepts — Architecture — Open Coaching Format"><meta name="twitter:description" content="arc42 architecture documentation for the OCF validator: 8. Crosscutting Concepts."><meta name="twitter:image" content="https://opencoachingformat.org/og-banner.svg"><style>:root{color-scheme:dark;--bg-page:#0b1220;--bg-elevated:#0f172a;--border:#1e293b;--text-primary:#f1f5f9;--text-muted:#cbd5e1;--link:#93c5fd;--accent:#60a5fa;--code-bg:#111c30;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif}*{box-sizing:border-box}html,body{background:var(--bg-page);color:var(--text-primary);margin:0;padding:0}body{line-height:1.6}a{color:var(--link)}main{max-width:860px;margin:0 auto;padding:2rem 1.5rem 4rem}main.wide{max-width:1100px}pre{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:1rem;overflow-x:auto}code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}table{border-collapse:collapse;width:100%}th,td{border:1px solid var(--border);text-align:left;padding:.4rem .6rem}:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.site-header[data-astro-cid-wpvy4v7s]{background:var(--bg-elevated);border-bottom:1px solid var(--border)}.nav-bar[data-astro-cid-wpvy4v7s]{justify-content:space-between;align-items:center;max-width:1100px;margin:0 auto;padding:.75rem 1.5rem;display:flex}.brand[data-astro-cid-wpvy4v7s]{color:var(--text-primary);font-size:1.05rem;font-weight:700;text-decoration:none}.nav-inline[data-astro-cid-wpvy4v7s] ul[data-astro-cid-wpvy4v7s]{gap:.25rem;margin:0;padding:0;list-style:none;display:flex}.nav-inline[data-astro-cid-wpvy4v7s] a[data-astro-cid-wpvy4v7s]{min-height:44px;color:var(--link);border-radius:4px;align-items:center;padding:0 .9rem;font-weight:600;text-decoration:none;display:inline-flex}.nav-inline[data-astro-cid-wpvy4v7s] a[data-astro-cid-wpvy4v7s]:hover{text-decoration:underline}.nav-toggle[data-astro-cid-wpvy4v7s]{border:1px solid var(--border);cursor:pointer;background:0 0;border-radius:4px;width:44px;height:44px;padding:0;display:none}.nav-toggle-icon[data-astro-cid-wpvy4v7s],.nav-toggle-icon[data-astro-cid-wpvy4v7s]:before,.nav-toggle-icon[data-astro-cid-wpvy4v7s]:after{background:var(--text-primary);width:20px;height:2px;margin:0 auto;display:block}.nav-toggle-icon[data-astro-cid-wpvy4v7s]:before,.nav-toggle-icon[data-astro-cid-wpvy4v7s]:after{content:"";position:relative}.nav-toggle-icon[data-astro-cid-wpvy4v7s]:before{top:-6px}.nav-toggle-icon[data-astro-cid-wpvy4v7s]:after{top:4px}.nav-drawer[data-astro-cid-wpvy4v7s]{background:var(--bg-elevated);border-left:1px solid var(--border);z-index:30;width:min(320px,85vw);height:100%;padding:1rem 1.5rem;position:fixed;top:0;right:0;overflow-y:auto}.nav-drawer[data-astro-cid-wpvy4v7s][hidden]{display:none}.nav-drawer-header[data-astro-cid-wpvy4v7s]{justify-content:space-between;align-items:center;margin-bottom:1rem;display:flex}.nav-drawer[data-astro-cid-wpvy4v7s] ul[data-astro-cid-wpvy4v7s]{flex-direction:column;gap:.25rem;margin:0;padding:0;list-style:none;display:flex}.nav-drawer[data-astro-cid-wpvy4v7s] a[data-astro-cid-wpvy4v7s]{min-height:44px;color:var(--link);border-radius:4px;align-items:center;padding:0 .5rem;font-weight:600;text-decoration:none;display:flex}.nav-close[data-astro-cid-wpvy4v7s]{border:1px solid var(--border);width:44px;height:44px;color:var(--text-primary);cursor:pointer;background:0 0;border-radius:4px;font-size:1.25rem;line-height:1}.nav-backdrop[data-astro-cid-wpvy4v7s]{z-index:20;background:#02060f99;position:fixed;inset:0}.nav-backdrop[data-astro-cid-wpvy4v7s][hidden]{display:none}@media (width<=720px){.nav-inline[data-astro-cid-wpvy4v7s]{display:none}.nav-toggle[data-astro-cid-wpvy4v7s]{display:block}}
+.crumbs[data-astro-cid-pyycvuw4]{color:var(--text-muted);align-items:center;gap:.5rem;margin-bottom:1rem;font-size:.9rem;display:flex}.arc42-content[data-astro-cid-pyycvuw4]{max-width:72ch}.arc42-content[data-astro-cid-pyycvuw4] pre.mermaid{text-align:center;background:0 0;margin:1.5rem 0;overflow-x:auto}.arc42-content[data-astro-cid-pyycvuw4] pre.mermaid svg{max-width:100%;height:auto}.arc42-content[data-astro-cid-pyycvuw4] pre{overflow-x:auto}.arc42-content[data-astro-cid-pyycvuw4] img{max-width:100%;height:auto}.arc42-content[data-astro-cid-pyycvuw4] table{border-collapse:collapse}.arc42-content[data-astro-cid-pyycvuw4] th,.arc42-content[data-astro-cid-pyycvuw4] td{border:1px solid var(--border);padding:.4rem .6rem}.section-nav[data-astro-cid-pyycvuw4]{border-top:1px solid var(--border);justify-content:space-between;gap:1rem;margin-top:2.5rem;padding-top:1rem;display:flex}.section-nav[data-astro-cid-pyycvuw4] a[data-astro-cid-pyycvuw4]{font-weight:600}.back[data-astro-cid-pyycvuw4]{margin-top:1.5rem}
+</style></head><body><header class="site-header" data-astro-cid-wpvy4v7s><div class="nav-bar" data-astro-cid-wpvy4v7s><a class="brand" href="/" data-astro-cid-wpvy4v7s>Open Coaching Format</a><button id="nav-toggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-drawer" aria-label="Open navigation menu" data-astro-cid-wpvy4v7s><span class="nav-toggle-icon" aria-hidden="true" data-astro-cid-wpvy4v7s></span></button><nav class="nav-inline" aria-label="Primary" data-astro-cid-wpvy4v7s><ul data-astro-cid-wpvy4v7s><li data-astro-cid-wpvy4v7s><a href="/" data-astro-cid-wpvy4v7s>Home</a></li><li data-astro-cid-wpvy4v7s><a href="/learn/" data-astro-cid-wpvy4v7s>Learn</a></li><li data-astro-cid-wpvy4v7s><a href="/use/" data-astro-cid-wpvy4v7s>Use</a></li><li data-astro-cid-wpvy4v7s><a href="/build/" data-astro-cid-wpvy4v7s>Build</a></li><li data-astro-cid-wpvy4v7s><a href="https://github.com/opencoachingformat/spec" data-astro-cid-wpvy4v7s>GitHub</a></li></ul></nav></div><div id="nav-drawer" class="nav-drawer" role="dialog" aria-modal="true" aria-label="Primary navigation" hidden data-astro-cid-wpvy4v7s><div class="nav-drawer-header" data-astro-cid-wpvy4v7s><span class="brand" data-astro-cid-wpvy4v7s>Open Coaching Format</span><button id="nav-close" class="nav-close" type="button" aria-label="Close navigation menu" data-astro-cid-wpvy4v7s><span aria-hidden="true" data-astro-cid-wpvy4v7s>&times;</span></button></div><ul data-astro-cid-wpvy4v7s><li data-astro-cid-wpvy4v7s><a href="/" data-astro-cid-wpvy4v7s>Home</a></li><li data-astro-cid-wpvy4v7s><a href="/learn/" data-astro-cid-wpvy4v7s>Learn</a></li><li data-astro-cid-wpvy4v7s><a href="/use/" data-astro-cid-wpvy4v7s>Use</a></li><li data-astro-cid-wpvy4v7s><a href="/build/" data-astro-cid-wpvy4v7s>Build</a></li><li data-astro-cid-wpvy4v7s><a href="https://github.com/opencoachingformat/spec" data-astro-cid-wpvy4v7s>GitHub</a></li></ul></div><div id="nav-backdrop" class="nav-backdrop" hidden data-astro-cid-wpvy4v7s></div></header><script type="module">var e=document.getElementById(`nav-toggle`),t=document.getElementById(`nav-drawer`),n=document.getElementById(`nav-backdrop`),r=document.getElementById(`nav-close`);if(e&&t&&n&&r){let i=`a[href], button:not([disabled])`;function a(){t.hidden=!1,n.hidden=!1,e.setAttribute(`aria-expanded`,`true`);let r=t.querySelector(i);r instanceof HTMLElement&&r.focus(),document.addEventListener(`keydown`,s)}function o(){t.hidden=!0,n.hidden=!0,e.setAttribute(`aria-expanded`,`false`),e.focus(),document.removeEventListener(`keydown`,s)}function s(e){if(e.key===`Escape`){o();return}if(e.key===`Tab`){let n=Array.from(t.querySelectorAll(i));if(n.length===0)return;let r=n.indexOf(document.activeElement);e.shiftKey&&r<=0?(e.preventDefault(),n[n.length-1].focus()):!e.shiftKey&&r===n.length-1&&(e.preventDefault(),n[0].focus())}}e.addEventListener(`click`,a),r.addEventListener(`click`,o),n.addEventListener(`click`,o)}</script><main class="wide"><nav class="crumbs" aria-label="Breadcrumb" data-astro-cid-pyycvuw4><a href="/build/" data-astro-cid-pyycvuw4>Build</a><span aria-hidden="true" data-astro-cid-pyycvuw4>/</span><a href="/build/architecture/" data-astro-cid-pyycvuw4>Architecture</a></nav><article class="arc42-content" data-astro-cid-pyycvuw4><h1>8. Cross-cutting Concepts</h1>
+<h2>8.1 Error/Result Model</h2>
+<p>A single, language-neutral shape is used everywhere, defined once
+conceptually and mirrored (not shared as code, since TS and Python cannot
+share a runtime type) in both languages:</p>
+<pre><code class="language-jsonc">{
+  &quot;valid&quot;: false,
+  &quot;errors&quot;:   [ /* Issue[] */ ],
+  &quot;warnings&quot;: [ /* Issue[] */ ],
+  &quot;summary&quot;: { &quot;errors&quot;: 2, &quot;warnings&quot;: 1 },
+  &quot;schema&quot;: {                    // which schema version this was validated against
+    &quot;validatedAgainst&quot;: &quot;1.4.0&quot;,
+    &quot;documentDeclared&quot;: &quot;https://opencoachingformat.org/schema/v1.json&quot;,
+    &quot;requiredByDoc&quot;: null,       // the doc&#39;s meta.min_schema_version, if any
+    &quot;match&quot;: true
+  }
+}
+</code></pre>
+<p>An <code>Issue</code>:</p>
+<pre><code class="language-jsonc">{
+  &quot;code&quot;: &quot;BALL_CARRIER_MISMATCH&quot;,
+  &quot;severity&quot;: &quot;error&quot;,
+  &quot;message&quot;: &quot;Player offense_2 performs pass but does not carry ball b1.&quot;,
+  &quot;path&quot;: &quot;/frames/2/actions/0&quot;,
+  &quot;frame&quot;: &quot;frame_3&quot;,
+  &quot;spec_ref&quot;: &quot;design §7.2&quot;,
+  &quot;data&quot;: { &quot;from&quot;: &quot;offense_2&quot;, &quot;ball_id&quot;: &quot;b1&quot;, &quot;action&quot;: &quot;pass&quot; }
+}
+</code></pre>
+<p><code>result.valid</code> is defined as <code>errors.length === 0</code> — warnings never affect it
+(unless a consumer opts into <code>--strict</code>, which is a CLI-layer concern, not a
+change to the underlying result semantics).</p>
+<h2>8.2 Error Code Registry (<code>shared/error-codes.json</code>)</h2>
+<p>Every code&#39;s severity, category, and message template is defined <strong>exactly
+once</strong>, language-neutrally. Both <code>codes.ts</code> and <code>codes.py</code> load this file
+directly rather than hardcoding severities or messages per-language. This is
+the mechanism that guarantees a <code>BALL_CARRIER_MISMATCH</code> means the same
+severity and produces the same message shape regardless of which package
+raised it.</p>
+<h2>8.2a Schema Version Awareness</h2>
+<p>Before Level 0 runs, <code>validate()</code> compares the document to the <strong>bundled schema
+version</strong> (read machine-readably from the schema&#39;s <code>x-ocf-version</code> keyword). Two
+version-skew situations are surfaced explicitly rather than mis-reported as
+structural errors:</p>
+<ul>
+<li><strong>Different schema major</strong> (the document&#39;s <code>$schema</code> points at a different
+<code>vN.json</code> than the validator bundles): the validator refuses with
+<code>SCHEMA_MAJOR_UNSUPPORTED</code> and does <strong>not</strong> run v1 schema/semantics — a v2
+document is never silently mis-validated as v1.</li>
+<li><strong>Newer minor required</strong> (the document&#39;s <code>meta.min_schema_version</code> exceeds the
+bundled version): the validator warns with <code>VALIDATOR_MAYBE_OUTDATED</code> and
+best-effort validates against the bundled schema, so the user sees the caveat
+instead of a misleading &quot;unknown field&quot; error.</li>
+</ul>
+<p>Every <code>Result</code> carries a <code>schema</code> block (<code>validatedAgainst</code>, <code>documentDeclared</code>,
+<code>requiredByDoc</code>, <code>match</code>) recording what was actually validated against. This
+deterministic behavior is mirrored in TS and Python for conformance parity. The
+TypeScript package additionally offers <code>validateAsync</code>, a <strong>browser-only</strong>
+convenience that — only in the newer-minor case — tries once to fetch the current
+schema and validate against it, falling back to the sync warning on any failure.
+Python stays synchronous and network-free; the fetch is not part of conformance.</p>
+<h2>8.3 Two-Level Validation (Schema, then Semantics)</h2>
+<p>See <a href="../adr/0002-two-stage-validation.md">ADR-0002</a>. Cross-cutting because
+every rule group (references, possession, coherence, quality) implicitly
+depends on Level 0 having already guaranteed structural shape — no rule
+group re-checks types/required fields that the schema already enforces.</p>
+<h2>8.4 Possession State Tracking</h2>
+<p>The semantic engine carries a <strong>per-frame ball-possession state</strong> (who
+carries which ball, where loose balls rest) threaded through the frame
+sequence in <strong>array order</strong> (not resolved via each action&#39;s optional <code>after</code>
+dependency — a known v1 limitation, see design doc §7). Both
+<code>rules/possession-rules</code> (carrier mismatches, ambiguous balls) and
+<code>rules/coherence</code> (<code>end_state</code> agreement) read this same state, so it is
+built once per <code>validate()</code> call and passed through, not recomputed per rule.</p>
+<h2>8.5 Field Semantics: <code>intensity</code> vs. <code>physicality</code></h2>
+<p>Actions with movement or ball-handling semantics (<code>move</code>, <code>cut</code>, <code>dribble</code>,
+<code>pass</code>, <code>shoot</code>) accept an <code>intensity</code> field (<code>walk</code> / <code>jog</code> / <code>sprint</code> /
+similar movement-speed enum, schema-defined). Contact-oriented actions
+(<code>screen</code>, <code>defend</code>, <code>rebound</code>, <code>pickup</code>) instead accept a <code>physicality</code>
+field — the two are <strong>mutually exclusive per action type</strong> and enforced via
+<code>additionalProperties: false</code> combined with per-<code>oneOf</code>-branch property
+lists in the JSON Schema: an action type that doesn&#39;t declare a field in its
+schema branch will fail Level-0 validation (<code>SCHEMA_INVALID</code>) if that field
+is present, rather than silently ignoring it. This is why
+<code>action-bad-movement-intensity</code> (an <code>intensity</code> value not in the schema enum)
+and <code>action-intensity-on-screen</code> (<code>intensity</code> used on a <code>screen</code>, which only
+accepts <code>physicality</code>) are both caught at Level 0, not by a semantic rule.</p>
+<h2>8.6 Legacy Model Rejection</h2>
+<p>Documents using the superseded geometric model (<code>entity_states</code> / <code>lines</code>,
+predating the current <code>balls[]</code>/<code>actions</code>/<code>start_state</code>/<code>end_state</code> model)
+are detected <strong>before</strong> generic schema errors run, and rejected with a
+single targeted <code>MODEL_LEGACY</code> error whose message points at the current
+model — rather than surfacing a confusing cascade of unrelated schema
+failures from validating old-shaped data against the new schema.</p>
+<h2>8.7 Provenance and Deliberate Schema Change</h2>
+<p><code>shared/schema/ocf-action-v1.json</code> always carries a paired
+<code>shared/schema/PROVENANCE.md</code> recording the exact source commit/ref it was
+copied from. The file is never hand-edited — both the manual process and the
+<code>sync-from-spec.yml</code> automation always update schema + provenance together,
+so provenance can never silently drift out of sync with the actual vendored
+content.</p>
+<h2>8.8 Conformance as Contract, Not Just Tests</h2>
+<p><code>shared/conformance/cases.json</code> is treated as a first-class architectural
+artifact, not merely a test fixture list: it is the machine-checked
+definition of &quot;these two implementations agree.&quot; Any new rule or schema
+change is expected to add/update a fixture + case entry, and CI failing on a
+conformance mismatch is the intended signal that the two languages have
+drifted — this is the primary mechanism satisfying Quality Goal 1.</p>
+<h2>8.9 Structural Mirroring vs. Exact Mirroring</h2>
+<p>The Python package is a <strong>behavioral</strong> mirror of the TypeScript reference,
+not a file-for-file structural clone: e.g. Python consolidates the four rule
+groups into one <code>rules.py</code> rather than a <code>rules/</code> subpackage. This is
+intentional — parity is enforced at the <code>shared/conformance</code> behavioral
+level (identical codes/severities per fixture), and each language is free to
+use idiomatic internal structure as long as conformance holds.</p>
+</article><nav class="section-nav" aria-label="Section navigation" data-astro-cid-pyycvuw4><a class="prev" href="/build/architecture/07-deployment-view/" data-astro-cid-pyycvuw4>← 7. Deployment View</a><a class="next" href="/build/architecture/09-architecture-decisions/" data-astro-cid-pyycvuw4>9. Architecture Decisions →</a></nav><p class="back" data-astro-cid-pyycvuw4><a href="/build/architecture/" data-astro-cid-pyycvuw4>← All sections</a></p></main></body></html>
