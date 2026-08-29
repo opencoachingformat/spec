@@ -32,7 +32,7 @@ jobs:
 
       - name: Diagram pipeline unit tests
         working-directory: site
-        run: node --test test/diagram.test.mjs test/replace-plantuml.test.mjs test/schema-versions.test.mjs test/build-sports.test.mjs
+        run: node --test test/diagram.test.mjs test/replace-plantuml.test.mjs test/schema-versions.test.mjs test/build-sports.test.mjs test/mermaid-marked.test.mjs
 
       - name: Build site
         working-directory: site
@@ -70,6 +70,7 @@ jobs:
             http://localhost:4321/learn/ \
             http://localhost:4321/use/ \
             http://localhost:4321/build/ \
+            http://localhost:4321/build/architecture/ \
             http://localhost:4321/docs/ \
             http://localhost:4321/docs/spec/ \
             http://localhost:4321/docs/schema/ \
