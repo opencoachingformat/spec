@@ -77,6 +77,7 @@ coexist and be referenced unambiguously.
 **An actor has at most one active action at a time.** Anything that looks
 like "two things at once for one actor" is modeled as one action with richer
 fields, never as two concurrent actions on the same `player`:
+
 - Two balls handled simultaneously → one `dribble` action with
   `ball_ids: [entity_ref, entity_ref]` (max 2, one per hand), one shared
   `moves[]` path. Sync vs. alternating dribble rhythm is renderer/tag nuance,
@@ -95,9 +96,9 @@ introduction, since this format doesn't support mid-play substitutions).
 **Cross-actor coupling** uses the new unified `trigger` field (replaces
 `after`/`with`/`on_catch`):
 
-```
+```jsonc
 "trigger": {
-  "type": "action_end" | "action_start" | "action_overlap" | "reception" | <sport-extensible string>,
+  "type": "action_end" | "action_start" | "action_overlap" | "reception" | "<sport-extensible string>",
   "ref": "<action_id>"   // required for action_end/action_start/action_overlap; omitted for reception
 }
 ```
@@ -144,7 +145,7 @@ Rather than a basketball-specific field or an awkward second `screen` action
 (which requires `for_player` and doesn't fit a screen that's a byproduct of
 a pass), actions carry an optional generic array:
 
-```
+```json
 "side_effects": [
   { "type": "screen", "on": "<entity_ref>", "physicality": "normal" }
 ]
@@ -161,14 +162,14 @@ non-breaking to add later if skipped now (see companion doc).
 Branching moves from `frame.branches` (outcome → target frame id) to a
 dedicated action-sequence element:
 
-```
+```jsonc
 {
   "type": "branch",
   "id": "branch_1",
   "on": "<action_id>",
   "cases": {
-    "make":  { "actions": [ ... ], "then": "<anchor_action_id>" },
-    "miss":  { "actions": [ ... ], "then": null }
+    "make":  { "actions": [ /* ... */ ], "then": "<anchor_action_id>" },
+    "miss":  { "actions": [ /* ... */ ], "then": null }
   }
 }
 ```
@@ -199,7 +200,7 @@ dedicated action-sequence element:
 A drill-level flag, orthogonal to branching but sharing its anchor/terminal
 vocabulary:
 
-```
+```json
 "continuum": true
 ```
 
@@ -272,6 +273,7 @@ does not constrain "how many actions per visual frame."
 
 This design was explicitly checked against the planned multi-ball v2 item
 and found to help rather than hinder it:
+
 - Unique `action.id`s (vs. today's `<entity_ref>.<action_type>` action_ref)
   resolve the exact reference-ambiguity problem multi-ball would otherwise
   hit first (two simultaneous `dribble` actions for one actor could not be
@@ -284,6 +286,7 @@ and found to help rather than hinder it:
 
 See the companion open-questions document
 (`2026-09-05-frameless-action-model-open-questions.md`) for:
+
 1. Whether a `side_effect` needs its own `id`.
 2. Variant-dependency constraints at the sport-definition level (e.g.
    `cut.curl` requiring a coupled `screen`), including the `trigger.type`
