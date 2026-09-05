@@ -51,3 +51,7 @@ test("every sport allOf branch whitelists actions[].type, not frames[].actions[]
   assert.equal(branchesWithActionWhitelist.length, 5,
     "expected exactly 5 sport action-type whitelist branches (basketball, soccer, handball, hockey, futsal)");
 });
+
+test("frame definition is fully removed (superseded by actions[]/branch)", () => {
+  assert.equal(schema.definitions.frame, undefined, "frame definition must be deleted");
+});

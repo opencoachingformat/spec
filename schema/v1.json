@@ -650,39 +650,6 @@
       "description": "Result that selects a branch target frame."
     },
 
-    "frame": {
-      "type": "object",
-      "description": "A coaching phase: explicit anchors (start_state/end_state) plus semantic actions, with optional outcome branches.",
-      "required": ["id", "actions", "end_state"],
-      "properties": {
-        "id": { "type": "string", "description": "Unique frame id within the drill." },
-        "label": { "type": "string" },
-        "description": { "type": "string", "description": "Coaching instruction; LLMs should generate this." },
-        "duration_ms": { "type": "integer", "minimum": 0, "description": "Deprecated: use per-action 'intensity' instead. Suggested animation duration for the phase." },
-        "start_state": {
-          "$ref": "#/definitions/state",
-          "description": "Optional. Defaults to the previous frame's end_state."
-        },
-        "actions": {
-          "type": "array",
-          "description": "Semantic actions in this phase. May be empty.",
-          "items": { "$ref": "#/definitions/action" }
-        },
-        "end_state": {
-          "$ref": "#/definitions/state",
-          "description": "Explicit anchor at the end of the phase."
-        },
-        "branches": {
-          "type": "object",
-          "description": "Optional outcome -> target frame id. Without branches, the next frame in the array follows.",
-          "propertyNames": { "$ref": "#/definitions/outcome" },
-          "additionalProperties": { "type": "string" },
-          "minProperties": 1
-        }
-      },
-      "additionalProperties": false
-    },
-
     "branch_case": {
       "type": "object",
       "description": "One outcome path of a branch: its own self-contained action sub-sequence, plus an explicit continuation target. 'then' is required so a validator can distinguish 'this path ends here' (then: null) from an author forgetting to continue it — never an implicit missing field.",
