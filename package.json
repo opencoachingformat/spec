@@ -42,7 +42,8 @@
     "test:sport": "node --test test/sport-branches.test.mjs",
     "test:version": "node --test test/schema-version.test.mjs",
     "test:manifest": "node --test test/versions-manifest.test.mjs",
-    "test": "npm run validate && npm run test:invalid && npm run test:positions && npm run test:sport && npm run test:version && npm run test:manifest"
+    "test:frameless": "node --test test/frameless-*.test.mjs",
+    "test": "npm run validate && npm run test:invalid && npm run test:positions && npm run test:sport && npm run test:version && npm run test:manifest && npm run test:frameless"
   },
   "devDependencies": {
     "ajv": "^8.20.0",
