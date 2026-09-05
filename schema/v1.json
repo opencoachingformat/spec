@@ -215,6 +215,33 @@
       "pattern": "^((offense|defense)_[1-9]|coach|(cone|station)_[1-9][0-9]*)\\.(move|cut|screen|defend|dribble|pass|shoot|rebound|pickup|tackle|clear|faceoff|check)$"
     },
 
+    "action_id": {
+      "type": "string",
+      "description": "Unique identifier for an action within the document. Author-chosen, must be unique across the whole actions[] sequence (including inside branch cases).",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9_-]+$"
+    },
+
+    "trigger": {
+      "type": "object",
+      "description": "Explicit timing coupling between this action and another action, or an implicit event on this action's own actor (e.g. receiving the ball). Replaces the old after/with/on_catch fields.",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "action_end/action_start/action_overlap require 'ref'. 'reception' fires on this action's own actor receiving the ball and takes no ref. Sport definitions may add further open trigger types (e.g. a hockey 'faceoff_won') without a schema change."
+        },
+        "ref": { "$ref": "#/definitions/action_id" }
+      },
+      "additionalProperties": false,
+      "if": {
+        "properties": { "type": { "enum": ["action_end", "action_start", "action_overlap"] } }
+      },
+      "then": {
+        "required": ["type", "ref"]
+      }
+    },
+
     "movement_intensity": {
       "type": "string",
       "description": "Relative tempo over distance for move/cut/dribble. Does not imply a concrete duration — a downstream application derives timing from this plus actual player speed.",
