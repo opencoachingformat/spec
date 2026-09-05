@@ -6,5 +6,5 @@
   },
   "court": { "ruleset": "fiba", "type": "half_court" },
   "entities": [],
-  "frames": [ { "id": "f1", "actions": [], "end_state": {} } ]
+  "actions": []
 }
