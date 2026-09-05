@@ -27,14 +27,24 @@ test("frames property is fully removed from the root", () => {
 });
 
 test("every sport allOf branch whitelists actions[].type, not frames[].actions[].type", () => {
+  const branchesWithActionWhitelist = [];
   for (const branch of schema.allOf) {
     if (!branch.then?.properties) continue;
+    // A branch is a sport-scoping action-type whitelist only if it constrains
+    // actions[].items.properties.type — the custom-ruleset branch (which only
+    // touches court.custom_dimensions) has a `then.properties` too but no
+    // `actions` key, so it's correctly skipped here, not silently miscounted.
     const actionsProp = branch.then.properties.actions;
-    if (actionsProp) {
-      assert.equal(actionsProp.items.properties.type.enum !== undefined, true,
-        "each sport branch must whitelist actions[].items.properties.type.enum directly at the root");
-    }
     assert.equal(branch.then.properties.frames, undefined,
-      "no sport branch should reference frames[] anymore");
+      "no branch should reference frames[] anymore");
+    if (!actionsProp) continue;
+    assert.ok(Array.isArray(actionsProp.items?.properties?.type?.enum),
+      "each sport branch must whitelist actions[].items.properties.type.enum directly at the root");
+    branchesWithActionWhitelist.push(branch);
   }
+  // Guards against a branch's whitelist silently disappearing (e.g. an empty
+  // then.properties): there must be exactly one action-type whitelist branch
+  // per supported sport (basketball, soccer, handball, hockey, futsal).
+  assert.equal(branchesWithActionWhitelist.length, 5,
+    "expected exactly 5 sport action-type whitelist branches (basketball, soccer, handball, hockey, futsal)");
 });
