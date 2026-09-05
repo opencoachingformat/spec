@@ -9,9 +9,8 @@
     { "type": "defense", "nr": 4, "x": 0.0, "y": 40.0 }
   ],
   "balls": [ { "id": "ball_1", "carried_by": "offense_9" } ],
-  "frames": [
-    { "id": "f1", "label": "Tackle", "description": "defender challenges the ball carrier, who releases a pass",
-      "actions": [ { "player": "defense_4", "type": "tackle" }, { "player": "offense_9", "type": "pass", "to_player": "offense_8" } ],
-      "end_state": { "offense_9": { "x": 0.0, "y": 30.0 }, "offense_8": { "x": 12.0, "y": 28.0 }, "defense_4": { "x": 0.0, "y": 38.0 } } }
+  "actions": [
+    { "id": "a1", "player": "defense_4", "type": "tackle", "description": "defender challenges the ball carrier, who releases a pass" },
+    { "id": "a2", "player": "offense_9", "type": "pass", "to_player": "offense_8" }
   ]
 }
