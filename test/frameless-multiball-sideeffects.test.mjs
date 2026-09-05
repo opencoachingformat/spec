@@ -54,6 +54,19 @@ test("action_dribble rejects three ball_ids (max 2 hands)", () => {
   assert.equal(ok, false);
 });
 
+test("action_dribble rejects ball_id and ball_ids present together", () => {
+  const validate = compileDef("action_dribble");
+  const ok = validate({
+    id: "d1",
+    player: "offense_1",
+    type: "dribble",
+    ball_id: "ball_1",
+    ball_ids: ["ball_1", "ball_2"],
+    moves: [{ to: { x: 1, y: 2 } }],
+  });
+  assert.equal(ok, false, "ball_id and ball_ids must be mutually exclusive, per ball_ids' own description");
+});
+
 test("action_pass accepts an optional side_effects array", () => {
   const validate = compileDef("action_pass");
   const ok = validate({

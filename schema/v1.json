@@ -375,7 +375,8 @@
         "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "not": { "required": ["ball_id", "ball_ids"] }
     },
 
     "action_pass": {
