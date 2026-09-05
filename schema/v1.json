@@ -209,12 +209,6 @@
       "additionalProperties": false
     },
 
-    "action_ref": {
-      "type": "string",
-      "description": "Reference to another action in the same frame: '<entity_ref>.<action_type>'.",
-      "pattern": "^((offense|defense)_[1-9]|coach|(cone|station)_[1-9][0-9]*)\\.(move|cut|screen|defend|dribble|pass|shoot|rebound|pickup|tackle|clear|faceoff|check)$"
-    },
-
     "action_id": {
       "type": "string",
       "description": "Unique identifier for an action within the document. Author-chosen, must be unique across the whole actions[] sequence (including inside branch cases).",
@@ -277,23 +271,22 @@
 
     "action_move": {
       "type": "object",
-      "required": ["player", "type", "moves"],
+      "required": ["id", "player", "type", "moves"],
       "properties": {
         "player": { "$ref": "#/definitions/entity_ref" },
         "type": { "const": "move" },
         "moves": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/move_step" } },
         "intensity": { "$ref": "#/definitions/movement_intensity" },
+        "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
-        "after": { "$ref": "#/definitions/action_ref" },
-        "with": { "$ref": "#/definitions/action_ref" },
-        "on_catch": { "type": "boolean" }
+        "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
     },
 
     "action_cut": {
       "type": "object",
-      "required": ["player", "type", "moves"],
+      "required": ["id", "player", "type", "moves"],
       "properties": {
         "player": { "$ref": "#/definitions/entity_ref" },
         "type": { "const": "cut" },
@@ -304,17 +297,16 @@
         "side": { "type": "string", "enum": ["left", "right"], "description": "Default side for this cut's around_player steps; overridden per move_step." },
         "arc": { "type": "string", "enum": ["tight", "normal", "wide"], "description": "Default arc for this cut's around_player steps; overridden per move_step." },
         "intensity": { "$ref": "#/definitions/movement_intensity" },
+        "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
-        "after": { "$ref": "#/definitions/action_ref" },
-        "with": { "$ref": "#/definitions/action_ref" },
-        "on_catch": { "type": "boolean" }
+        "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
     },
 
     "action_screen": {
       "type": "object",
-      "required": ["player", "type", "for_player"],
+      "required": ["id", "player", "type", "for_player"],
       "properties": {
         "player": { "$ref": "#/definitions/entity_ref" },
         "type": { "const": "screen" },
@@ -323,51 +315,48 @@
         "at": { "$ref": "#/definitions/coordinate" },
         "variant": { "type": "string", "enum": ["ball_screen", "back_screen", "down_screen", "flare_screen", "cross_screen", "pin_down"] },
         "physicality": { "$ref": "#/definitions/physicality" },
+        "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
-        "after": { "$ref": "#/definitions/action_ref" },
-        "with": { "$ref": "#/definitions/action_ref" },
-        "on_catch": { "type": "boolean" }
+        "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
     },
 
     "action_defend": {
       "type": "object",
-      "required": ["player", "type", "guards_player"],
+      "required": ["id", "player", "type", "guards_player"],
       "properties": {
         "player": { "$ref": "#/definitions/entity_ref" },
         "type": { "const": "defend" },
         "guards_player": { "$ref": "#/definitions/entity_ref" },
         "variant": { "type": "string", "enum": ["on_ball", "deny", "help", "hedge", "switch", "box_out"] },
         "physicality": { "$ref": "#/definitions/physicality" },
+        "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
-        "after": { "$ref": "#/definitions/action_ref" },
-        "with": { "$ref": "#/definitions/action_ref" },
-        "on_catch": { "type": "boolean" }
+        "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
     },
 
     "action_dribble": {
       "type": "object",
-      "required": ["player", "type", "moves"],
+      "required": ["id", "player", "type", "moves"],
       "properties": {
         "player": { "$ref": "#/definitions/entity_ref" },
         "type": { "const": "dribble" },
         "moves": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/move_step" } },
         "ball_id": { "$ref": "#/definitions/ball_ref" },
         "intensity": { "$ref": "#/definitions/movement_intensity" },
+        "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
-        "after": { "$ref": "#/definitions/action_ref" },
-        "with": { "$ref": "#/definitions/action_ref" },
-        "on_catch": { "type": "boolean" }
+        "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
     },
 
     "action_pass": {
       "type": "object",
-      "required": ["player", "type", "to_player"],
+      "required": ["id", "player", "type", "to_player"],
       "properties": {
         "player": { "$ref": "#/definitions/entity_ref" },
         "type": { "const": "pass" },
@@ -375,17 +364,16 @@
         "ball_id": { "$ref": "#/definitions/ball_ref" },
         "variant": { "type": "string", "enum": ["chest", "bounce", "overhead", "lob", "baseball", "hand_off", "outlet"] },
         "intensity": { "$ref": "#/definitions/ball_intensity" },
+        "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
-        "after": { "$ref": "#/definitions/action_ref" },
-        "with": { "$ref": "#/definitions/action_ref" },
-        "on_catch": { "type": "boolean" }
+        "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
     },
 
     "action_shoot": {
       "type": "object",
-      "required": ["player", "type"],
+      "required": ["id", "player", "type"],
       "properties": {
         "player": { "$ref": "#/definitions/entity_ref" },
         "type": { "const": "shoot" },
@@ -393,43 +381,40 @@
         "variant": { "type": "string", "enum": ["jumper", "three", "layup", "floater", "dunk", "hook", "free_throw"] },
         "result": { "type": "string", "enum": ["make", "miss"] },
         "intensity": { "$ref": "#/definitions/ball_intensity" },
+        "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
-        "after": { "$ref": "#/definitions/action_ref" },
-        "with": { "$ref": "#/definitions/action_ref" },
-        "on_catch": { "type": "boolean" }
+        "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
     },
 
     "action_rebound": {
       "type": "object",
-      "required": ["player", "type"],
+      "required": ["id", "player", "type"],
       "properties": {
         "player": { "$ref": "#/definitions/entity_ref" },
         "type": { "const": "rebound" },
         "ball_id": { "$ref": "#/definitions/ball_ref" },
         "variant": { "type": "string", "enum": ["offensive", "defensive"] },
         "physicality": { "$ref": "#/definitions/physicality" },
+        "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
-        "after": { "$ref": "#/definitions/action_ref" },
-        "with": { "$ref": "#/definitions/action_ref" },
-        "on_catch": { "type": "boolean" }
+        "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
     },
 
     "action_pickup": {
       "type": "object",
-      "required": ["player", "type", "ball_id"],
+      "required": ["id", "player", "type", "ball_id"],
       "properties": {
         "player": { "$ref": "#/definitions/entity_ref" },
         "type": { "const": "pickup" },
         "ball_id": { "$ref": "#/definitions/ball_ref" },
         "physicality": { "$ref": "#/definitions/physicality" },
+        "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
-        "after": { "$ref": "#/definitions/action_ref" },
-        "with": { "$ref": "#/definitions/action_ref" },
-        "on_catch": { "type": "boolean" }
+        "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
     },
@@ -437,15 +422,14 @@
     "action_tackle": {
       "type": "object",
       "$comment": "Reserved for invasion sports (soccer/futsal/hockey). No variants defined yet; must be specified before promotion.",
-      "required": ["player", "type"],
+      "required": ["id", "player", "type"],
       "properties": {
         "player": { "$ref": "#/definitions/entity_ref" },
         "type": { "const": "tackle" },
         "physicality": { "$ref": "#/definitions/physicality" },
+        "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
-        "after": { "$ref": "#/definitions/action_ref" },
-        "with": { "$ref": "#/definitions/action_ref" },
-        "on_catch": { "type": "boolean" }
+        "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
     },
@@ -453,16 +437,15 @@
     "action_clear": {
       "type": "object",
       "$comment": "Reserved for invasion sports (soccer/futsal/hockey). No variants defined yet.",
-      "required": ["player", "type"],
+      "required": ["id", "player", "type"],
       "properties": {
         "player": { "$ref": "#/definitions/entity_ref" },
         "type": { "const": "clear" },
         "ball_id": { "$ref": "#/definitions/ball_ref" },
         "intensity": { "$ref": "#/definitions/ball_intensity" },
+        "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
-        "after": { "$ref": "#/definitions/action_ref" },
-        "with": { "$ref": "#/definitions/action_ref" },
-        "on_catch": { "type": "boolean" }
+        "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
     },
@@ -470,14 +453,13 @@
     "action_faceoff": {
       "type": "object",
       "$comment": "Reserved for hockey. No variants defined yet.",
-      "required": ["player", "type"],
+      "required": ["id", "player", "type"],
       "properties": {
         "player": { "$ref": "#/definitions/entity_ref" },
         "type": { "const": "faceoff" },
+        "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
-        "after": { "$ref": "#/definitions/action_ref" },
-        "with": { "$ref": "#/definitions/action_ref" },
-        "on_catch": { "type": "boolean" }
+        "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
     },
@@ -485,16 +467,15 @@
     "action_check": {
       "type": "object",
       "$comment": "Reserved for hockey. No variants defined yet.",
-      "required": ["player", "type"],
+      "required": ["id", "player", "type"],
       "properties": {
         "player": { "$ref": "#/definitions/entity_ref" },
         "type": { "const": "check" },
         "on_player": { "$ref": "#/definitions/entity_ref" },
         "physicality": { "$ref": "#/definitions/physicality" },
+        "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
-        "after": { "$ref": "#/definitions/action_ref" },
-        "with": { "$ref": "#/definitions/action_ref" },
-        "on_catch": { "type": "boolean" }
+        "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
     },
