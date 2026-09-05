@@ -708,7 +708,7 @@
 
     "branch": {
       "type": "object",
-      "description": "Outcome-dependent continuation, scoped to the outcome of one action. Only actors referenced inside the triggering case's own actions[] are affected — an uninvolved actor's action is unaffected by a branch it isn't part of.",
+      "description": "Outcome-dependent continuation, scoped to the outcome of one action. Only actors referenced inside the triggering case's own actions[] are affected — an uninvolved actor's action is unaffected by a branch it isn't part of. Any other actor's action that needs to react to the same outcome must itself live inside the relevant case's sub-sequence, or use trigger against an action inside it.",
       "required": ["id", "on", "cases"],
       "properties": {
         "id": { "$ref": "#/definitions/action_id" },

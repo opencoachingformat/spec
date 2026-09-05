@@ -24,8 +24,8 @@ test("branch_case definition exists with actions[] and optional then", () => {
   const d = defs.branch_case;
   assert.ok(d, "definitions.branch_case must exist");
   assert.deepEqual(d.required, ["actions", "then"]);
-  assert.ok(d.properties.then.type.includes("string"), "then must allow string (a continuation target id)");
-  assert.ok(d.properties.then.type.includes("null"), "then must allow null (explicit terminal marker)");
+  assert.deepEqual([...d.properties.then.type].sort(), ["null", "string"],
+    "then must allow exactly string (a continuation target id) and null (explicit terminal marker), nothing else");
 });
 
 test("a branch validates with two cases, one terminal (then: null via type null)", () => {
