@@ -671,75 +671,115 @@ never has to reason about `physicality` values.
 }
 ----
 
-`duration_ms` (see <<Frame Model>>) is deprecated in favor of `intensity`.
-It remains valid for backward compatibility with existing play files, but
-new play files should express tempo via `intensity` instead.
+The frame-level `duration_ms` field from the pre-v2.0.0 frame model is
+removed; `intensity` is now the only way to express tempo.
 
 === Timing
 
-Actions express ordering semantically, not in seconds (omitted = at frame
-start):
+Actions express ordering semantically, not in seconds. Every action has a
+unique `id`. Absent an explicit `trigger`, an actor's actions run in the
+order they appear for that actor in the flat `actions[]` sequence — the
+first action for a given actor starts from its `entities`/`balls` setup
+position; each subsequent action for that actor starts where its previous
+action ended.
+
+Cross-actor coupling uses `trigger`:
 
 [cols="1,3", options="header"]
 |===
-| Field | Meaning
-| `after` | `"<player>.<type>"` — starts after the referenced action begins.
-| `with` | `"<player>.<type>"` — simultaneous with the referenced action.
-| `on_catch` | `true` — straight out of the catch (catch-and-shoot).
+| `trigger.type` | Meaning
+| `action_end` | Starts after the referenced action (`ref`) ends.
+| `action_start` | Starts after the referenced action (`ref`) begins.
+| `action_overlap` | Runs *while* the referenced action (`ref`) is active (e.g. a curl cut during an active screen).
+| `reception` | Starts the instant this action's own actor receives the ball. No `ref` — replaces the old `on_catch` boolean.
 |===
+
+`trigger.type` is open and sport-extensible — a sport may define further
+trigger types beyond these four without a schema change, the same way
+`tags` needs no schema change for open coaching vocabulary.
+
+A `move_step`'s `around_player` reference (see <<Movement Sequences>>) is
+NOT a `trigger` — it implies that the referenced actor must be at their
+final position by the time that step is processed, as a side effect of the
+geometric reference, without needing a separate explicit `trigger`.
 
 ---
 
-== Frames
+== Actions Sequence
 
-A frame is a coaching phase. It combines explicit anchors with semantic actions.
+A play is a flat, ordered `actions[]` array at the document root — no frame
+container. Framing (grouping actions into a still-frame, a PDF step, or a
+page) is entirely a renderer/consumer decision; the spec makes no framing
+choices and imposes no limit on how many actions an actor may have.
 
-=== Frame Model
+=== Action Identity and Ordering
+
+Every action has a unique `id` (required). There is no per-action position
+anchor: every entity's/ball's position at any point is derived purely from
+its `entities`/`balls` setup state plus the effect of every action that
+actor has had so far in the sequence. An actor has at most one active action
+at a time — composite motions use `side_effects` (see <<Actions>>) or, for
+two-ball dribbling, `ball_ids` on one `dribble` action, never two concurrent
+actions for the same `player`.
+
+=== Branching
+
+An item in `actions[]` may be a `branch` instead of an action:
 
 [cols="1,1,3", options="header"]
 |===
 | Field | Required | Meaning
-| `id` | yes | Unique frame id within the drill.
-| `label` | no | Short display label.
-| `description` | no | Coaching instruction. LLMs should generate this.
-| `duration_ms` | no | *Deprecated* — use per-action `intensity` instead. Suggested animation duration for the phase.
-| `start_state` | no | Positional + ball anchor at phase start. Defaults to the previous frame's `end_state`.
-| `actions` | yes | Semantic actions in this phase. May be empty.
-| `end_state` | yes | Positional + ball anchor at phase end.
-| `branches` | no | Outcome -> target frame id.
+| `id` | yes | Unique id for this branch.
+| `on` | yes | The `id` of the action whose outcome selects the case.
+| `cases` | yes | Map of outcome (`make`, `miss`, `turnover`, `steal`, `foul`) -> case.
 |===
 
-=== States
+Each case is:
 
-`start_state` and `end_state` map entity refs to coordinates, plus an optional
-`balls` map of ball ref -> ball state. Because each frame carries an explicit
-anchor, any frame can be rendered as a still without simulating history — which
-is what enables PDF export, editor scrubbing and video overlay.
+[cols="1,1,3", options="header"]
+|===
+| Field | Required | Meaning
+| `actions` | yes | Self-contained action (or nested branch) sub-sequence for this outcome. May be empty.
+| `then` | yes | The `id` this case continues into, or `null` if this path ends here. Required — always explicit, never an implicitly-missing field.
+|===
 
-`start_state` is optional and inherits the previous frame's `end_state`. Set it
-explicitly only at jumps, steals, rebounds or continuum resets.
+Branch scope is per-branch, not global: only actors referenced inside the
+triggering case's own `actions[]` are affected. Any other actor's action
+that needs to react to the same outcome must live inside the relevant case's
+sub-sequence, or `trigger` off an action inside it.
 
 [source,json]
 ----
-"end_state": {
-  "offense_1": { "x": -1.0, "y": 9.0 },
-  "offense_4": { "named": "right_block" },
-  "balls": { "ball_1": { "carried_by": "offense_4" } }
+{
+  "id": "branch_1",
+  "on": "a7",
+  "cases": {
+    "make": { "actions": [], "then": null },
+    "miss": {
+      "actions": [
+        { "id": "a8", "player": "offense_2", "type": "rebound", "ball_id": "ball_1", "variant": "offensive" },
+        { "id": "a9", "player": "offense_2", "type": "shoot", "ball_id": "ball_1", "variant": "layup", "result": "make", "trigger": { "type": "action_end", "ref": "a8" } }
+      ],
+      "then": null
+    }
+  }
 }
 ----
 
-=== Branches
+=== Continuum (Looping Plays)
 
-Without `branches`, the next frame in the array follows. With `branches`, the
-outcome selects the next frame. Outcomes are `make`, `miss`, `turnover`,
-`steal`, `foul`. A branch may point at an earlier frame to build a continuum
-loop. For a single set play, omit `branches` and let the final frame set the
-ball `dead`.
+A drill that is designed to repeat sets the document-level flag:
 
 [source,json]
 ----
-"branches": { "make": "frame_reset", "miss": "frame_oreb" }
+"continuum": true
 ----
+
+A validator then checks that the play's terminal state matches its setup
+state (or an explicitly designated loop anchor a `branch` case's `then`
+points at, for a loop that re-enters mid-sequence rather than at the very
+start). Exact tolerance is a validator-level concern, not enforced by the
+schema itself.
 
 ---
 
@@ -995,6 +1035,7 @@ The y-axis is inverted (y increases downward in FIBA, upward in {ocf}).
 ----
 {
   "$schema": "https://opencoachingformat.org/schema/v1.json",
+  "sport": "basketball",
   "meta": {
     "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
     "title": "Basic Pick & Roll",
@@ -1013,58 +1054,56 @@ The y-axis is inverted (y increases downward in FIBA, upward in {ocf}).
     { "type": "defense", "nr": 4, "x": -2.80, "y": 7.80 }
   ],
   "balls": [ { "id": "ball_1", "carried_by": "offense_1" } ],
-  "frames": [
+  "actions": [
     {
-      "id": "frame_1",
-      "label": "Step 1 — Screen",
-      "description": "offense_4 moves up from the left elbow to set a ball screen for offense_1 at the top of the key.",
-      "duration_ms": 1500,
-      "actions": [
-        { "player": "offense_4", "type": "screen", "for_player": "offense_1", "on_player": "defense_1", "variant": "ball_screen", "at": { "x": -0.5, "y": 6.7 } }
-      ],
-      "end_state": {
-        "offense_1": { "named": "top_of_the_key" },
-        "offense_4": { "x": -0.5, "y": 6.2 },
-        "balls": { "ball_1": { "carried_by": "offense_1" } }
-      }
+      "id": "a1",
+      "player": "offense_4",
+      "type": "screen",
+      "for_player": "offense_1",
+      "on_player": "defense_1",
+      "variant": "ball_screen",
+      "at": { "x": -0.5, "y": 6.7 },
+      "description": "offense_4 moves up from the left elbow to set a ball screen for offense_1 at the top of the key."
     },
     {
-      "id": "frame_2",
-      "label": "Step 2 — Attack",
-      "description": "offense_1 uses the screen and dribbles hard left toward the elbow; offense_4 rolls to the right block.",
-      "duration_ms": 2000,
-      "actions": [
-        {
-          "player": "offense_1",
-          "type": "dribble",
-          "ball_id": "ball_1",
-          "moves": [
-            { "variant": "hesitation" },
-            { "variant": "speed", "to": { "named": "left_elbow" }, "around_player": "defense_1" }
-          ]
-        },
-        { "player": "offense_4", "type": "cut", "variant": "basket", "moves": [ { "to": { "named": "right_block" } } ], "tags": ["roll"] }
+      "id": "a2",
+      "player": "offense_1",
+      "type": "dribble",
+      "ball_id": "ball_1",
+      "moves": [
+        { "variant": "hesitation" },
+        { "variant": "speed", "to": { "named": "left_elbow" }, "around_player": "defense_1" }
       ],
-      "end_state": {
-        "offense_1": { "named": "left_elbow" },
-        "offense_4": { "named": "right_block" },
-        "balls": { "ball_1": { "carried_by": "offense_1" } }
-      }
+      "description": "offense_1 uses the screen and dribbles hard left toward the elbow."
     },
     {
-      "id": "frame_3",
-      "label": "Step 3 — Finish",
-      "description": "offense_1 throws a bounce pass to the rolling offense_4, who finishes with a layup.",
-      "duration_ms": 1500,
-      "actions": [
-        { "player": "offense_1", "type": "pass", "to_player": "offense_4", "ball_id": "ball_1", "variant": "bounce" },
-        { "player": "offense_4", "type": "shoot", "ball_id": "ball_1", "variant": "layup", "result": "make", "on_catch": true }
-      ],
-      "end_state": {
-        "offense_1": { "named": "left_elbow" },
-        "offense_4": { "named": "right_block" },
-        "balls": { "ball_1": { "dead": true } }
-      }
+      "id": "a3",
+      "player": "offense_4",
+      "type": "cut",
+      "variant": "basket",
+      "moves": [ { "to": { "named": "right_block" } } ],
+      "tags": ["roll"],
+      "trigger": { "type": "action_end", "ref": "a1" },
+      "description": "offense_4 rolls to the right block."
+    },
+    {
+      "id": "a4",
+      "player": "offense_1",
+      "type": "pass",
+      "to_player": "offense_4",
+      "ball_id": "ball_1",
+      "variant": "bounce",
+      "description": "offense_1 throws a bounce pass to the rolling offense_4."
+    },
+    {
+      "id": "a5",
+      "player": "offense_4",
+      "type": "shoot",
+      "ball_id": "ball_1",
+      "variant": "layup",
+      "result": "make",
+      "trigger": { "type": "reception" },
+      "description": "offense_4 finishes with a layup."
     }
   ],
   "areas": [
@@ -1180,12 +1219,13 @@ class Drill {
   +court: Court
   +entities: Entity[]
   +balls: Ball[]
-  +frames: Frame[]
+  +actions: (Action|Branch)[]
   --
   +color_scheme: ColorScheme?
   +named_positions: NamedPositions?
   +areas: Area[]?
   +labels: Label[]?
+  +continuum: boolean?
 }
 
 class Meta {
@@ -1221,26 +1261,36 @@ class Entity {
   +label: string?
 }
 
-class Frame {
+class Branch {
   +id: string
-  +actions: Action[]
-  +end_state: State
-  --
-  +label: string?
-  +description: string?
-  +duration_ms: integer?
-  +start_state: State?
-  +branches: map?
+  +on: string
+  +cases: map
+}
+
+class BranchCase {
+  +actions: (Action|Branch)[]
+  +then: string?
 }
 
 class Action {
+  +id: string
   +player: EntityRef
   +type: enum
   --
   +ball_id: string?
+  +ball_ids: string[]?
   +moves: Move[]?
   +variant: string?
   +tags: string[]?
+  +trigger: Trigger?
+  +side_effects: SideEffect[]?
+  +description: string?
+}
+
+class Trigger {
+  +type: string
+  --
+  +ref: string?
 }
 
 class Coordinate {
@@ -1253,9 +1303,12 @@ class Coordinate {
 Drill *-- Meta
 Drill *-- Court
 Drill *-- Entity
-Drill *-- Frame
-Frame *-- Action
+Drill *-- Action
+Drill *-- Branch
+Branch *-- BranchCase
+BranchCase *-- Action
 Action *-- Coordinate
+Action *-- Trigger
 @enduml
 ....
 
@@ -1269,11 +1322,12 @@ Action *-- Coordinate
 | `court`           | yes | Ruleset, court type, drill focus.
 | `entities`        | yes | Non-ball entities: offense, defense, coach, cones, stations.
 | `balls`           | yes | Array of balls; each ball has `id` + one of `carried_by`, `at`, or `dead`.
-| `frames`          | yes | Ordered coaching phases; each carries `actions` and `end_state`.
+| `actions`         | yes | Flat, ordered sequence of actions and branch containers.
 | `color_scheme`    | no  | Override FIBA default color roles.
 | `named_positions` | no  | Custom named court positions.
 | `areas`           | no  | Highlighted zones on the court.
 | `labels`          | no  | Free text annotations on the court.
+| `continuum`       | no  | Marks this play as designed to loop; see <<Continuum (Looping Plays)>>.
 |===
 
 === Coordinate oneOf
@@ -1330,7 +1384,8 @@ Coordinate <|-- RelativeCoordinate
 | Pass `variant` | chest, bounce, overhead, lob, baseball, hand_off, outlet
 | Shoot `variant` | jumper, three, layup, floater, dunk, hook, free_throw
 | Rebound `variant` | offensive, defensive
-| Frame `outcome` | make, miss, turnover, steal, foul
+| Branch `outcome` | make, miss, turnover, steal, foul
+| `trigger.type` (built-in) | action_end, action_start, action_overlap, reception (sport-extensible)
 | `movement_intensity` (move/cut/dribble `intensity`) | slow, normal, fast, explosive
 | `ball_intensity` (pass/shoot `intensity`) | soft, normal, hard, bullet
 | `physicality` (screen/defend/rebound/pickup) | passive, normal, aggressive, hard
@@ -1370,13 +1425,12 @@ Output only valid JSON matching https://opencoachingformat.org/schema/v1.json
 
 === LLM Output Tips
 
-* Actions express *intent*, not geometry — prefer named positions in `end_state` over raw coordinates wherever a standard name applies
-* Leave optional action fields out when the description is vague; add `variant`, `ball_id`, and timing only when the description implies them
+* Actions express *intent*, not geometry — prefer named positions in `moves[].to` over raw coordinates wherever a standard name applies
+* Leave optional action fields out when the description is vague; add `variant`, `ball_id`, and `trigger` only when the description implies them
 * Use `relative_to` for positions defined as offsets ("2 meters right of the elbow")
-* Every frame requires an `end_state`; list only the entities whose positions change in that frame (others inherit)
-* Ball state in `end_state.balls` must reflect the result of the actions: use `carried_by` after a pass/pickup, `dead` after a made shot with no rebound
-* Set the ball `dead` in `end_state.balls` after a `shoot` with `result: "make"` if no `rebound` or `pickup` follows in that frame or the next
-* Frame `description` should mirror the coaching instruction in natural language — LLMs should always generate this field
+* Give every action a unique, stable `id` (e.g. `a1`, `a2`, ...) — later actions reference earlier ones by `id` via `trigger`
+* An actor's actions run in the order they appear for that actor; only add `trigger` when timing depends on a DIFFERENT actor's action, or on this actor's own ball reception (`trigger: { "type": "reception" }`)
+* Action `description` should mirror the coaching instruction in natural language for the one action it explains — LLMs should always generate this field
 
 === Validation
 
@@ -1406,9 +1460,9 @@ npx ajv-cli validate \
 | `dynamicElement.color`| `entity.color`                | See color map below
 | `dynamicElement.x`    | `entity.x`                    | `(fiba_x - 192) / 192 * 7.5`
 | `dynamicElement.y`    | `entity.y`                    | `(270 - fiba_y) / 270 * 14.0`
-| `lineElement.type`    | `frame.actions[].type`        | See action type map below
+| `lineElement.type`    | `actions[].type`              | See action type map below
 | `lineElement.curved`  | — (derived from action type)  | Renderer infers path style
-| `lineElement.coords`  | `frame.actions[].moves[].to`  | Coordinate conversion each point
+| `lineElement.coords`  | `actions[].moves[].to`        | Coordinate conversion each point
 | `staticElement (area)`| `areas[]`                     | form, color, position
 | `staticElement (text)`| `labels[]`                    | text, position
 |===
@@ -1461,6 +1515,27 @@ npx ajv-cli validate \
 
 [appendix]
 == Changelog
+
+=== v2.0.0 (in progress)
+
+**Breaking.** Replaces `frames[]` with a flat, ordered `actions[]` array at
+the document root — framing (grouping actions into visual steps) is now
+entirely a renderer/consumer concern, not part of the spec. Every action
+gets a unique required `id` (replacing the `<entity_ref>.<action_type>`
+`action_ref` pattern, which could not address more than one action of a
+given type per actor — this was the real root cause of the old model's
+de facto action-per-actor ceiling). `after`/`with`/`on_catch` are replaced
+by a unified, sport-extensible `trigger` field
+(`action_end`/`action_start`/`action_overlap`/`reception`). Frame-level
+`label`/`description`/`start_state`/`end_state`/`duration_ms`/`branches`
+are removed; `description` moves to each action. Outcome branching becomes
+a dedicated `branch` action-sequence element with per-case sub-sequences
+and an explicit terminal marker (`then: null`). Adds a document-level
+`continuum` flag for looping plays. Adds `side_effects[]` (composite
+actions, e.g. a dribble hand-off's screen side effect) and `ball_ids[]`
+(two-ball dribbling) to the action model. See
+`docs/superpowers/specs/2026-09-05-frameless-action-model-design.md` for
+the full design rationale.
 
 === v1.4.0
 
