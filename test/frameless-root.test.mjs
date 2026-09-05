@@ -19,7 +19,10 @@ test("actions is a top-level array property referencing the action union, and ma
   // is still a REQUIRED root property (the key must be present), just not
   // required to be non-empty.
   assert.equal(p.minItems, undefined, "actions[] must not require at least 1 item");
-  assert.equal(p.items.$ref, "#/definitions/action");
+  // Since the branch construct was added, each item is oneOf [action, branch]
+  // rather than a plain $ref to action.
+  const refs = p.items.oneOf?.map((x) => x.$ref);
+  assert.ok(refs?.includes("#/definitions/action"), "actions[].items must reference the action union");
 });
 
 test("frames property is fully removed from the root", () => {

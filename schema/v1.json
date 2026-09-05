@@ -681,6 +681,50 @@
         }
       },
       "additionalProperties": false
+    },
+
+    "branch_case": {
+      "type": "object",
+      "description": "One outcome path of a branch: its own self-contained action sub-sequence, plus an explicit continuation target. 'then' is required so a validator can distinguish 'this path ends here' (then: null) from an author forgetting to continue it — never an implicit missing field.",
+      "required": ["actions", "then"],
+      "properties": {
+        "actions": {
+          "type": "array",
+          "description": "Self-contained action sub-sequence for this outcome. May be empty (e.g. a 'miss' case that does nothing but continue elsewhere via 'then').",
+          "items": {
+            "oneOf": [
+              { "$ref": "#/definitions/action" },
+              { "$ref": "#/definitions/branch" }
+            ]
+          }
+        },
+        "then": {
+          "type": ["string", "null"],
+          "description": "The action id this case continues into (may be an id that precedes the branch, for a continuum loop), or null if this path ends here (a made shot with no rebound, a turnover that ends the rep, etc)."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "branch": {
+      "type": "object",
+      "description": "Outcome-dependent continuation, scoped to the outcome of one action. Only actors referenced inside the triggering case's own actions[] are affected — an uninvolved actor's action is unaffected by a branch it isn't part of.",
+      "required": ["id", "on", "cases"],
+      "properties": {
+        "id": { "$ref": "#/definitions/action_id" },
+        "on": {
+          "$ref": "#/definitions/action_id",
+          "description": "The action whose outcome selects which case applies."
+        },
+        "cases": {
+          "type": "object",
+          "description": "Outcome -> branch_case. Not every outcome needs a case; an outcome with no case means that outcome doesn't branch (the flat sequence continues normally for unaffected actors).",
+          "propertyNames": { "$ref": "#/definitions/outcome" },
+          "additionalProperties": { "$ref": "#/definitions/branch_case" },
+          "minProperties": 1
+        }
+      },
+      "additionalProperties": false
     }
   },
 
@@ -774,8 +818,13 @@
 
     "actions": {
       "type": "array",
-      "description": "Flat, ordered sequence of actions (and branch containers, added in a follow-up schema change). May be empty (e.g. a static formation/setup-only diagram with no movement). Framing/grouping into visual steps is entirely a renderer concern; the spec makes no framing decisions.",
-      "items": { "$ref": "#/definitions/action" }
+      "description": "Flat, ordered sequence of actions and branch containers. Framing/grouping into visual steps is entirely a renderer concern; the spec makes no framing decisions.",
+      "items": {
+        "oneOf": [
+          { "$ref": "#/definitions/action" },
+          { "$ref": "#/definitions/branch" }
+        ]
+      }
     },
 
     "areas": { "type": "array", "items": { "$ref": "#/definitions/area" } },
