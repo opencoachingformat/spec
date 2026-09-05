@@ -828,7 +828,13 @@
     },
 
     "areas": { "type": "array", "items": { "$ref": "#/definitions/area" } },
-    "labels": { "type": "array", "items": { "$ref": "#/definitions/label" } }
+    "labels": { "type": "array", "items": { "$ref": "#/definitions/label" } },
+
+    "continuum": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true, this play is designed to loop: its terminal state(s) are expected to match its setup state (or an explicitly designated loop anchor a branch_case's 'then' points at), so it can repeat indefinitely. Exact tolerance and non-setup loop anchors are a validator-level concern, not enforced by this schema."
+    }
   },
 
   "additionalProperties": false,
