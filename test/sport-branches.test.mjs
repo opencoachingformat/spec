@@ -41,7 +41,7 @@ test("each sport skeleton's action_types matches its schema whitelist branch", (
       const isBB = b.if?.anyOf?.some((x) => x.properties?.sport?.const === "basketball");
       const c = b.if?.properties?.sport?.const;
       if ((sport === "basketball" && isBB) || c === sport) {
-        return b.then.properties.frames.items.properties.actions.items.properties.type.enum;
+        return b.then.properties.actions.items.properties.type.enum;
       }
     }
     return null;

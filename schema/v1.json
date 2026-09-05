@@ -6,7 +6,7 @@
   "title": "Open Coaching Format",
   "description": "Open standard for team-sport coaching diagrams and animations (invasion team sports; basketball first). Semantic action model.",
   "type": "object",
-  "required": ["meta", "court", "entities", "frames"],
+  "required": ["meta", "court", "entities", "actions"],
 
   "definitions": {
 
@@ -739,10 +739,10 @@
       "items": { "$ref": "#/definitions/ball" }
     },
 
-    "frames": {
+    "actions": {
       "type": "array",
-      "minItems": 1,
-      "items": { "$ref": "#/definitions/frame" }
+      "description": "Flat, ordered sequence of actions (and branch containers, added in a follow-up schema change). May be empty (e.g. a static formation/setup-only diagram with no movement). Framing/grouping into visual steps is entirely a renderer concern; the spec makes no framing decisions.",
+      "items": { "$ref": "#/definitions/action" }
     },
 
     "areas": { "type": "array", "items": { "$ref": "#/definitions/area" } },
@@ -773,19 +773,11 @@
       "then": {
         "type": "object",
         "properties": {
-          "frames": {
+          "actions": {
             "type": "array",
             "items": {
               "type": "object",
-              "properties": {
-                "actions": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": { "type": { "enum": ["move","cut","screen","defend","dribble","pass","shoot","rebound","pickup"] } }
-                  }
-                }
-              }
+              "properties": { "type": { "enum": ["move","cut","screen","defend","dribble","pass","shoot","rebound","pickup"] } }
             }
           }
         }
@@ -796,19 +788,11 @@
       "then": {
         "type": "object",
         "properties": {
-          "frames": {
+          "actions": {
             "type": "array",
             "items": {
               "type": "object",
-              "properties": {
-                "actions": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": { "type": { "enum": ["move","pass","shoot","defend","dribble","tackle","clear"] } }
-                  }
-                }
-              }
+              "properties": { "type": { "enum": ["move","pass","shoot","defend","dribble","tackle","clear"] } }
             }
           }
         }
@@ -819,19 +803,11 @@
       "then": {
         "type": "object",
         "properties": {
-          "frames": {
+          "actions": {
             "type": "array",
             "items": {
               "type": "object",
-              "properties": {
-                "actions": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": { "type": { "enum": ["move","pass","shoot","defend","cut","screen","pickup"] } }
-                  }
-                }
-              }
+              "properties": { "type": { "enum": ["move","pass","shoot","defend","cut","screen","pickup"] } }
             }
           }
         }
@@ -842,19 +818,11 @@
       "then": {
         "type": "object",
         "properties": {
-          "frames": {
+          "actions": {
             "type": "array",
             "items": {
               "type": "object",
-              "properties": {
-                "actions": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": { "type": { "enum": ["move","pass","shoot","defend","dribble","clear","faceoff","check"] } }
-                  }
-                }
-              }
+              "properties": { "type": { "enum": ["move","pass","shoot","defend","dribble","clear","faceoff","check"] } }
             }
           }
         }
@@ -865,19 +833,11 @@
       "then": {
         "type": "object",
         "properties": {
-          "frames": {
+          "actions": {
             "type": "array",
             "items": {
               "type": "object",
-              "properties": {
-                "actions": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": { "type": { "enum": ["move","pass","shoot","defend","dribble","tackle","clear"] } }
-                  }
-                }
-              }
+              "properties": { "type": { "enum": ["move","pass","shoot","defend","dribble","tackle","clear"] } }
             }
           }
         }
