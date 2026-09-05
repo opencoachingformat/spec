@@ -10,14 +10,7 @@
   "entities": [
     { "type": "offense", "nr": 2, "x": -6.75, "y": 13.98 }
   ],
-  "frames": [
-    {
-      "id": "f1",
-      "label": "Static",
-      "actions": [
-        { "player": "offense_2", "type": "move", "moves": [ { "to": { "named": "right_wing" } } ] }
-      ],
-      "end_state": { "offense_2": { "named": "right_wing" } }
-    }
+  "actions": [
+    { "id": "a1", "player": "offense_2", "type": "move", "moves": [ { "to": { "named": "right_wing" } } ] }
   ]
 }
