@@ -236,6 +236,18 @@
       }
     },
 
+    "side_effect": {
+      "type": "object",
+      "description": "A secondary effect this action has on another actor, for composite actions where one physical motion does two semantic things at once (e.g. a dribble hand-off, where the passer's body also screens the receiver's defender). Open 'type' vocabulary, sport-extensible.",
+      "required": ["type", "on"],
+      "properties": {
+        "type": { "type": "string" },
+        "on": { "$ref": "#/definitions/entity_ref" },
+        "physicality": { "$ref": "#/definitions/physicality" }
+      },
+      "additionalProperties": false
+    },
+
     "movement_intensity": {
       "type": "string",
       "description": "Relative tempo over distance for move/cut/dribble. Does not imply a concrete duration — a downstream application derives timing from this plus actual player speed.",
@@ -279,6 +291,7 @@
         "intensity": { "$ref": "#/definitions/movement_intensity" },
         "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
+        "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
@@ -299,6 +312,7 @@
         "intensity": { "$ref": "#/definitions/movement_intensity" },
         "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
+        "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
@@ -317,6 +331,7 @@
         "physicality": { "$ref": "#/definitions/physicality" },
         "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
+        "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
@@ -333,6 +348,7 @@
         "physicality": { "$ref": "#/definitions/physicality" },
         "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
+        "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
@@ -346,9 +362,17 @@
         "type": { "const": "dribble" },
         "moves": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/move_step" } },
         "ball_id": { "$ref": "#/definitions/ball_ref" },
+        "ball_ids": {
+          "type": "array",
+          "description": "Two-ball dribbling: one ball per hand. Use ball_id for the single-ball case; use ball_ids (not both) when this action controls two balls simultaneously.",
+          "minItems": 1,
+          "maxItems": 2,
+          "items": { "$ref": "#/definitions/ball_ref" }
+        },
         "intensity": { "$ref": "#/definitions/movement_intensity" },
         "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
+        "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
@@ -366,6 +390,7 @@
         "intensity": { "$ref": "#/definitions/ball_intensity" },
         "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
+        "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
@@ -383,6 +408,7 @@
         "intensity": { "$ref": "#/definitions/ball_intensity" },
         "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
+        "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
@@ -399,6 +425,7 @@
         "physicality": { "$ref": "#/definitions/physicality" },
         "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
+        "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
@@ -414,6 +441,7 @@
         "physicality": { "$ref": "#/definitions/physicality" },
         "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
+        "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
@@ -429,6 +457,7 @@
         "physicality": { "$ref": "#/definitions/physicality" },
         "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
+        "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
@@ -445,6 +474,7 @@
         "intensity": { "$ref": "#/definitions/ball_intensity" },
         "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
+        "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
@@ -459,6 +489,7 @@
         "type": { "const": "faceoff" },
         "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
+        "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
@@ -475,6 +506,7 @@
         "physicality": { "$ref": "#/definitions/physicality" },
         "id": { "$ref": "#/definitions/action_id" },
         "tags": { "type": "array", "items": { "type": "string" } },
+        "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
       },
       "additionalProperties": false
