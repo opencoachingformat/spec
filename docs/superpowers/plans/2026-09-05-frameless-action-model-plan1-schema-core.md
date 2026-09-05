@@ -333,11 +333,16 @@ test("document root requires actions, not frames", () => {
   assert.ok(!schema.required.includes("frames"), "root required[] must not include 'frames' anymore");
 });
 
-test("actions is a top-level array property referencing the action union", () => {
+test("actions is a top-level array property referencing the action union, and may be empty", () => {
   const p = schema.properties.actions;
   assert.ok(p, "properties.actions must exist");
   assert.equal(p.type, "array");
-  assert.equal(p.minItems, 1);
+  // No minItems: a static formation/setup-only diagram with zero actions is a
+  // legitimate document (the old model allowed this via a single frame with
+  // actions: [] — "Semantic actions in this phase. May be empty."). actions
+  // is still a REQUIRED root property (the key must be present), just not
+  // required to be non-empty.
+  assert.equal(p.minItems, undefined, "actions[] must not require at least 1 item");
   assert.equal(p.items.$ref, "#/definitions/action");
 });
 
@@ -393,11 +398,12 @@ with:
 ```json
     "actions": {
       "type": "array",
-      "minItems": 1,
-      "description": "Flat, ordered sequence of actions (and branch containers, added in a follow-up schema change). Framing/grouping into visual steps is entirely a renderer concern; the spec makes no framing decisions.",
+      "description": "Flat, ordered sequence of actions (and branch containers, added in a follow-up schema change). May be empty (e.g. a static formation/setup-only diagram with no movement). Framing/grouping into visual steps is entirely a renderer concern; the spec makes no framing decisions.",
       "items": { "$ref": "#/definitions/action" }
     },
 ```
+
+Note: no `minItems` here, deliberately — the old `frames[]` required `minItems: 1` at the FRAME level (at least one frame), but a frame's own `actions[]` was always allowed to be empty (per the old frame definition: "Semantic actions in this phase. May be empty."). A static single-formation diagram with zero actions is a legitimate document (see `examples/based-on-references.ocf.json` in Plan 2), so the new root `actions[]` must allow empty the same way the old per-frame `actions[]` did.
 
 - [ ] **Step 4: Update all 5 sport-scoping `allOf` branches**
 
