@@ -15,7 +15,12 @@ test("x-ocf-version matches package.json version", () => {
 
 test("x-ocf-version matches the $comment prose version", () => {
   const comment = schema.$comment ?? "";
-  const m = comment.match(/Schema version (\d+\.\d+\.\d+)/);
-  assert.ok(m, "$comment should state 'Schema version X.Y.Z'");
+  // Full SemVer, including an optional pre-release suffix (e.g. "2.0.0-alpha.1")
+  // — a bare \d+\.\d+\.\d+ regex can't round-trip a pre-release version, and
+  // the schema is legitimately on one during the v2.0.0 program (see
+  // v2-program-strategy: no final v2.0.0 release until all breaking changes
+  // land).
+  const m = comment.match(/Schema version (\d+\.\d+\.\d+(?:-[0-9A-Za-z]+(?:\.[0-9A-Za-z]+)*)?)\b/);
+  assert.ok(m, "$comment should state 'Schema version X.Y.Z' (optionally with a pre-release suffix)");
   assert.equal(schema["x-ocf-version"], m[1]);
 });

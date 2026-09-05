@@ -1,5 +1,5 @@
 = Open Coaching Format — Open Standard for Team-Sport Coaching Diagrams
-:version: 1.4.0
+:version: 2.0.0-alpha.1
 :doctype: book
 :toc: left
 :toc-title: Table of Contents
@@ -1517,7 +1517,7 @@ npx ajv-cli validate \
 [appendix]
 == Changelog
 
-=== v2.0.0 (in progress)
+=== v2.0.0-alpha.1 (in progress — not a final v2.0.0 release)
 
 **Breaking.** Replaces `frames[]` with a flat, ordered `actions[]` array at
 the document root — framing (grouping actions into visual steps) is now
