@@ -24,7 +24,8 @@
 
 *{ocf} v{version}* is an open, ruleset-aware JSON schema for representing team-sport coaching diagrams and multi-step animations — targeting invasion team sports, with basketball fully defined first.
 It defines a court coordinate system based on real-world units (meters or feet), a registry of named court positions per ruleset,
-a semantic entity model, and a frame-based animation structure.
+a semantic entity model, and a flat, ordered action-sequence structure for
+multi-step animations.
 
 The format is designed to be:
 
@@ -49,7 +50,7 @@ This prevents programmatic drill creation, LLM-assisted coaching tools, and cros
 . A well-defined JSON Schema (Draft-7)
 . A coordinate system grounded in real-world units
 . A named position registry aligned with official ruleset geometry
-. A frame model for multi-step animated drills
+. A flat action-sequence model for multi-step animated drills
 . A clear import path from the FIBA Europe internal format
 
 === Design Principles
@@ -73,8 +74,8 @@ This prevents programmatic drill creation, LLM-assisted coaching tools, and cros
 | *Entity keys = team + number*
 | `offense_1`, `defense_3`. No synthetic IDs for player entities.
 
-| *Frames are anchored*
-| Each frame carries explicit `start_state`/`end_state` anchors plus semantic actions. Any frame can render as a still without simulating history.
+| *Actions are the single source of truth*
+| Every position is derived from `entities`/`balls` setup plus the effect of every action an actor has had so far — no separate per-phase state anchor. Framing (grouping actions into a still) is entirely a renderer decision.
 
 | *Colors are semantic roles*
 | `"offense"`, `"defense"`, `"black"`. Hex values are configured per document.
@@ -376,10 +377,9 @@ NOTE: `offense_1` and `defense_1` are distinct entities. In transition drills, b
 
 === Distinct Positions
 
-Two distinct entities MUST NOT occupy the same position. Within any single state
-(the top-level `entities` array, or a frame's `start_state` / `end_state`), no
-two entities may share coordinates that resolve closer than a **minimum
-separation** to each other.
+Two distinct entities MUST NOT occupy the same position. In the top-level
+`entities` array (the document's initial setup), no two entities may share
+coordinates that resolve closer than a **minimum separation** to each other.
 
 The minimum separation is one **player diameter** in the document's court unit —
 the space a player symbol occupies — so that rendered symbols never overlap and
@@ -590,8 +590,8 @@ This drives **where the ball is drawn relative to its carrier**:
 
 * A carried ball is drawn slightly **ahead of and to one side of** the carrier —
   not on top of them — so the player's number stays visible and the handling
-  side is legible. "Ahead" is the direction of the ball-handling action
-  (`dribble` / `pass` / `shoot`) in that frame.
+  side is legible. "Ahead" is the direction of that ball-handling action
+  (`dribble` / `pass` / `shoot`).
 * **Default (no tag, or `right_handed`):** the ball is on the **right** of the
   direction of travel.
 * **`left_handed`:** the ball is on the **left**.
@@ -609,8 +609,9 @@ is not offset — the offset applies only to a **carried** ball.
 
 `move`, `cut` and `dribble` carry a `moves[]` sequence. A move *without* `to` is
 a move on the spot (ball handling / fake); a move *with* `to` carries the player
-(and ball, for `dribble`) to a waypoint. The final `to` must match the player's
-position in the frame `end_state`. Reference fields (`around_player`,
+(and ball, for `dribble`) to a waypoint. The final `to` in the sequence becomes
+the player's resulting position for every action that follows — there is no
+separate state anchor to keep in sync with it. Reference fields (`around_player`,
 `off_screen_by`) may sit on an individual move and override the action level.
 
 For `dribble` (and `move`), each move's `variant` describes that step's character — a single dribble action can chain e.g. `crossover` then `speed` — whereas `cut` also has an action-level `variant` for the overall cut type (e.g. `backdoor`).
