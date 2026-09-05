@@ -1,13 +1,10 @@
 {
   "$schema": "https://opencoachingformat.org/schema/v1.json",
-  "meta": { "id": "00000000-0000-4000-8000-000000000002", "title": "bad state ball key" },
+  "meta": { "id": "00000000-0000-4000-8000-000000000002", "title": "bad ball reference" },
   "court": { "ruleset": "fiba", "type": "half_court" },
   "entities": [ { "type": "offense", "nr": 1, "x": 0, "y": 5 } ],
-  "frames": [
-    {
-      "id": "f1",
-      "actions": [],
-      "end_state": { "balls": { "not_a_ball": { "dead": true } } }
-    }
+  "balls": [ { "id": "ball_1", "carried_by": "offense_1" } ],
+  "actions": [
+    { "id": "a1", "player": "offense_1", "type": "shoot", "ball_id": "not_a_ball" }
   ]
 }
