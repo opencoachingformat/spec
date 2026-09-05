@@ -290,6 +290,7 @@
         "moves": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/move_step" } },
         "intensity": { "$ref": "#/definitions/movement_intensity" },
         "id": { "$ref": "#/definitions/action_id" },
+        "description": { "type": "string", "description": "Coaching prose explaining this specific action, e.g. for a renderer narrating a step." },
         "tags": { "type": "array", "items": { "type": "string" } },
         "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
@@ -311,6 +312,7 @@
         "arc": { "type": "string", "enum": ["tight", "normal", "wide"], "description": "Default arc for this cut's around_player steps; overridden per move_step." },
         "intensity": { "$ref": "#/definitions/movement_intensity" },
         "id": { "$ref": "#/definitions/action_id" },
+        "description": { "type": "string", "description": "Coaching prose explaining this specific action, e.g. for a renderer narrating a step." },
         "tags": { "type": "array", "items": { "type": "string" } },
         "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
@@ -330,6 +332,7 @@
         "variant": { "type": "string", "enum": ["ball_screen", "back_screen", "down_screen", "flare_screen", "cross_screen", "pin_down"] },
         "physicality": { "$ref": "#/definitions/physicality" },
         "id": { "$ref": "#/definitions/action_id" },
+        "description": { "type": "string", "description": "Coaching prose explaining this specific action, e.g. for a renderer narrating a step." },
         "tags": { "type": "array", "items": { "type": "string" } },
         "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
@@ -347,6 +350,7 @@
         "variant": { "type": "string", "enum": ["on_ball", "deny", "help", "hedge", "switch", "box_out"] },
         "physicality": { "$ref": "#/definitions/physicality" },
         "id": { "$ref": "#/definitions/action_id" },
+        "description": { "type": "string", "description": "Coaching prose explaining this specific action, e.g. for a renderer narrating a step." },
         "tags": { "type": "array", "items": { "type": "string" } },
         "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
@@ -371,6 +375,7 @@
         },
         "intensity": { "$ref": "#/definitions/movement_intensity" },
         "id": { "$ref": "#/definitions/action_id" },
+        "description": { "type": "string", "description": "Coaching prose explaining this specific action, e.g. for a renderer narrating a step." },
         "tags": { "type": "array", "items": { "type": "string" } },
         "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
@@ -390,6 +395,7 @@
         "variant": { "type": "string", "enum": ["chest", "bounce", "overhead", "lob", "baseball", "hand_off", "outlet"] },
         "intensity": { "$ref": "#/definitions/ball_intensity" },
         "id": { "$ref": "#/definitions/action_id" },
+        "description": { "type": "string", "description": "Coaching prose explaining this specific action, e.g. for a renderer narrating a step." },
         "tags": { "type": "array", "items": { "type": "string" } },
         "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
@@ -408,6 +414,7 @@
         "result": { "type": "string", "enum": ["make", "miss"] },
         "intensity": { "$ref": "#/definitions/ball_intensity" },
         "id": { "$ref": "#/definitions/action_id" },
+        "description": { "type": "string", "description": "Coaching prose explaining this specific action, e.g. for a renderer narrating a step." },
         "tags": { "type": "array", "items": { "type": "string" } },
         "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
@@ -425,6 +432,7 @@
         "variant": { "type": "string", "enum": ["offensive", "defensive"] },
         "physicality": { "$ref": "#/definitions/physicality" },
         "id": { "$ref": "#/definitions/action_id" },
+        "description": { "type": "string", "description": "Coaching prose explaining this specific action, e.g. for a renderer narrating a step." },
         "tags": { "type": "array", "items": { "type": "string" } },
         "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
@@ -441,6 +449,7 @@
         "ball_id": { "$ref": "#/definitions/ball_ref" },
         "physicality": { "$ref": "#/definitions/physicality" },
         "id": { "$ref": "#/definitions/action_id" },
+        "description": { "type": "string", "description": "Coaching prose explaining this specific action, e.g. for a renderer narrating a step." },
         "tags": { "type": "array", "items": { "type": "string" } },
         "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
@@ -457,6 +466,7 @@
         "type": { "const": "tackle" },
         "physicality": { "$ref": "#/definitions/physicality" },
         "id": { "$ref": "#/definitions/action_id" },
+        "description": { "type": "string", "description": "Coaching prose explaining this specific action, e.g. for a renderer narrating a step." },
         "tags": { "type": "array", "items": { "type": "string" } },
         "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
@@ -474,6 +484,7 @@
         "ball_id": { "$ref": "#/definitions/ball_ref" },
         "intensity": { "$ref": "#/definitions/ball_intensity" },
         "id": { "$ref": "#/definitions/action_id" },
+        "description": { "type": "string", "description": "Coaching prose explaining this specific action, e.g. for a renderer narrating a step." },
         "tags": { "type": "array", "items": { "type": "string" } },
         "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
@@ -489,6 +500,7 @@
         "player": { "$ref": "#/definitions/entity_ref" },
         "type": { "const": "faceoff" },
         "id": { "$ref": "#/definitions/action_id" },
+        "description": { "type": "string", "description": "Coaching prose explaining this specific action, e.g. for a renderer narrating a step." },
         "tags": { "type": "array", "items": { "type": "string" } },
         "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }
@@ -506,6 +518,7 @@
         "on_player": { "$ref": "#/definitions/entity_ref" },
         "physicality": { "$ref": "#/definitions/physicality" },
         "id": { "$ref": "#/definitions/action_id" },
+        "description": { "type": "string", "description": "Coaching prose explaining this specific action, e.g. for a renderer narrating a step." },
         "tags": { "type": "array", "items": { "type": "string" } },
         "side_effects": { "type": "array", "items": { "$ref": "#/definitions/side_effect" } },
         "trigger": { "$ref": "#/definitions/trigger" }

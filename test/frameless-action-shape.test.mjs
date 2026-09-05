@@ -22,6 +22,12 @@ for (const name of ACTION_DEFS) {
     assert.equal(d.properties.on_catch, undefined, `${name} must not have "on_catch" anymore`);
     assert.equal(d.properties.trigger?.$ref, "#/definitions/trigger", `${name}.properties.trigger must ref trigger`);
   });
+
+  test(`${name} has an optional string description (coaching prose per action, per the frame-less design)`, () => {
+    const d = defs[name];
+    assert.equal(d.properties.description?.type, "string", `${name}.properties.description must be a string`);
+    assert.ok(!d.required.includes("description"), `${name} description must stay optional`);
+  });
 }
 
 test("action_ref definition is fully removed (superseded by action_id)", () => {
