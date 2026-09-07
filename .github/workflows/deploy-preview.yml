@@ -65,16 +65,11 @@ jobs:
           SITE_BASE_PATH: /${{ env.PREVIEW_BASE_PATH }}/
         run: npm run build
 
-      - name: Assemble dist/ under preview path
-        run: |
-          mkdir -p "dist/${{ env.PREVIEW_BASE_PATH }}"
-          cp -r "site/dist/." "dist/${{ env.PREVIEW_BASE_PATH }}/"
-
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          publish_dir: site/dist
           destination_dir: ${{ env.PREVIEW_BASE_PATH }}
           keep_files: true
 
