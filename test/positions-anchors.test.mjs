@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { resolveNamedPosition } from "../positions/resolve-position.mjs";
 
-// The 6 cross-ruleset anchors asserted by docs/specification-v1.adoc:288-294.
+// The 6 cross-ruleset anchors asserted by docs/specification.adoc:288-294.
 const ANCHORS = {
   fiba: { top_of_the_key: ["y", 5.68], left_wing: ["x", -6.75], left_corner: ["x", -7.5], free_throw_line: ["y", 8.2], left_elbow: ["x", -2.45] },
   nba:  { top_of_the_key: ["y", 20.75], left_wing: ["x", -22.15], left_corner: ["x", -25.0], free_throw_line: ["y", 28.0], left_elbow: ["x", -8.0] },

@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - 'site/**'
-      - 'docs/specification-v1.adoc'
+      - 'docs/specification.adoc'
       - 'schema/v1.json'
       - 'examples/**'
   workflow_dispatch:

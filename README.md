@@ -64,7 +64,7 @@ opencoachingformat/
 ├── schema/
 │   └── v1.json                  # JSON Schema Draft-7 (canonical)
 ├── docs/
-│   └── specification-v1.adoc   # Full specification (AsciiDoc)
+│   └── specification.adoc      # Full specification (AsciiDoc)
 ├── examples/
 │   ├── pick-and-roll.ocf.json
 │   ├── 3-man-weave.ocf.json
@@ -85,7 +85,7 @@ opencoachingformat/
 
 ## Specification
 
-→ [Full Specification (AsciiDoc)](docs/specification-v1.adoc)
+→ [Full Specification (AsciiDoc)](docs/specification.adoc)
 → [JSON Schema v1](schema/v1.json)
 
 ### Using the schema from npm

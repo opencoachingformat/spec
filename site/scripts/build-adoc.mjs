@@ -35,7 +35,7 @@ const outDir = path.join(siteRoot, 'src', 'generated');
 mkdirSync(outDir, { recursive: true });
 
 const adocSource = readFileSync(
-  path.join(repoRoot, 'docs', 'specification-v1.adoc'),
+  path.join(repoRoot, 'docs', 'specification.adoc'),
   'utf-8'
 );
 const doc = await load(adocSource, {
