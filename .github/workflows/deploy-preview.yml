@@ -1,0 +1,98 @@
+name: Deploy Preview Site
+
+# Publishes the v2 branch under /v2-preview/ alongside the main site on
+# gh-pages, and tears that path back down again once the v2 branch is
+# gone (merged-and-deleted, or removed manually). If a future vN branch
+# needs its own preview, copy this workflow and change PREVIEW_BASE_PATH
+# and the branch filters below - each preview branch gets its own path
+# and its own teardown, independent of this one.
+
+on:
+  push:
+    branches:
+      - v2
+    paths:
+      - 'site/**'
+      - 'docs/specification.adoc'
+      - 'schema/v1.json'
+      - 'examples/**'
+  delete:
+  workflow_dispatch:
+    inputs:
+      teardown:
+        description: 'Remove the preview instead of deploying it'
+        type: boolean
+        default: false
+
+env:
+  PREVIEW_BASE_PATH: /v2-preview
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gh-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.teardown != 'true')
+    runs-on: ubuntu-latest
+    name: Build and deploy preview site
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: site/package-lock.json
+
+      - name: Install site dependencies
+        working-directory: site
+        run: npm ci
+
+      - name: Build docs site (asciidoctor + astro)
+        working-directory: site
+        env:
+          SITE_BASE_PATH: ${{ env.PREVIEW_BASE_PATH }}/
+        run: npm run build
+
+      - name: Assemble dist/ under preview path
+        run: |
+          mkdir -p "dist${{ env.PREVIEW_BASE_PATH }}"
+          cp -r "site/dist/." "dist${{ env.PREVIEW_BASE_PATH }}/"
+
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          destination_dir: ${{ env.PREVIEW_BASE_PATH }}
+          keep_files: true
+
+  teardown:
+    if: (github.event_name == 'delete' && github.event.ref_type == 'branch' && github.event.ref == 'v2') || (github.event_name == 'workflow_dispatch' && github.event.inputs.teardown == 'true')
+    runs-on: ubuntu-latest
+    name: Remove preview from gh-pages
+    steps:
+      - name: Checkout gh-pages
+        uses: actions/checkout@v7
+        with:
+          ref: gh-pages
+
+      - name: Remove preview path
+        run: |
+          if [ -d ".${{ env.PREVIEW_BASE_PATH }}" ]; then
+            git rm -r --ignore-unmatch ".${{ env.PREVIEW_BASE_PATH }}"
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git commit -m "chore(site): remove /v2-preview (branch deleted)"
+            git push
+          else
+            echo "No preview directory found on gh-pages, nothing to remove."
+          fi
