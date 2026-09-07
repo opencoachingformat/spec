@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Card from '../../components/Card.astro';
+import { withBase } from '../../lib/base-path.mjs';
 ---
 <Base
   title="Learn"
@@ -19,17 +20,17 @@ import Card from '../../components/Card.astro';
       <Card
         title="Documentation"
         description="The concepts behind OCF: the document model, court, entities, actions, and frames."
-        href="/docs/"
+        href={withBase('/docs/')}
       />
       <Card
         title="Key features"
         description="The ideas that make OCF expressive — named positions, coordinates, and animation."
-        href="/docs/features/"
+        href={withBase('/docs/features/')}
       />
       <Card
         title="Examples"
         description="Worked OCF drills: pick and roll, three-man weave, transition offense, and more."
-        href="/examples/"
+        href={withBase('/examples/')}
       />
     </div>
   </section>

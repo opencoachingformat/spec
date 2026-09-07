@@ -1,14 +1,16 @@
 ---
+import { withBase } from '../lib/base-path.mjs';
+
 const navItems = [
-  { href: '/', label: 'Home' },
-  { href: '/learn/', label: 'Learn' },
-  { href: '/use/', label: 'Use' },
-  { href: '/build/', label: 'Build' },
+  { href: withBase('/'), label: 'Home' },
+  { href: withBase('/learn/'), label: 'Learn' },
+  { href: withBase('/use/'), label: 'Use' },
+  { href: withBase('/build/'), label: 'Build' },
 ];
 ---
 <header class="site-header">
   <div class="nav-bar">
-    <a class="brand" href="/">Open Coaching Format</a>
+    <a class="brand" href={withBase('/')}>Open Coaching Format</a>
     <button
       id="nav-toggle"
       class="nav-toggle"

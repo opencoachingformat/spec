@@ -2,6 +2,7 @@
 import Base from '../../../layouts/Base.astro';
 import Card from '../../../components/Card.astro';
 import arc42 from '../../../generated/arc42/index.json';
+import { withBase } from '../../../lib/base-path.mjs';
 ---
 <Base
   title="Architecture (arc42)"
@@ -23,13 +24,13 @@ import arc42 from '../../../generated/arc42/index.json';
         <Card
           title={entry.title}
           description={`arc42 section: ${entry.title}.`}
-          href={`/build/architecture/${entry.slug}/`}
+          href={withBase(`/build/architecture/${entry.slug}/`)}
         />
       ))}
     </div>
   </section>
 
-  <p class="back"><a href="/build/">← Build</a></p>
+  <p class="back"><a href={withBase('/build/')}>← Build</a></p>
 </Base>
 
 <style>

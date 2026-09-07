@@ -2,6 +2,7 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import Base from '../../../layouts/Base.astro';
+import { withBase } from '../../../lib/base-path.mjs';
 
 export function getStaticPaths() {
   // Resolve the generated dir from the site root (where `npm run build` runs).
@@ -38,27 +39,27 @@ mermaid.run();`}
   )}
 
   <nav class="crumbs" aria-label="Breadcrumb">
-    <a href="/build/">Build</a>
+    <a href={withBase('/build/')}>Build</a>
     <span aria-hidden="true">/</span>
-    <a href="/build/architecture/">Architecture</a>
+    <a href={withBase('/build/architecture/')}>Architecture</a>
   </nav>
 
   <article class="arc42-content" set:html={html}></article>
 
   <nav class="section-nav" aria-label="Section navigation">
     {prev ? (
-      <a class="prev" href={`/build/architecture/${prev.slug}/`}>← {prev.title}</a>
+      <a class="prev" href={withBase(`/build/architecture/${prev.slug}/`)}>← {prev.title}</a>
     ) : (
       <span></span>
     )}
     {next ? (
-      <a class="next" href={`/build/architecture/${next.slug}/`}>{next.title} →</a>
+      <a class="next" href={withBase(`/build/architecture/${next.slug}/`)}>{next.title} →</a>
     ) : (
       <span></span>
     )}
   </nav>
 
-  <p class="back"><a href="/build/architecture/">← All sections</a></p>
+  <p class="back"><a href={withBase('/build/architecture/')}>← All sections</a></p>
 </Base>
 
 <style>

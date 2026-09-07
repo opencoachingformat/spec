@@ -6,6 +6,7 @@ import { OCF_RENDERER_VERSION } from '../../lib/renderer-version.mjs';
 import { buildDiscussionUrl } from '../../lib/discussions.mjs';
 import { SCHEMA_VERSIONS_URL } from '../../lib/schema-versions.mjs';
 import rendererModuleUrl from '../../generated/renderer/index.js?url';
+import { withBase } from '../../lib/base-path.mjs';
 
 const CATEGORY_CONFIG = {
   renderer: 'renderer-feedback',
@@ -98,7 +99,7 @@ const seedJson = seedExample ? seedExample.json : '{}';
             <a
               id="rp-schema-newer"
               class="schema-newer"
-              href="/docs/schema/"
+              href={withBase('/docs/schema/')}
               hidden
             ></a>
           </div>

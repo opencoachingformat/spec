@@ -2,6 +2,7 @@
 import Base from '../../../layouts/Base.astro';
 import Card from '../../../components/Card.astro';
 import sports from '../../../generated/sports.json';
+import { withBase } from '../../../lib/base-path.mjs';
 
 const descriptions = {
   basketball:
@@ -37,7 +38,7 @@ const descriptions = {
           description={descriptions[sport.sport] ?? (sport.reserved
             ? 'Reserved. Provisional vocabulary, open for contribution.'
             : 'Fully specified vocabulary.')}
-          href={`/learn/sports/${sport.sport}/`}
+          href={withBase(`/learn/sports/${sport.sport}/`)}
           status={sport.statusLabel}
         />
       ))}

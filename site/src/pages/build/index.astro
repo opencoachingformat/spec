@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Card from '../../components/Card.astro';
+import { withBase } from '../../lib/base-path.mjs';
 ---
 <Base
   title="Build"
@@ -19,27 +20,27 @@ import Card from '../../components/Card.astro';
       <Card
         title="Specification"
         description="The full, normative Open Coaching Format specification."
-        href="/docs/spec/"
+        href={withBase('/docs/spec/')}
       />
       <Card
         title="JSON Schema"
         description="The machine-readable JSON Schema you validate documents against."
-        href="/docs/schema/"
+        href={withBase('/docs/schema/')}
       />
       <Card
         title="Architecture"
         description="How the reference validator is built, documented with the arc42 template — diagrams included."
-        href="/build/architecture/"
+        href={withBase('/build/architecture/')}
       />
       <Card
         title="Error codes"
         description="The catalogue of validation error and warning codes with their meanings."
-        href="/errors/"
+        href={withBase('/errors/')}
       />
       <Card
         title="Ecosystem"
         description="Validator, renderer, and editor projects built on OCF, plus the roadmap."
-        href="/ecosystem/"
+        href={withBase('/ecosystem/')}
       />
     </div>
   </section>

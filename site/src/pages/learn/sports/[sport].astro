@@ -1,6 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import sports from '../../../generated/sports.json';
+import { withBase } from '../../../lib/base-path.mjs';
 
 export function getStaticPaths() {
   return sports.map((sport) => ({
@@ -121,7 +122,7 @@ const variantEntries = Object.entries(sport.variants ?? {});
     </section>
   )}
 
-  <p class="back"><a href="/learn/sports/">← All sports</a></p>
+  <p class="back"><a href={withBase('/learn/sports/')}>← All sports</a></p>
 </Base>
 
 <style>

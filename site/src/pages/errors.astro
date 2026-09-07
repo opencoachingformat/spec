@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import errorCodes from '../generated/error-codes.json';
+import { withBase } from '../lib/base-path.mjs';
 
 const rows = Object.entries(errorCodes)
   .map(([code, def]) => ({ code, ...def }))
@@ -12,7 +13,7 @@ const rows = Object.entries(errorCodes)
 >
   <h1>Error Codes</h1>
   <p>
-    Reference for every code the <a href="/playground/">validator</a> can emit,
+    Reference for every code the <a href={withBase('/playground/')}>validator</a> can emit,
     generated from the validator's own <code>shared/error-codes.json</code>.
   </p>
   <table>

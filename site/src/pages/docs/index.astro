@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Card from '../../components/Card.astro';
+import { withBase } from '../../lib/base-path.mjs';
 ---
 <Base
   title="Docs"
@@ -17,22 +18,22 @@ import Card from '../../components/Card.astro';
     <Card
       title="Specification"
       description="The full normative specification: coordinate system, entities, actions, frames, and branches."
-      href="/docs/spec/"
+      href={withBase('/docs/spec/')}
     />
     <Card
       title="JSON Schema"
       description="The canonical, machine-readable JSON Schema (Draft-07) used to validate OCF files."
-      href="/docs/schema/"
+      href={withBase('/docs/schema/')}
     />
     <Card
       title="Features"
       description="What makes OCF different: semantic actions, automatic ball possession, hybrid frames, and more."
-      href="/docs/features/"
+      href={withBase('/docs/features/')}
     />
     <Card
       title="Rulesets"
       description="The coordinate system and the FIBA/NBA/NCAA/NFHS rulesets OCF supports out of the box."
-      href="/docs/rulesets/"
+      href={withBase('/docs/rulesets/')}
     />
   </div>
 </Base>

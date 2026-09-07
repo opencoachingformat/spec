@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Card from '../components/Card.astro';
+import { withBase } from '../lib/base-path.mjs';
 
 const sports = [
   {
@@ -114,7 +115,7 @@ const jsonLd = {
         <Card
           title={sport.title}
           description={sport.description}
-          href="/learn/"
+          href={withBase('/learn/')}
           status={sport.status}
         />
       ))}
@@ -152,17 +153,17 @@ const jsonLd = {
       <Card
         title="Learn"
         description="Understand the concepts and browse the format sport by sport."
-        href="/learn/"
+        href={withBase('/learn/')}
       />
       <Card
         title="Use"
         description="Validate and render your own OCF documents, and see the supported rulesets."
-        href="/use/"
+        href={withBase('/use/')}
       />
       <Card
         title="Build"
         description="The specification, JSON Schema, error codes, and the tools built on OCF."
-        href="/build/"
+        href={withBase('/build/')}
       />
     </div>
   </section>

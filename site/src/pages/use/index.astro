@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Card from '../../components/Card.astro';
+import { withBase } from '../../lib/base-path.mjs';
 ---
 <Base
   title="Use"
@@ -19,22 +20,22 @@ import Card from '../../components/Card.astro';
       <Card
         title="Playground"
         description="Paste or edit an OCF document and validate it instantly against the reference validator."
-        href="/playground/"
+        href={withBase('/playground/')}
       />
       <Card
         title="Renderer"
         description="See an OCF document drawn as a diagram, straight from the JSON."
-        href="/playground/renderer/"
+        href={withBase('/playground/renderer/')}
       />
       <Card
         title="Rulesets"
         description="The playing surfaces OCF supports, with their coordinate systems and markings."
-        href="/docs/rulesets/"
+        href={withBase('/docs/rulesets/')}
       />
       <Card
         title="Error codes"
         description="What each validation error and warning means, so you can fix a document quickly."
-        href="/errors/"
+        href={withBase('/errors/')}
       />
     </div>
   </section>

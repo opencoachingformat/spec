@@ -12,8 +12,8 @@ export default defineConfig({
   base,
   outDir: './dist',
   integrations: [sitemap()],
-  redirects: {
-    '/spec': '/docs/spec',
-    '/schema': '/docs/schema',
-  },
+  // /spec and /schema redirect via src/pages/spec.astro and schema.astro
+  // (Astro.redirect + withBase), not this config's own `redirects` option:
+  // that option always emits an unprefixed target URL, which breaks under
+  // a non-root `base` (see the /v2-preview investigation).
 });
