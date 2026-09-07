@@ -2,12 +2,12 @@
 
 ## Status
 
-Living document, not an RFC. Tracks the five bundled breaking changes that
+Living document, not an RFC. Tracks the six bundled breaking changes that
 together make up the v2.0.0 release. Update as items progress.
 
 ## Why a "program," not a single RFC
 
-OCF v2.0.0 bundles five independent breaking changes into one release
+OCF v2.0.0 bundles six independent breaking changes into one release
 rather than shipping each as its own major bump. Per SemVer discipline each
 would technically warrant its own major version; batching them avoids a
 rapid sequence of major-version churn for consumers migrating once anyway.
@@ -24,7 +24,7 @@ suffix (currently `2.0.0-alpha.1`).
 renderer needs; the renderer does zero validation. Clean separation: spec =
 truth + validatability; validator = correctness; renderer = display only.
 
-## The five items
+## The six items
 
 | # | RFC | Title | Status |
 |---|-----|-------|--------|
@@ -33,6 +33,7 @@ truth + validatability; validator = correctness; renderer = display only.
 | 3 | [RFC 0009](../../../rfcs/0009-multi-ball.md) | Multi-ball | Partially Accepted — two-ball dribbling implemented; broader generalization open |
 | 4 | [RFC 0006](../../../rfcs/0006-frameless-action-model.md) | Frame-less action model | Accepted, implemented |
 | 5 | [RFC 0010](../../../rfcs/0010-sport-scoped-court.md) | Sport-scoped court & ruleset | Draft — brainstormed, not yet approved for implementation |
+| 6 | [RFC 0011](../../../rfcs/0011-remove-rendering-concerns.md) | Remove rendering concerns (`color_scheme`, `color`, `CONTRAST_LOW`) | Draft — decision recorded, not yet implemented |
 
 ## Ordering rationale
 
@@ -56,6 +57,12 @@ gating meaningful, so item 5 is sequenced last regardless of its RFC number.
 - RFC 0010 (sport-scoped court/ruleset) requires RFC 0007 (`sport` required)
   to be meaningful — a `sport`-less document silently defaulting to
   basketball would undermine a whitelist keyed on `sport`.
+- RFC 0011 (remove rendering concerns) has no dependency on any other
+  program item and none depend on it — it can be implemented in any order
+  relative to the other five. Its one open follow-on question (a possible
+  future `area`/`label` semantic field, tracked in
+  opencoachingformat/spec#53) is explicitly independent and non-breaking,
+  so it does not need to resolve before v2.0.0 ships.
 
 ## Related deferred/companion topics
 
@@ -72,6 +79,11 @@ Not part of the v2.0.0 program scope:
 - The renderer's pre-existing ruleset-blindness bug (ignores `court.ruleset`
   for dimensions, always draws FIBA defaults) — a real, separate bug,
   independent of this program.
+- Whether `area`/`label` should gain a semantic `role`/`kind` field (e.g. a
+  referenceable "target zone" an action could point at) — open public
+  discussion, opencoachingformat/spec#53; confirmed additive/non-breaking
+  whenever it's resolved, so it does not gate RFC 0011 or the v2.0.0
+  release.
 
 ## References
 
