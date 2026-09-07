@@ -1,0 +1,2153 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>JSON Schema — Open Coaching Format</title><meta name="description" content="Canonical JSON Schema (Draft-07) for the Open Coaching Format v1 — court, entities, actions, frames, and branches."><link rel="canonical" href="https://opencoachingformat.org/v2-preview/docs/schema/"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta property="og:type" content="website"><meta property="og:title" content="JSON Schema — Open Coaching Format"><meta property="og:description" content="Canonical JSON Schema (Draft-07) for the Open Coaching Format v1 — court, entities, actions, frames, and branches."><meta property="og:image" content="https://opencoachingformat.org/og-banner.svg"><meta property="og:url" content="https://opencoachingformat.org/v2-preview/docs/schema/"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="JSON Schema — Open Coaching Format"><meta name="twitter:description" content="Canonical JSON Schema (Draft-07) for the Open Coaching Format v1 — court, entities, actions, frames, and branches."><meta name="twitter:image" content="https://opencoachingformat.org/og-banner.svg"><style>:root{color-scheme:dark;--bg-page:#0b1220;--bg-elevated:#0f172a;--border:#1e293b;--text-primary:#f1f5f9;--text-muted:#cbd5e1;--link:#93c5fd;--accent:#60a5fa;--code-bg:#111c30;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif}*{box-sizing:border-box}html,body{background:var(--bg-page);color:var(--text-primary);margin:0;padding:0}body{line-height:1.6}a{color:var(--link)}main{max-width:860px;margin:0 auto;padding:2rem 1.5rem 4rem}main.wide{max-width:1100px}pre{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:1rem;overflow-x:auto}code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}table{border-collapse:collapse;width:100%}th,td{border:1px solid var(--border);text-align:left;padding:.4rem .6rem}:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.site-header[data-astro-cid-wpvy4v7s]{background:var(--bg-elevated);border-bottom:1px solid var(--border)}.nav-bar[data-astro-cid-wpvy4v7s]{justify-content:space-between;align-items:center;max-width:1100px;margin:0 auto;padding:.75rem 1.5rem;display:flex}.brand[data-astro-cid-wpvy4v7s]{color:var(--text-primary);font-size:1.05rem;font-weight:700;text-decoration:none}.nav-inline[data-astro-cid-wpvy4v7s] ul[data-astro-cid-wpvy4v7s]{gap:.25rem;margin:0;padding:0;list-style:none;display:flex}.nav-inline[data-astro-cid-wpvy4v7s] a[data-astro-cid-wpvy4v7s]{min-height:44px;color:var(--link);border-radius:4px;align-items:center;padding:0 .9rem;font-weight:600;text-decoration:none;display:inline-flex}.nav-inline[data-astro-cid-wpvy4v7s] a[data-astro-cid-wpvy4v7s]:hover{text-decoration:underline}.nav-toggle[data-astro-cid-wpvy4v7s]{border:1px solid var(--border);cursor:pointer;background:0 0;border-radius:4px;width:44px;height:44px;padding:0;display:none}.nav-toggle-icon[data-astro-cid-wpvy4v7s],.nav-toggle-icon[data-astro-cid-wpvy4v7s]:before,.nav-toggle-icon[data-astro-cid-wpvy4v7s]:after{background:var(--text-primary);width:20px;height:2px;margin:0 auto;display:block}.nav-toggle-icon[data-astro-cid-wpvy4v7s]:before,.nav-toggle-icon[data-astro-cid-wpvy4v7s]:after{content:"";position:relative}.nav-toggle-icon[data-astro-cid-wpvy4v7s]:before{top:-6px}.nav-toggle-icon[data-astro-cid-wpvy4v7s]:after{top:4px}.nav-drawer[data-astro-cid-wpvy4v7s]{background:var(--bg-elevated);border-left:1px solid var(--border);z-index:30;width:min(320px,85vw);height:100%;padding:1rem 1.5rem;position:fixed;top:0;right:0;overflow-y:auto}.nav-drawer[data-astro-cid-wpvy4v7s][hidden]{display:none}.nav-drawer-header[data-astro-cid-wpvy4v7s]{justify-content:space-between;align-items:center;margin-bottom:1rem;display:flex}.nav-drawer[data-astro-cid-wpvy4v7s] ul[data-astro-cid-wpvy4v7s]{flex-direction:column;gap:.25rem;margin:0;padding:0;list-style:none;display:flex}.nav-drawer[data-astro-cid-wpvy4v7s] a[data-astro-cid-wpvy4v7s]{min-height:44px;color:var(--link);border-radius:4px;align-items:center;padding:0 .5rem;font-weight:600;text-decoration:none;display:flex}.nav-close[data-astro-cid-wpvy4v7s]{border:1px solid var(--border);width:44px;height:44px;color:var(--text-primary);cursor:pointer;background:0 0;border-radius:4px;font-size:1.25rem;line-height:1}.nav-backdrop[data-astro-cid-wpvy4v7s]{z-index:20;background:#02060f99;position:fixed;inset:0}.nav-backdrop[data-astro-cid-wpvy4v7s][hidden]{display:none}@media (width<=720px){.nav-inline[data-astro-cid-wpvy4v7s]{display:none}.nav-toggle[data-astro-cid-wpvy4v7s]{display:block}}
+</style></head><body><header class="site-header" data-astro-cid-wpvy4v7s><div class="nav-bar" data-astro-cid-wpvy4v7s><a class="brand" href="/" data-astro-cid-wpvy4v7s>Open Coaching Format</a><button id="nav-toggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-drawer" aria-label="Open navigation menu" data-astro-cid-wpvy4v7s><span class="nav-toggle-icon" aria-hidden="true" data-astro-cid-wpvy4v7s></span></button><nav class="nav-inline" aria-label="Primary" data-astro-cid-wpvy4v7s><ul data-astro-cid-wpvy4v7s><li data-astro-cid-wpvy4v7s><a href="/" data-astro-cid-wpvy4v7s>Home</a></li><li data-astro-cid-wpvy4v7s><a href="/learn/" data-astro-cid-wpvy4v7s>Learn</a></li><li data-astro-cid-wpvy4v7s><a href="/use/" data-astro-cid-wpvy4v7s>Use</a></li><li data-astro-cid-wpvy4v7s><a href="/build/" data-astro-cid-wpvy4v7s>Build</a></li><li data-astro-cid-wpvy4v7s><a href="https://github.com/opencoachingformat/spec" data-astro-cid-wpvy4v7s>GitHub</a></li></ul></nav></div><div id="nav-drawer" class="nav-drawer" role="dialog" aria-modal="true" aria-label="Primary navigation" hidden data-astro-cid-wpvy4v7s><div class="nav-drawer-header" data-astro-cid-wpvy4v7s><span class="brand" data-astro-cid-wpvy4v7s>Open Coaching Format</span><button id="nav-close" class="nav-close" type="button" aria-label="Close navigation menu" data-astro-cid-wpvy4v7s><span aria-hidden="true" data-astro-cid-wpvy4v7s>&times;</span></button></div><ul data-astro-cid-wpvy4v7s><li data-astro-cid-wpvy4v7s><a href="/" data-astro-cid-wpvy4v7s>Home</a></li><li data-astro-cid-wpvy4v7s><a href="/learn/" data-astro-cid-wpvy4v7s>Learn</a></li><li data-astro-cid-wpvy4v7s><a href="/use/" data-astro-cid-wpvy4v7s>Use</a></li><li data-astro-cid-wpvy4v7s><a href="/build/" data-astro-cid-wpvy4v7s>Build</a></li><li data-astro-cid-wpvy4v7s><a href="https://github.com/opencoachingformat/spec" data-astro-cid-wpvy4v7s>GitHub</a></li></ul></div><div id="nav-backdrop" class="nav-backdrop" hidden data-astro-cid-wpvy4v7s></div></header><script type="module">var e=document.getElementById(`nav-toggle`),t=document.getElementById(`nav-drawer`),n=document.getElementById(`nav-backdrop`),r=document.getElementById(`nav-close`);if(e&&t&&n&&r){let i=`a[href], button:not([disabled])`;function a(){t.hidden=!1,n.hidden=!1,e.setAttribute(`aria-expanded`,`true`);let r=t.querySelector(i);r instanceof HTMLElement&&r.focus(),document.addEventListener(`keydown`,s)}function o(){t.hidden=!0,n.hidden=!0,e.setAttribute(`aria-expanded`,`false`),e.focus(),document.removeEventListener(`keydown`,s)}function s(e){if(e.key===`Escape`){o();return}if(e.key===`Tab`){let n=Array.from(t.querySelectorAll(i));if(n.length===0)return;let r=n.indexOf(document.activeElement);e.shiftKey&&r<=0?(e.preventDefault(),n[n.length-1].focus()):!e.shiftKey&&r===n.length-1&&(e.preventDefault(),n[0].focus())}}e.addEventListener(`click`,a),r.addEventListener(`click`,o),n.addEventListener(`click`,o)}</script><main><h1>JSON Schema (v1)</h1><p>Canonical schema: <code>https://opencoachingformat.org/schema/v1.json</code></p><pre tabindex="0"><code>{
+  &quot;$schema&quot;: &quot;http://json-schema.org/draft-07/schema#&quot;,
+  &quot;$id&quot;: &quot;https://opencoachingformat.org/schema/v1.json&quot;,
+  &quot;$comment&quot;: &quot;Schema version 2.0.0-alpha.1. Breaking change (frame-less action model) — part of the v2.0.0 program, not yet a final release (sport-required, affects-roles, and multi-ball are still pending before v2.0.0 ships). The $id keeps the &#39;v1.json&#39; filename by design even though the content is v2: file naming and x-ocf-version are independent, so a consumer must read x-ocf-version to determine the actual major, not the URL. Version-pinned copies live at /&lt;version&gt;/ocf-action-v1.json.&quot;,
+  &quot;x-ocf-version&quot;: &quot;2.0.0-alpha.1&quot;,
+  &quot;title&quot;: &quot;Open Coaching Format&quot;,
+  &quot;description&quot;: &quot;Open standard for team-sport coaching diagrams and animations (invasion team sports; basketball first). Semantic action model.&quot;,
+  &quot;type&quot;: &quot;object&quot;,
+  &quot;required&quot;: [
+    &quot;meta&quot;,
+    &quot;court&quot;,
+    &quot;entities&quot;,
+    &quot;actions&quot;
+  ],
+  &quot;definitions&quot;: {
+    &quot;ruleset&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;enum&quot;: [
+        &quot;fiba&quot;,
+        &quot;nba&quot;,
+        &quot;ncaa&quot;,
+        &quot;nfhs&quot;,
+        &quot;custom&quot;
+      ],
+      &quot;description&quot;: &quot;Basketball ruleset. Determines unit, field dimensions and named position coordinates.&quot;
+    },
+    &quot;unit&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;enum&quot;: [
+        &quot;m&quot;,
+        &quot;ft&quot;
+      ],
+      &quot;description&quot;: &quot;Length unit used for all coordinates in this document. Derived from ruleset unless custom.&quot;
+    },
+    &quot;coordinate_free&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;Absolute coordinate in court units. Origin at center of court. x: negative=viewer&#39;s left, positive=viewer&#39;s right. y: positive=frontcourt (offense basket), negative=backcourt.&quot;,
+      &quot;required&quot;: [
+        &quot;x&quot;,
+        &quot;y&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;x&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;y&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;coordinate_named&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;Reference to a named court position resolved via the active ruleset. Custom positions use &#39;custom.&#39; prefix.&quot;,
+      &quot;required&quot;: [
+        &quot;named&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;named&quot;: {
+          &quot;type&quot;: &quot;string&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;coordinate_relative&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;Offset from a named court position, in court units.&quot;,
+      &quot;required&quot;: [
+        &quot;relative_to&quot;,
+        &quot;dx&quot;,
+        &quot;dy&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;relative_to&quot;: {
+          &quot;type&quot;: &quot;string&quot;
+        },
+        &quot;dx&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;dy&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;coordinate&quot;: {
+      &quot;description&quot;: &quot;A single point: absolute, named, or relative.&quot;,
+      &quot;oneOf&quot;: [
+        {
+          &quot;$ref&quot;: &quot;#/definitions/coordinate_free&quot;
+        },
+        {
+          &quot;$ref&quot;: &quot;#/definitions/coordinate_named&quot;
+        },
+        {
+          &quot;$ref&quot;: &quot;#/definitions/coordinate_relative&quot;
+        }
+      ]
+    },
+    &quot;entity_ref&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;description&quot;: &quot;Reference to a player, coach, cone or station. Format &#39;{offense|defense}_{1-9}&#39;, &#39;coach&#39;, &#39;cone_N&#39;, &#39;station_N&#39;.&quot;,
+      &quot;pattern&quot;: &quot;^(offense|defense)_[1-9]$|^coach$|^(cone|station)_[1-9][0-9]*$&quot;
+    },
+    &quot;ball_ref&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;description&quot;: &quot;Reference to a ball by id, e.g. &#39;ball_1&#39;.&quot;,
+      &quot;pattern&quot;: &quot;^ball_[1-9][0-9]*$&quot;
+    },
+    &quot;color_role&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;enum&quot;: [
+        &quot;offense&quot;,
+        &quot;defense&quot;,
+        &quot;black&quot;,
+        &quot;grey&quot;,
+        &quot;yellow&quot;,
+        &quot;green&quot;,
+        &quot;red&quot;,
+        &quot;blue&quot;,
+        &quot;white&quot;
+      ],
+      &quot;description&quot;: &quot;Semantic color role. Resolved to hex via color_scheme.&quot;
+    },
+    &quot;entity_offense&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;Offensive player.&quot;,
+      &quot;required&quot;: [
+        &quot;type&quot;,
+        &quot;nr&quot;,
+        &quot;x&quot;,
+        &quot;y&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;type&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;const&quot;: &quot;offense&quot;
+        },
+        &quot;nr&quot;: {
+          &quot;type&quot;: &quot;integer&quot;,
+          &quot;minimum&quot;: 1,
+          &quot;maximum&quot;: 9
+        },
+        &quot;x&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;y&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;rotation&quot;: {
+          &quot;type&quot;: &quot;number&quot;,
+          &quot;minimum&quot;: 0,
+          &quot;maximum&quot;: 360,
+          &quot;default&quot;: 0
+        },
+        &quot;color&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/color_role&quot;,
+          &quot;default&quot;: &quot;offense&quot;
+        },
+        &quot;label&quot;: {
+          &quot;type&quot;: &quot;string&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;entity_defense&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;Defensive player.&quot;,
+      &quot;required&quot;: [
+        &quot;type&quot;,
+        &quot;nr&quot;,
+        &quot;x&quot;,
+        &quot;y&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;type&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;const&quot;: &quot;defense&quot;
+        },
+        &quot;nr&quot;: {
+          &quot;type&quot;: &quot;integer&quot;,
+          &quot;minimum&quot;: 1,
+          &quot;maximum&quot;: 9
+        },
+        &quot;x&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;y&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;rotation&quot;: {
+          &quot;type&quot;: &quot;number&quot;,
+          &quot;minimum&quot;: 0,
+          &quot;maximum&quot;: 360,
+          &quot;default&quot;: 0
+        },
+        &quot;color&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/color_role&quot;,
+          &quot;default&quot;: &quot;defense&quot;
+        },
+        &quot;label&quot;: {
+          &quot;type&quot;: &quot;string&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;entity_coach&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;Coach position marker. May carry a ball.&quot;,
+      &quot;required&quot;: [
+        &quot;type&quot;,
+        &quot;x&quot;,
+        &quot;y&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;type&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;const&quot;: &quot;coach&quot;
+        },
+        &quot;x&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;y&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;entity_cone&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;Training cone / marker.&quot;,
+      &quot;required&quot;: [
+        &quot;type&quot;,
+        &quot;nr&quot;,
+        &quot;x&quot;,
+        &quot;y&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;type&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;const&quot;: &quot;cone&quot;
+        },
+        &quot;nr&quot;: {
+          &quot;type&quot;: &quot;integer&quot;,
+          &quot;minimum&quot;: 1
+        },
+        &quot;x&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;y&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;entity_station&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;Numbered station for circuit training.&quot;,
+      &quot;required&quot;: [
+        &quot;type&quot;,
+        &quot;nr&quot;,
+        &quot;x&quot;,
+        &quot;y&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;type&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;const&quot;: &quot;station&quot;
+        },
+        &quot;nr&quot;: {
+          &quot;type&quot;: &quot;integer&quot;,
+          &quot;minimum&quot;: 1
+        },
+        &quot;label&quot;: {
+          &quot;type&quot;: &quot;string&quot;
+        },
+        &quot;x&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;y&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;entity&quot;: {
+      &quot;description&quot;: &quot;Any non-ball entity on the court.&quot;,
+      &quot;oneOf&quot;: [
+        {
+          &quot;$ref&quot;: &quot;#/definitions/entity_offense&quot;
+        },
+        {
+          &quot;$ref&quot;: &quot;#/definitions/entity_defense&quot;
+        },
+        {
+          &quot;$ref&quot;: &quot;#/definitions/entity_coach&quot;
+        },
+        {
+          &quot;$ref&quot;: &quot;#/definitions/entity_cone&quot;
+        },
+        {
+          &quot;$ref&quot;: &quot;#/definitions/entity_station&quot;
+        }
+      ]
+    },
+    &quot;ball&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;A ball. Holds exactly one lifecycle state: carried_by, at, or dead.&quot;,
+      &quot;required&quot;: [
+        &quot;id&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;id&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/ball_ref&quot;
+        },
+        &quot;carried_by&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;at&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/coordinate&quot;
+        },
+        &quot;dead&quot;: {
+          &quot;type&quot;: &quot;boolean&quot;,
+          &quot;const&quot;: true
+        }
+      },
+      &quot;additionalProperties&quot;: false,
+      &quot;oneOf&quot;: [
+        {
+          &quot;required&quot;: [
+            &quot;carried_by&quot;
+          ],
+          &quot;not&quot;: {
+            &quot;anyOf&quot;: [
+              {
+                &quot;required&quot;: [
+                  &quot;at&quot;
+                ]
+              },
+              {
+                &quot;required&quot;: [
+                  &quot;dead&quot;
+                ]
+              }
+            ]
+          }
+        },
+        {
+          &quot;required&quot;: [
+            &quot;at&quot;
+          ],
+          &quot;not&quot;: {
+            &quot;anyOf&quot;: [
+              {
+                &quot;required&quot;: [
+                  &quot;carried_by&quot;
+                ]
+              },
+              {
+                &quot;required&quot;: [
+                  &quot;dead&quot;
+                ]
+              }
+            ]
+          }
+        },
+        {
+          &quot;required&quot;: [
+            &quot;dead&quot;
+          ],
+          &quot;not&quot;: {
+            &quot;anyOf&quot;: [
+              {
+                &quot;required&quot;: [
+                  &quot;carried_by&quot;
+                ]
+              },
+              {
+                &quot;required&quot;: [
+                  &quot;at&quot;
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    &quot;ball_state&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;A ball&#39;s lifecycle state inside a frame state, keyed by ball ref. Exactly one of carried_by/at/dead.&quot;,
+      &quot;properties&quot;: {
+        &quot;carried_by&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;at&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/coordinate&quot;
+        },
+        &quot;dead&quot;: {
+          &quot;type&quot;: &quot;boolean&quot;,
+          &quot;const&quot;: true
+        }
+      },
+      &quot;additionalProperties&quot;: false,
+      &quot;oneOf&quot;: [
+        {
+          &quot;required&quot;: [
+            &quot;carried_by&quot;
+          ],
+          &quot;not&quot;: {
+            &quot;anyOf&quot;: [
+              {
+                &quot;required&quot;: [
+                  &quot;at&quot;
+                ]
+              },
+              {
+                &quot;required&quot;: [
+                  &quot;dead&quot;
+                ]
+              }
+            ]
+          }
+        },
+        {
+          &quot;required&quot;: [
+            &quot;at&quot;
+          ],
+          &quot;not&quot;: {
+            &quot;anyOf&quot;: [
+              {
+                &quot;required&quot;: [
+                  &quot;carried_by&quot;
+                ]
+              },
+              {
+                &quot;required&quot;: [
+                  &quot;dead&quot;
+                ]
+              }
+            ]
+          }
+        },
+        {
+          &quot;required&quot;: [
+            &quot;dead&quot;
+          ],
+          &quot;not&quot;: {
+            &quot;anyOf&quot;: [
+              {
+                &quot;required&quot;: [
+                  &quot;carried_by&quot;
+                ]
+              },
+              {
+                &quot;required&quot;: [
+                  &quot;at&quot;
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    &quot;state&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;Positional + ball anchor. Entity refs map to a coordinate; the optional &#39;balls&#39; map keys ball refs to ball states.&quot;,
+      &quot;properties&quot;: {
+        &quot;balls&quot;: {
+          &quot;type&quot;: &quot;object&quot;,
+          &quot;propertyNames&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/ball_ref&quot;
+          },
+          &quot;additionalProperties&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/ball_state&quot;
+          }
+        }
+      },
+      &quot;patternProperties&quot;: {
+        &quot;^(offense|defense)_[1-9]$|^coach$|^(cone|station)_[1-9][0-9]*$&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/coordinate&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;action_id&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;description&quot;: &quot;Unique identifier for an action within the document. Author-chosen, must be unique across the whole actions[] sequence (including inside branch cases).&quot;,
+      &quot;minLength&quot;: 1,
+      &quot;pattern&quot;: &quot;^[a-zA-Z0-9_-]+$&quot;
+    },
+    &quot;trigger&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;Explicit timing coupling between this action and another action, or an implicit event on this action&#39;s own actor (e.g. receiving the ball). Replaces the old after/with/on_catch fields.&quot;,
+      &quot;required&quot;: [
+        &quot;type&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;type&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;action_end/action_start/action_overlap require &#39;ref&#39;. &#39;reception&#39; fires on this action&#39;s own actor receiving the ball and takes no ref. Sport definitions may add further open trigger types (e.g. a hockey &#39;faceoff_won&#39;) without a schema change.&quot;
+        },
+        &quot;ref&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/action_id&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false,
+      &quot;if&quot;: {
+        &quot;properties&quot;: {
+          &quot;type&quot;: {
+            &quot;enum&quot;: [
+              &quot;action_end&quot;,
+              &quot;action_start&quot;,
+              &quot;action_overlap&quot;
+            ]
+          }
+        }
+      },
+      &quot;then&quot;: {
+        &quot;required&quot;: [
+          &quot;type&quot;,
+          &quot;ref&quot;
+        ]
+      }
+    },
+    &quot;side_effect&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;A secondary effect this action has on another actor, for composite actions where one physical motion does two semantic things at once (e.g. a dribble hand-off, where the passer&#39;s body also screens the receiver&#39;s defender). Open &#39;type&#39; vocabulary, sport-extensible.&quot;,
+      &quot;required&quot;: [
+        &quot;type&quot;,
+        &quot;on&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;type&quot;: {
+          &quot;type&quot;: &quot;string&quot;
+        },
+        &quot;on&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;physicality&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/physicality&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;movement_intensity&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;description&quot;: &quot;Relative tempo over distance for move/cut/dribble. Does not imply a concrete duration — a downstream application derives timing from this plus actual player speed.&quot;,
+      &quot;enum&quot;: [
+        &quot;slow&quot;,
+        &quot;normal&quot;,
+        &quot;fast&quot;,
+        &quot;explosive&quot;
+      ]
+    },
+    &quot;ball_intensity&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;description&quot;: &quot;Relative ball speed for pass/shoot. Independent of the pass &#39;variant&#39; (technique/flight path), e.g. variant &#39;lob&#39; + intensity &#39;soft&#39; are separate axes.&quot;,
+      &quot;enum&quot;: [
+        &quot;soft&quot;,
+        &quot;normal&quot;,
+        &quot;hard&quot;,
+        &quot;bullet&quot;
+      ]
+    },
+    &quot;physicality&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;description&quot;: &quot;Contact/collision style for screen/defend/rebound/pickup, used by a renderer to pick the right animation. Independent of intensity — no effect on distance/timing.&quot;,
+      &quot;enum&quot;: [
+        &quot;passive&quot;,
+        &quot;normal&quot;,
+        &quot;aggressive&quot;,
+        &quot;hard&quot;
+      ]
+    },
+    &quot;move_step&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;One step in a movement sequence. Without &#39;to&#39; = a move on the spot. Reference fields override the action-level ones.&quot;,
+      &quot;properties&quot;: {
+        &quot;variant&quot;: {
+          &quot;type&quot;: &quot;string&quot;
+        },
+        &quot;to&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/coordinate&quot;
+        },
+        &quot;around_player&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;off_screen_by&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;intensity&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/movement_intensity&quot;
+        },
+        &quot;side&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;enum&quot;: [
+            &quot;left&quot;,
+            &quot;right&quot;
+          ],
+          &quot;description&quot;: &quot;Which side to pass an around_player obstacle on, relative to the moving player&#39;s direction of travel. Optional; renderer chooses when absent.&quot;
+        },
+        &quot;arc&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;enum&quot;: [
+            &quot;tight&quot;,
+            &quot;normal&quot;,
+            &quot;wide&quot;
+          ],
+          &quot;description&quot;: &quot;How closely the path wraps an around_player obstacle: tight (curl), normal, wide (flare). Optional; renderer default when absent.&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;action_move&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;required&quot;: [
+        &quot;id&quot;,
+        &quot;player&quot;,
+        &quot;type&quot;,
+        &quot;moves&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;player&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;type&quot;: {
+          &quot;const&quot;: &quot;move&quot;
+        },
+        &quot;moves&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;minItems&quot;: 1,
+          &quot;items&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/move_step&quot;
+          }
+        },
+        &quot;intensity&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/movement_intensity&quot;
+        },
+        &quot;id&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/action_id&quot;
+        },
+        &quot;description&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Coaching prose explaining this specific action, e.g. for a renderer narrating a step.&quot;
+        },
+        &quot;tags&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        &quot;side_effects&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/side_effect&quot;
+          }
+        },
+        &quot;trigger&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/trigger&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;action_cut&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;required&quot;: [
+        &quot;id&quot;,
+        &quot;player&quot;,
+        &quot;type&quot;,
+        &quot;moves&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;player&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;type&quot;: {
+          &quot;const&quot;: &quot;cut&quot;
+        },
+        &quot;moves&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;minItems&quot;: 1,
+          &quot;items&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/move_step&quot;
+          }
+        },
+        &quot;variant&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;enum&quot;: [
+            &quot;backdoor&quot;,
+            &quot;give_and_go&quot;,
+            &quot;flash&quot;,
+            &quot;v_cut&quot;,
+            &quot;l_cut&quot;,
+            &quot;curl&quot;,
+            &quot;flare&quot;,
+            &quot;fade&quot;,
+            &quot;basket&quot;
+          ]
+        },
+        &quot;around_player&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;off_screen_by&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;side&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;enum&quot;: [
+            &quot;left&quot;,
+            &quot;right&quot;
+          ],
+          &quot;description&quot;: &quot;Default side for this cut&#39;s around_player steps; overridden per move_step.&quot;
+        },
+        &quot;arc&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;enum&quot;: [
+            &quot;tight&quot;,
+            &quot;normal&quot;,
+            &quot;wide&quot;
+          ],
+          &quot;description&quot;: &quot;Default arc for this cut&#39;s around_player steps; overridden per move_step.&quot;
+        },
+        &quot;intensity&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/movement_intensity&quot;
+        },
+        &quot;id&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/action_id&quot;
+        },
+        &quot;description&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Coaching prose explaining this specific action, e.g. for a renderer narrating a step.&quot;
+        },
+        &quot;tags&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        &quot;side_effects&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/side_effect&quot;
+          }
+        },
+        &quot;trigger&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/trigger&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;action_screen&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;required&quot;: [
+        &quot;id&quot;,
+        &quot;player&quot;,
+        &quot;type&quot;,
+        &quot;for_player&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;player&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;type&quot;: {
+          &quot;const&quot;: &quot;screen&quot;
+        },
+        &quot;for_player&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;on_player&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;at&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/coordinate&quot;
+        },
+        &quot;variant&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;enum&quot;: [
+            &quot;ball_screen&quot;,
+            &quot;back_screen&quot;,
+            &quot;down_screen&quot;,
+            &quot;flare_screen&quot;,
+            &quot;cross_screen&quot;,
+            &quot;pin_down&quot;
+          ]
+        },
+        &quot;physicality&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/physicality&quot;
+        },
+        &quot;id&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/action_id&quot;
+        },
+        &quot;description&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Coaching prose explaining this specific action, e.g. for a renderer narrating a step.&quot;
+        },
+        &quot;tags&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        &quot;side_effects&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/side_effect&quot;
+          }
+        },
+        &quot;trigger&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/trigger&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;action_defend&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;required&quot;: [
+        &quot;id&quot;,
+        &quot;player&quot;,
+        &quot;type&quot;,
+        &quot;guards_player&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;player&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;type&quot;: {
+          &quot;const&quot;: &quot;defend&quot;
+        },
+        &quot;guards_player&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;variant&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;enum&quot;: [
+            &quot;on_ball&quot;,
+            &quot;deny&quot;,
+            &quot;help&quot;,
+            &quot;hedge&quot;,
+            &quot;switch&quot;,
+            &quot;box_out&quot;
+          ]
+        },
+        &quot;physicality&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/physicality&quot;
+        },
+        &quot;id&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/action_id&quot;
+        },
+        &quot;description&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Coaching prose explaining this specific action, e.g. for a renderer narrating a step.&quot;
+        },
+        &quot;tags&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        &quot;side_effects&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/side_effect&quot;
+          }
+        },
+        &quot;trigger&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/trigger&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;action_dribble&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;required&quot;: [
+        &quot;id&quot;,
+        &quot;player&quot;,
+        &quot;type&quot;,
+        &quot;moves&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;player&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;type&quot;: {
+          &quot;const&quot;: &quot;dribble&quot;
+        },
+        &quot;moves&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;minItems&quot;: 1,
+          &quot;items&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/move_step&quot;
+          }
+        },
+        &quot;ball_id&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/ball_ref&quot;
+        },
+        &quot;ball_ids&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;description&quot;: &quot;Two-ball dribbling: one ball per hand. Use ball_id for the single-ball case; use ball_ids (not both) when this action controls two balls simultaneously.&quot;,
+          &quot;minItems&quot;: 1,
+          &quot;maxItems&quot;: 2,
+          &quot;items&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/ball_ref&quot;
+          }
+        },
+        &quot;intensity&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/movement_intensity&quot;
+        },
+        &quot;id&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/action_id&quot;
+        },
+        &quot;description&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Coaching prose explaining this specific action, e.g. for a renderer narrating a step.&quot;
+        },
+        &quot;tags&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        &quot;side_effects&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/side_effect&quot;
+          }
+        },
+        &quot;trigger&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/trigger&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false,
+      &quot;not&quot;: {
+        &quot;required&quot;: [
+          &quot;ball_id&quot;,
+          &quot;ball_ids&quot;
+        ]
+      }
+    },
+    &quot;action_pass&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;required&quot;: [
+        &quot;id&quot;,
+        &quot;player&quot;,
+        &quot;type&quot;,
+        &quot;to_player&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;player&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;type&quot;: {
+          &quot;const&quot;: &quot;pass&quot;
+        },
+        &quot;to_player&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;ball_id&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/ball_ref&quot;
+        },
+        &quot;variant&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;enum&quot;: [
+            &quot;chest&quot;,
+            &quot;bounce&quot;,
+            &quot;overhead&quot;,
+            &quot;lob&quot;,
+            &quot;baseball&quot;,
+            &quot;hand_off&quot;,
+            &quot;outlet&quot;
+          ]
+        },
+        &quot;intensity&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/ball_intensity&quot;
+        },
+        &quot;id&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/action_id&quot;
+        },
+        &quot;description&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Coaching prose explaining this specific action, e.g. for a renderer narrating a step.&quot;
+        },
+        &quot;tags&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        &quot;side_effects&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/side_effect&quot;
+          }
+        },
+        &quot;trigger&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/trigger&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;action_shoot&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;required&quot;: [
+        &quot;id&quot;,
+        &quot;player&quot;,
+        &quot;type&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;player&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;type&quot;: {
+          &quot;const&quot;: &quot;shoot&quot;
+        },
+        &quot;ball_id&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/ball_ref&quot;
+        },
+        &quot;variant&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;enum&quot;: [
+            &quot;jumper&quot;,
+            &quot;three&quot;,
+            &quot;layup&quot;,
+            &quot;floater&quot;,
+            &quot;dunk&quot;,
+            &quot;hook&quot;,
+            &quot;free_throw&quot;
+          ]
+        },
+        &quot;result&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;enum&quot;: [
+            &quot;make&quot;,
+            &quot;miss&quot;
+          ]
+        },
+        &quot;intensity&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/ball_intensity&quot;
+        },
+        &quot;id&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/action_id&quot;
+        },
+        &quot;description&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Coaching prose explaining this specific action, e.g. for a renderer narrating a step.&quot;
+        },
+        &quot;tags&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        &quot;side_effects&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/side_effect&quot;
+          }
+        },
+        &quot;trigger&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/trigger&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;action_rebound&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;required&quot;: [
+        &quot;id&quot;,
+        &quot;player&quot;,
+        &quot;type&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;player&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;type&quot;: {
+          &quot;const&quot;: &quot;rebound&quot;
+        },
+        &quot;ball_id&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/ball_ref&quot;
+        },
+        &quot;variant&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;enum&quot;: [
+            &quot;offensive&quot;,
+            &quot;defensive&quot;
+          ]
+        },
+        &quot;physicality&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/physicality&quot;
+        },
+        &quot;id&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/action_id&quot;
+        },
+        &quot;description&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Coaching prose explaining this specific action, e.g. for a renderer narrating a step.&quot;
+        },
+        &quot;tags&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        &quot;side_effects&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/side_effect&quot;
+          }
+        },
+        &quot;trigger&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/trigger&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;action_pickup&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;required&quot;: [
+        &quot;id&quot;,
+        &quot;player&quot;,
+        &quot;type&quot;,
+        &quot;ball_id&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;player&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;type&quot;: {
+          &quot;const&quot;: &quot;pickup&quot;
+        },
+        &quot;ball_id&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/ball_ref&quot;
+        },
+        &quot;physicality&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/physicality&quot;
+        },
+        &quot;id&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/action_id&quot;
+        },
+        &quot;description&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Coaching prose explaining this specific action, e.g. for a renderer narrating a step.&quot;
+        },
+        &quot;tags&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        &quot;side_effects&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/side_effect&quot;
+          }
+        },
+        &quot;trigger&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/trigger&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;action_tackle&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;$comment&quot;: &quot;Reserved for invasion sports (soccer/futsal/hockey). No variants defined yet; must be specified before promotion.&quot;,
+      &quot;required&quot;: [
+        &quot;id&quot;,
+        &quot;player&quot;,
+        &quot;type&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;player&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;type&quot;: {
+          &quot;const&quot;: &quot;tackle&quot;
+        },
+        &quot;physicality&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/physicality&quot;
+        },
+        &quot;id&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/action_id&quot;
+        },
+        &quot;description&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Coaching prose explaining this specific action, e.g. for a renderer narrating a step.&quot;
+        },
+        &quot;tags&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        &quot;side_effects&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/side_effect&quot;
+          }
+        },
+        &quot;trigger&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/trigger&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;action_clear&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;$comment&quot;: &quot;Reserved for invasion sports (soccer/futsal/hockey). No variants defined yet.&quot;,
+      &quot;required&quot;: [
+        &quot;id&quot;,
+        &quot;player&quot;,
+        &quot;type&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;player&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;type&quot;: {
+          &quot;const&quot;: &quot;clear&quot;
+        },
+        &quot;ball_id&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/ball_ref&quot;
+        },
+        &quot;intensity&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/ball_intensity&quot;
+        },
+        &quot;id&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/action_id&quot;
+        },
+        &quot;description&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Coaching prose explaining this specific action, e.g. for a renderer narrating a step.&quot;
+        },
+        &quot;tags&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        &quot;side_effects&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/side_effect&quot;
+          }
+        },
+        &quot;trigger&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/trigger&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;action_faceoff&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;$comment&quot;: &quot;Reserved for hockey. No variants defined yet.&quot;,
+      &quot;required&quot;: [
+        &quot;id&quot;,
+        &quot;player&quot;,
+        &quot;type&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;player&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;type&quot;: {
+          &quot;const&quot;: &quot;faceoff&quot;
+        },
+        &quot;id&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/action_id&quot;
+        },
+        &quot;description&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Coaching prose explaining this specific action, e.g. for a renderer narrating a step.&quot;
+        },
+        &quot;tags&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        &quot;side_effects&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/side_effect&quot;
+          }
+        },
+        &quot;trigger&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/trigger&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;action_check&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;$comment&quot;: &quot;Reserved for hockey. No variants defined yet.&quot;,
+      &quot;required&quot;: [
+        &quot;id&quot;,
+        &quot;player&quot;,
+        &quot;type&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;player&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;type&quot;: {
+          &quot;const&quot;: &quot;check&quot;
+        },
+        &quot;on_player&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;physicality&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/physicality&quot;
+        },
+        &quot;id&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/action_id&quot;
+        },
+        &quot;description&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Coaching prose explaining this specific action, e.g. for a renderer narrating a step.&quot;
+        },
+        &quot;tags&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        &quot;side_effects&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/side_effect&quot;
+          }
+        },
+        &quot;trigger&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/trigger&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;action&quot;: {
+      &quot;description&quot;: &quot;Any action. Discriminated by &#39;type&#39;.&quot;,
+      &quot;oneOf&quot;: [
+        {
+          &quot;$ref&quot;: &quot;#/definitions/action_move&quot;
+        },
+        {
+          &quot;$ref&quot;: &quot;#/definitions/action_cut&quot;
+        },
+        {
+          &quot;$ref&quot;: &quot;#/definitions/action_screen&quot;
+        },
+        {
+          &quot;$ref&quot;: &quot;#/definitions/action_defend&quot;
+        },
+        {
+          &quot;$ref&quot;: &quot;#/definitions/action_dribble&quot;
+        },
+        {
+          &quot;$ref&quot;: &quot;#/definitions/action_pass&quot;
+        },
+        {
+          &quot;$ref&quot;: &quot;#/definitions/action_shoot&quot;
+        },
+        {
+          &quot;$ref&quot;: &quot;#/definitions/action_rebound&quot;
+        },
+        {
+          &quot;$ref&quot;: &quot;#/definitions/action_pickup&quot;
+        },
+        {
+          &quot;$ref&quot;: &quot;#/definitions/action_tackle&quot;
+        },
+        {
+          &quot;$ref&quot;: &quot;#/definitions/action_clear&quot;
+        },
+        {
+          &quot;$ref&quot;: &quot;#/definitions/action_faceoff&quot;
+        },
+        {
+          &quot;$ref&quot;: &quot;#/definitions/action_check&quot;
+        }
+      ]
+    },
+    &quot;custom_position&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;required&quot;: [
+        &quot;x&quot;,
+        &quot;y&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;x&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;y&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;description&quot;: {
+          &quot;type&quot;: &quot;string&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;formation_adjustment&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;Per-entity delta from the resolved formation position. dx/dy are in court units, anchored to that entity&#39;s registry position (not a named position, so no relative_to).&quot;,
+      &quot;required&quot;: [
+        &quot;entity&quot;,
+        &quot;dx&quot;,
+        &quot;dy&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;entity&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/entity_ref&quot;
+        },
+        &quot;dx&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;dy&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;note&quot;: {
+          &quot;type&quot;: &quot;string&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;based_on_formation&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;External reference to a starting formation in a versioned registry, resolved to entities at authoring time; pure provenance thereafter. Resolve by id, never by title.&quot;,
+      &quot;required&quot;: [
+        &quot;id&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;id&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Stable formation id in the registry. Only field with normative meaning.&quot;
+        },
+        &quot;title&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Human-readable label, convenience only.&quot;
+        },
+        &quot;source&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;format&quot;: &quot;uri&quot;,
+          &quot;description&quot;: &quot;Stable URI of the formation registry index. Any URI; not host-restricted.&quot;
+        },
+        &quot;source_version&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;SemVer of the referenced registry. Optional; when present MUST be valid SemVer.&quot;,
+          &quot;pattern&quot;: &quot;^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$&quot;
+        },
+        &quot;adjustments&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/formation_adjustment&quot;
+          }
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;based_on_play&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;External reference to another play this one derives from. The referenced play is always the base; this document is the derivative. Resolve by id, never by title.&quot;,
+      &quot;required&quot;: [
+        &quot;id&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;id&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Stable play id in the referenced playbook index. Only field with normative meaning.&quot;
+        },
+        &quot;title&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Human-readable label, convenience only.&quot;
+        },
+        &quot;source&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;format&quot;: &quot;uri&quot;,
+          &quot;description&quot;: &quot;Stable URI of the playbook index/manifest. Any URI; not host-restricted.&quot;
+        },
+        &quot;source_version&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;SemVer of the referenced playbook. Optional; when present MUST be valid SemVer.&quot;,
+          &quot;pattern&quot;: &quot;^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$&quot;
+        },
+        &quot;relationship&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;enum&quot;: [
+            &quot;variant&quot;,
+            &quot;progression&quot;,
+            &quot;counter&quot;
+          ],
+          &quot;description&quot;: &quot;How this play relates to the base. Direction is fixed: this play derives from the referenced base.&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;color_scheme&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;Hex color values for each semantic role.&quot;,
+      &quot;properties&quot;: {
+        &quot;offense_fill&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;pattern&quot;: &quot;^#[0-9a-fA-F]{6}$&quot;,
+          &quot;default&quot;: &quot;#003366&quot;
+        },
+        &quot;offense_stroke&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;pattern&quot;: &quot;^#[0-9a-fA-F]{6}$&quot;,
+          &quot;default&quot;: &quot;#ffffff&quot;
+        },
+        &quot;defense_fill&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;pattern&quot;: &quot;^#[0-9a-fA-F]{6}$&quot;,
+          &quot;default&quot;: &quot;#58001d&quot;
+        },
+        &quot;defense_stroke&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;pattern&quot;: &quot;^#[0-9a-fA-F]{6}$&quot;,
+          &quot;default&quot;: &quot;#ffffff&quot;
+        },
+        &quot;black&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;pattern&quot;: &quot;^#[0-9a-fA-F]{6}$&quot;,
+          &quot;default&quot;: &quot;#000000&quot;
+        },
+        &quot;grey&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;pattern&quot;: &quot;^#[0-9a-fA-F]{6}$&quot;,
+          &quot;default&quot;: &quot;#7f7f7f&quot;
+        },
+        &quot;yellow&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;pattern&quot;: &quot;^#[0-9a-fA-F]{6}$&quot;,
+          &quot;default&quot;: &quot;#ffff00&quot;
+        },
+        &quot;green&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;pattern&quot;: &quot;^#[0-9a-fA-F]{6}$&quot;,
+          &quot;default&quot;: &quot;#7ce86a&quot;
+        },
+        &quot;red&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;pattern&quot;: &quot;^#[0-9a-fA-F]{6}$&quot;,
+          &quot;default&quot;: &quot;#ff0000&quot;
+        },
+        &quot;blue&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;pattern&quot;: &quot;^#[0-9a-fA-F]{6}$&quot;,
+          &quot;default&quot;: &quot;#5dd5ff&quot;
+        },
+        &quot;white&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;pattern&quot;: &quot;^#[0-9a-fA-F]{6}$&quot;,
+          &quot;default&quot;: &quot;#ffffff&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;area&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;required&quot;: [
+        &quot;form&quot;,
+        &quot;x&quot;,
+        &quot;y&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;form&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;enum&quot;: [
+            &quot;rectangle&quot;,
+            &quot;ellipse&quot;,
+            &quot;triangle&quot;
+          ]
+        },
+        &quot;color&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/color_role&quot;,
+          &quot;default&quot;: &quot;yellow&quot;
+        },
+        &quot;opacity&quot;: {
+          &quot;type&quot;: &quot;number&quot;,
+          &quot;minimum&quot;: 0,
+          &quot;maximum&quot;: 1,
+          &quot;default&quot;: 0.4
+        },
+        &quot;x&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;y&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;width&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;height&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;rotation&quot;: {
+          &quot;type&quot;: &quot;number&quot;,
+          &quot;minimum&quot;: 0,
+          &quot;maximum&quot;: 360,
+          &quot;default&quot;: 0
+        },
+        &quot;coords&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;minItems&quot;: 3,
+          &quot;maxItems&quot;: 3,
+          &quot;items&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/coordinate&quot;
+          }
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;label&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;required&quot;: [
+        &quot;text&quot;,
+        &quot;x&quot;,
+        &quot;y&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;text&quot;: {
+          &quot;type&quot;: &quot;string&quot;
+        },
+        &quot;x&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;y&quot;: {
+          &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;color&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/color_role&quot;,
+          &quot;default&quot;: &quot;black&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;outcome&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;enum&quot;: [
+        &quot;make&quot;,
+        &quot;miss&quot;,
+        &quot;turnover&quot;,
+        &quot;steal&quot;,
+        &quot;foul&quot;
+      ],
+      &quot;description&quot;: &quot;Result that selects a branch target frame.&quot;
+    },
+    &quot;branch_case&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;One outcome path of a branch: its own self-contained action sub-sequence, plus an explicit continuation target. &#39;then&#39; is required so a validator can distinguish &#39;this path ends here&#39; (then: null) from an author forgetting to continue it — never an implicit missing field.&quot;,
+      &quot;required&quot;: [
+        &quot;actions&quot;,
+        &quot;then&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;actions&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;description&quot;: &quot;Self-contained action sub-sequence for this outcome. May be empty (e.g. a &#39;miss&#39; case that does nothing but continue elsewhere via &#39;then&#39;).&quot;,
+          &quot;items&quot;: {
+            &quot;oneOf&quot;: [
+              {
+                &quot;$ref&quot;: &quot;#/definitions/action&quot;
+              },
+              {
+                &quot;$ref&quot;: &quot;#/definitions/branch&quot;
+              }
+            ]
+          }
+        },
+        &quot;then&quot;: {
+          &quot;type&quot;: [
+            &quot;string&quot;,
+            &quot;null&quot;
+          ],
+          &quot;description&quot;: &quot;The action id this case continues into (may be an id that precedes the branch, for a continuum loop), or null if this path ends here (a made shot with no rebound, a turnover that ends the rep, etc).&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;branch&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;description&quot;: &quot;Outcome-dependent continuation, scoped to the outcome of one action. Only actors referenced inside the triggering case&#39;s own actions[] are affected — an uninvolved actor&#39;s action is unaffected by a branch it isn&#39;t part of. Any other actor&#39;s action that needs to react to the same outcome must itself live inside the relevant case&#39;s sub-sequence, or use trigger against an action inside it.&quot;,
+      &quot;required&quot;: [
+        &quot;id&quot;,
+        &quot;on&quot;,
+        &quot;cases&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;id&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/action_id&quot;
+        },
+        &quot;on&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/action_id&quot;,
+          &quot;description&quot;: &quot;The action whose outcome selects which case applies.&quot;
+        },
+        &quot;cases&quot;: {
+          &quot;type&quot;: &quot;object&quot;,
+          &quot;description&quot;: &quot;Outcome -&gt; branch_case. Not every outcome needs a case; an outcome with no case means that outcome doesn&#39;t branch (the flat sequence continues normally for unaffected actors).&quot;,
+          &quot;propertyNames&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/outcome&quot;
+          },
+          &quot;additionalProperties&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/branch_case&quot;
+          },
+          &quot;minProperties&quot;: 1
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    }
+  },
+  &quot;properties&quot;: {
+    &quot;$schema&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;format&quot;: &quot;uri&quot;
+    },
+    &quot;sport&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;enum&quot;: [
+        &quot;basketball&quot;,
+        &quot;soccer&quot;,
+        &quot;handball&quot;,
+        &quot;hockey&quot;,
+        &quot;futsal&quot;
+      ],
+      &quot;default&quot;: &quot;basketball&quot;,
+      &quot;$comment&quot;: &quot;Optional, default basketball (back-compat). Intended to become required in v2.0.0. basketball is fully defined; soccer/handball/hockey/futsal carry provisional minimal action whitelists pending sport-expert review.&quot;
+    },
+    &quot;meta&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;required&quot;: [
+        &quot;id&quot;,
+        &quot;title&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;id&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;format&quot;: &quot;uuid&quot;
+        },
+        &quot;title&quot;: {
+          &quot;type&quot;: &quot;string&quot;
+        },
+        &quot;description&quot;: {
+          &quot;type&quot;: &quot;string&quot;
+        },
+        &quot;author&quot;: {
+          &quot;type&quot;: &quot;string&quot;
+        },
+        &quot;tags&quot;: {
+          &quot;type&quot;: &quot;array&quot;,
+          &quot;items&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          }
+        },
+        &quot;difficulty&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;enum&quot;: [
+            &quot;beginner&quot;,
+            &quot;intermediate&quot;,
+            &quot;advanced&quot;
+          ]
+        },
+        &quot;created&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;format&quot;: &quot;date-time&quot;
+        },
+        &quot;modified&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;format&quot;: &quot;date-time&quot;
+        },
+        &quot;source_format&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;enum&quot;: [
+            &quot;fiba&quot;,
+            &quot;fastdraw&quot;,
+            &quot;open&quot;,
+            &quot;custom&quot;
+          ]
+        },
+        &quot;source_url&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;format&quot;: &quot;uri&quot;
+        },
+        &quot;based_on_formation&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/based_on_formation&quot;
+        },
+        &quot;based_on_play&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/based_on_play&quot;
+        },
+        &quot;min_schema_version&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;description&quot;: &quot;Minimum OCF schema version required to validate this document correctly. Optional; when present MUST be valid SemVer. A validator whose bundled schema is older SHOULD warn that it may be out of date rather than treat unknown newer fields as errors.&quot;,
+          &quot;pattern&quot;: &quot;^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$&quot;
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;court&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;required&quot;: [
+        &quot;ruleset&quot;,
+        &quot;type&quot;
+      ],
+      &quot;properties&quot;: {
+        &quot;ruleset&quot;: {
+          &quot;$ref&quot;: &quot;#/definitions/ruleset&quot;
+        },
+        &quot;type&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;enum&quot;: [
+            &quot;half_court&quot;,
+            &quot;full_court&quot;
+          ]
+        },
+        &quot;drill_focus&quot;: {
+          &quot;type&quot;: &quot;string&quot;,
+          &quot;enum&quot;: [
+            &quot;offense&quot;,
+            &quot;defense&quot;,
+            &quot;transition&quot;,
+            &quot;neutral&quot;
+          ],
+          &quot;default&quot;: &quot;offense&quot;
+        },
+        &quot;wheelchair&quot;: {
+          &quot;type&quot;: &quot;boolean&quot;,
+          &quot;default&quot;: false
+        },
+        &quot;custom_dimensions&quot;: {
+          &quot;type&quot;: &quot;object&quot;,
+          &quot;required&quot;: [
+            &quot;unit&quot;,
+            &quot;length&quot;,
+            &quot;width&quot;,
+            &quot;basket_from_baseline&quot;,
+            &quot;three_point_distance&quot;,
+            &quot;paint_width&quot;,
+            &quot;paint_depth&quot;,
+            &quot;free_throw_distance&quot;
+          ],
+          &quot;properties&quot;: {
+            &quot;unit&quot;: {
+              &quot;$ref&quot;: &quot;#/definitions/unit&quot;
+            },
+            &quot;length&quot;: {
+              &quot;type&quot;: &quot;number&quot;
+            },
+            &quot;width&quot;: {
+              &quot;type&quot;: &quot;number&quot;
+            },
+            &quot;basket_from_baseline&quot;: {
+              &quot;type&quot;: &quot;number&quot;
+            },
+            &quot;three_point_distance&quot;: {
+              &quot;type&quot;: &quot;number&quot;
+            },
+            &quot;paint_width&quot;: {
+              &quot;type&quot;: &quot;number&quot;
+            },
+            &quot;paint_depth&quot;: {
+              &quot;type&quot;: &quot;number&quot;
+            },
+            &quot;free_throw_distance&quot;: {
+              &quot;type&quot;: &quot;number&quot;
+            }
+          },
+          &quot;additionalProperties&quot;: false
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;color_scheme&quot;: {
+      &quot;$ref&quot;: &quot;#/definitions/color_scheme&quot;
+    },
+    &quot;named_positions&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;properties&quot;: {
+        &quot;custom&quot;: {
+          &quot;type&quot;: &quot;object&quot;,
+          &quot;additionalProperties&quot;: {
+            &quot;$ref&quot;: &quot;#/definitions/custom_position&quot;
+          }
+        }
+      },
+      &quot;additionalProperties&quot;: false
+    },
+    &quot;entities&quot;: {
+      &quot;type&quot;: &quot;array&quot;,
+      &quot;description&quot;: &quot;All non-ball entities and their initial (frame 0) positions.&quot;,
+      &quot;items&quot;: {
+        &quot;$ref&quot;: &quot;#/definitions/entity&quot;
+      }
+    },
+    &quot;balls&quot;: {
+      &quot;type&quot;: &quot;array&quot;,
+      &quot;description&quot;: &quot;Balls present at the start of the drill. Each holds exactly one lifecycle state.&quot;,
+      &quot;items&quot;: {
+        &quot;$ref&quot;: &quot;#/definitions/ball&quot;
+      }
+    },
+    &quot;actions&quot;: {
+      &quot;type&quot;: &quot;array&quot;,
+      &quot;description&quot;: &quot;Flat, ordered sequence of actions and branch containers. Framing/grouping into visual steps is entirely a renderer concern; the spec makes no framing decisions.&quot;,
+      &quot;items&quot;: {
+        &quot;oneOf&quot;: [
+          {
+            &quot;$ref&quot;: &quot;#/definitions/action&quot;
+          },
+          {
+            &quot;$ref&quot;: &quot;#/definitions/branch&quot;
+          }
+        ]
+      }
+    },
+    &quot;areas&quot;: {
+      &quot;type&quot;: &quot;array&quot;,
+      &quot;items&quot;: {
+        &quot;$ref&quot;: &quot;#/definitions/area&quot;
+      }
+    },
+    &quot;labels&quot;: {
+      &quot;type&quot;: &quot;array&quot;,
+      &quot;items&quot;: {
+        &quot;$ref&quot;: &quot;#/definitions/label&quot;
+      }
+    },
+    &quot;continuum&quot;: {
+      &quot;type&quot;: &quot;boolean&quot;,
+      &quot;default&quot;: false,
+      &quot;description&quot;: &quot;When true, this play is designed to loop: its terminal state(s) are expected to match its setup state (or an explicitly designated loop anchor a branch_case&#39;s &#39;then&#39; points at), so it can repeat indefinitely. Exact tolerance and non-setup loop anchors are a validator-level concern, not enforced by this schema.&quot;
+    }
+  },
+  &quot;additionalProperties&quot;: false,
+  &quot;allOf&quot;: [
+    {
+      &quot;if&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;court&quot;: {
+            &quot;type&quot;: &quot;object&quot;,
+            &quot;properties&quot;: {
+              &quot;ruleset&quot;: {
+                &quot;const&quot;: &quot;custom&quot;
+              }
+            }
+          }
+        }
+      },
+      &quot;then&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;court&quot;: {
+            &quot;type&quot;: &quot;object&quot;,
+            &quot;required&quot;: [
+              &quot;custom_dimensions&quot;
+            ]
+          }
+        }
+      }
+    },
+    {
+      &quot;$comment&quot;: &quot;sport absent OR basketball -&gt; basketball action whitelist (default is a non-validating annotation, so absence must be handled explicitly for back-compat)&quot;,
+      &quot;if&quot;: {
+        &quot;anyOf&quot;: [
+          {
+            &quot;not&quot;: {
+              &quot;required&quot;: [
+                &quot;sport&quot;
+              ]
+            }
+          },
+          {
+            &quot;properties&quot;: {
+              &quot;sport&quot;: {
+                &quot;const&quot;: &quot;basketball&quot;
+              }
+            }
+          }
+        ]
+      },
+      &quot;then&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;actions&quot;: {
+            &quot;type&quot;: &quot;array&quot;,
+            &quot;items&quot;: {
+              &quot;type&quot;: &quot;object&quot;,
+              &quot;properties&quot;: {
+                &quot;type&quot;: {
+                  &quot;enum&quot;: [
+                    &quot;move&quot;,
+                    &quot;cut&quot;,
+                    &quot;screen&quot;,
+                    &quot;defend&quot;,
+                    &quot;dribble&quot;,
+                    &quot;pass&quot;,
+                    &quot;shoot&quot;,
+                    &quot;rebound&quot;,
+                    &quot;pickup&quot;
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      &quot;if&quot;: {
+        &quot;required&quot;: [
+          &quot;sport&quot;
+        ],
+        &quot;properties&quot;: {
+          &quot;sport&quot;: {
+            &quot;const&quot;: &quot;soccer&quot;
+          }
+        }
+      },
+      &quot;then&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;actions&quot;: {
+            &quot;type&quot;: &quot;array&quot;,
+            &quot;items&quot;: {
+              &quot;type&quot;: &quot;object&quot;,
+              &quot;properties&quot;: {
+                &quot;type&quot;: {
+                  &quot;enum&quot;: [
+                    &quot;move&quot;,
+                    &quot;pass&quot;,
+                    &quot;shoot&quot;,
+                    &quot;defend&quot;,
+                    &quot;dribble&quot;,
+                    &quot;tackle&quot;,
+                    &quot;clear&quot;
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      &quot;if&quot;: {
+        &quot;required&quot;: [
+          &quot;sport&quot;
+        ],
+        &quot;properties&quot;: {
+          &quot;sport&quot;: {
+            &quot;const&quot;: &quot;handball&quot;
+          }
+        }
+      },
+      &quot;then&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;actions&quot;: {
+            &quot;type&quot;: &quot;array&quot;,
+            &quot;items&quot;: {
+              &quot;type&quot;: &quot;object&quot;,
+              &quot;properties&quot;: {
+                &quot;type&quot;: {
+                  &quot;enum&quot;: [
+                    &quot;move&quot;,
+                    &quot;pass&quot;,
+                    &quot;shoot&quot;,
+                    &quot;defend&quot;,
+                    &quot;cut&quot;,
+                    &quot;screen&quot;,
+                    &quot;pickup&quot;
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      &quot;if&quot;: {
+        &quot;required&quot;: [
+          &quot;sport&quot;
+        ],
+        &quot;properties&quot;: {
+          &quot;sport&quot;: {
+            &quot;const&quot;: &quot;hockey&quot;
+          }
+        }
+      },
+      &quot;then&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;actions&quot;: {
+            &quot;type&quot;: &quot;array&quot;,
+            &quot;items&quot;: {
+              &quot;type&quot;: &quot;object&quot;,
+              &quot;properties&quot;: {
+                &quot;type&quot;: {
+                  &quot;enum&quot;: [
+                    &quot;move&quot;,
+                    &quot;pass&quot;,
+                    &quot;shoot&quot;,
+                    &quot;defend&quot;,
+                    &quot;dribble&quot;,
+                    &quot;clear&quot;,
+                    &quot;faceoff&quot;,
+                    &quot;check&quot;
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      &quot;if&quot;: {
+        &quot;required&quot;: [
+          &quot;sport&quot;
+        ],
+        &quot;properties&quot;: {
+          &quot;sport&quot;: {
+            &quot;const&quot;: &quot;futsal&quot;
+          }
+        }
+      },
+      &quot;then&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;actions&quot;: {
+            &quot;type&quot;: &quot;array&quot;,
+            &quot;items&quot;: {
+              &quot;type&quot;: &quot;object&quot;,
+              &quot;properties&quot;: {
+                &quot;type&quot;: {
+                  &quot;enum&quot;: [
+                    &quot;move&quot;,
+                    &quot;pass&quot;,
+                    &quot;shoot&quot;,
+                    &quot;defend&quot;,
+                    &quot;dribble&quot;,
+                    &quot;tackle&quot;,
+                    &quot;clear&quot;
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}</code></pre></main></body></html>

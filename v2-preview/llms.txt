@@ -1,0 +1,10 @@
+# Open Coaching Format
+
+> An open standard for representing sports coaching diagrams, drill animations, and playbooks as structured data, encoded as JSON and validated against a public JSON Schema.
+
+## Docs
+
+- [Specification](https://opencoachingformat.org/docs/spec/): Full normative specification — coordinate system, entities, actions, frames, and branches.
+- [JSON Schema](https://opencoachingformat.org/docs/schema/): Canonical JSON Schema (Draft-07) for Open Coaching Format v1.
+- [Examples](https://opencoachingformat.org/examples/): Worked OCF drills, from a fully-annotated set play to a minimal quick-mode sketch.
+- [Ecosystem](https://opencoachingformat.org/ecosystem/): Validator, renderer, and editor projects, plus the roadmap.
