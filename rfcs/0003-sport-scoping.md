@@ -319,8 +319,27 @@ Because validity now depends on `sport`, add fixtures:
 
 ---
 
+## Amendments
+
+- **2026-09-07**: This RFC's own Detailed Design table (§"Sport-scoped
+  (gated by `sport`)" vs. "Sport-neutral" classification, listing "rulesets
+  + named-position catalogs" as sport-scoped) never had a corresponding
+  schema mechanism built — only the `actions[].type` whitelist gating was
+  implemented. `court.ruleset` remained a pure-basketball enum with no
+  cross-check against `sport`, and `court.custom_dimensions` kept
+  basketball-only field names regardless of declared sport (see the
+  checked-in `examples/sport-soccer.ocf.json`, which is forced to repurpose
+  `paint_width`/`paint_depth` to mean soccer's penalty-box dimensions). RFC
+  0010 delivers the follow-through this RFC's own design table specified
+  but never implemented.
+
+---
+
 ## References
 
 - Related RFC: #0002 (External References — precedent for externalizing
   sport content like formations/positions).
+- RFC 0010 (Sport-Scoped Court & Ruleset) — delivers the ruleset/named-position
+  sport-scoping this RFC's Detailed Design table specified but did not
+  implement; see Amendments above.
 - Internal analysis (private): sport-neutrality architecture decision.
