@@ -25,7 +25,10 @@ on:
         default: false
 
 env:
-  PREVIEW_BASE_PATH: /v2-preview
+  # Relative directory name only (no leading/trailing slash) - used
+  # as-is for destination_dir/local paths, and prefixed with "/" where
+  # Astro's base path needs a rooted form.
+  PREVIEW_BASE_PATH: v2-preview
 
 permissions:
   contents: write
@@ -59,13 +62,13 @@ jobs:
       - name: Build docs site (asciidoctor + astro)
         working-directory: site
         env:
-          SITE_BASE_PATH: ${{ env.PREVIEW_BASE_PATH }}/
+          SITE_BASE_PATH: /${{ env.PREVIEW_BASE_PATH }}/
         run: npm run build
 
       - name: Assemble dist/ under preview path
         run: |
-          mkdir -p "dist${{ env.PREVIEW_BASE_PATH }}"
-          cp -r "site/dist/." "dist${{ env.PREVIEW_BASE_PATH }}/"
+          mkdir -p "dist/${{ env.PREVIEW_BASE_PATH }}"
+          cp -r "site/dist/." "dist/${{ env.PREVIEW_BASE_PATH }}/"
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
@@ -87,11 +90,11 @@ jobs:
 
       - name: Remove preview path
         run: |
-          if [ -d ".${{ env.PREVIEW_BASE_PATH }}" ]; then
-            git rm -r --ignore-unmatch ".${{ env.PREVIEW_BASE_PATH }}"
+          if [ -d "${{ env.PREVIEW_BASE_PATH }}" ]; then
+            git rm -r --ignore-unmatch "${{ env.PREVIEW_BASE_PATH }}"
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
-            git commit -m "chore(site): remove /v2-preview (branch deleted)"
+            git commit -m "chore(site): remove /${{ env.PREVIEW_BASE_PATH }} (branch deleted)"
             git push
           else
             echo "No preview directory found on gh-pages, nothing to remove."
