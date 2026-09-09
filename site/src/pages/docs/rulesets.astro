@@ -1,19 +1,19 @@
 ---
 import Base from '../../layouts/Base.astro';
 
-const rulesets = [
-  { ruleset: 'fiba', unit: 'm', length: '28.0', width: '15.0' },
-  { ruleset: 'nba', unit: 'ft', length: '94.0', width: '50.0' },
-  { ruleset: 'ncaa', unit: 'ft', length: '94.0', width: '50.0' },
-  { ruleset: 'nfhs', unit: 'ft', length: '84.0', width: '50.0' },
-  { ruleset: 'custom', unit: '*', length: 'user-defined', width: 'user-defined' },
+const courtProfiles = [
+  { courtProfile: 'fiba', unit: 'm', length: '28.0', width: '15.0' },
+  { courtProfile: 'nba', unit: 'ft', length: '94.0', width: '50.0' },
+  { courtProfile: 'ncaa', unit: 'ft', length: '94.0', width: '50.0' },
+  { courtProfile: 'nfhs', unit: 'ft', length: '84.0', width: '50.0' },
+  { courtProfile: 'custom', unit: '*', length: 'user-defined', width: 'user-defined' },
 ];
 ---
 <Base
-  title="Rulesets"
-  description="The OCF coordinate system and the FIBA, NBA, NCAA, and NFHS rulesets it supports out of the box."
+  title="Court Profiles"
+  description="The OCF coordinate system and the FIBA, NBA, NCAA, and NFHS court profiles it supports out of the box."
 >
-  <h1>Coordinate System &amp; Rulesets</h1>
+  <h1>Coordinate System &amp; Court Profiles</h1>
 
   <h2 id="coordinate-system">Coordinate system</h2>
   <p>OCF positions are expressed on two axes, both centered on midcourt:</p>
@@ -24,25 +24,25 @@ y: −max … 0 … +max   (defense basket → midline → offense basket)</code
     <strong>feet</strong> for NBA, NCAA, and NFHS.
   </p>
 
-  <h2 id="supported-rulesets">Supported rulesets</h2>
+  <h2 id="supported-court-profiles">Supported court profiles</h2>
   <p>
-    Each ruleset determines the coordinate unit and the court dimensions
+    Each court profile determines the coordinate unit and the court dimensions
     used to resolve named positions (e.g. <code>top_of_the_key</code>) into
     concrete coordinates.
   </p>
   <table>
     <thead>
       <tr>
-        <th>Ruleset</th>
+        <th>Court Profile</th>
         <th>Unit</th>
         <th>Court length</th>
         <th>Court width</th>
       </tr>
     </thead>
     <tbody>
-      {rulesets.map((row) => (
+      {courtProfiles.map((row) => (
         <tr>
-          <td><code>{row.ruleset}</code></td>
+          <td><code>{row.courtProfile}</code></td>
           <td>{row.unit}</td>
           <td>{row.length}</td>
           <td>{row.width}</td>
