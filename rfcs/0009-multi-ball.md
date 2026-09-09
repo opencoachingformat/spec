@@ -8,7 +8,7 @@
 | Created     | 2026-09-07 (two-ball dribbling implemented 2026-09-05 as part of RFC 0006) |
 | Status      | Partially Accepted (two-ball dribbling implemented; broader ball-model generalization still open) |
 | Affects     | Schema + Spec + Validator (TS + Python)           |
-| Version     | Targets OCF v2.0.0 (program item 3 of 5 — see the [v2.0.0 program overview](../docs/superpowers/specs/2026-09-07-v2-program-overview.md)) |
+| Version     | Targets OCF v2.0.0 (program item 3 of 7 — see the [v2.0.0 program overview](../docs/superpowers/specs/2026-09-07-v2-program-overview.md)) |
 
 ---
 

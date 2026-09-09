@@ -6,9 +6,9 @@
 | Title       | `sport` becomes a required top-level field         |
 | Author(s)   | opencoachingformat maintainers                    |
 | Created     | 2026-09-07                                        |
-| Status      | Draft — decision recorded, detailed design not yet written |
+| Status      | Draft — detailed design complete, not yet implemented |
 | Affects     | Schema + Spec                                     |
-| Version     | Targets OCF v2.0.0 (program item 1 of 5 — see the [v2.0.0 program overview](../docs/superpowers/specs/2026-09-07-v2-program-overview.md)) |
+| Version     | Targets OCF v2.0.0 (program item 1 of 7 — see the [v2.0.0 program overview](../docs/superpowers/specs/2026-09-07-v2-program-overview.md)) |
 
 ---
 
@@ -54,37 +54,83 @@ breaking change gets its own RFC (see the v2.0.0 program overview).
 
 ## Detailed Design
 
-**Not yet written.** The mechanical schema change itself is small — moving
-`sport` from `schema/v1.json`'s `properties` into its root `required` array
-— but this RFC intentionally does not yet specify:
+The mechanical schema change: move `sport` from `schema/v1.json`'s
+`properties` into its root `required` array (`["meta", "court", "entities",
+"actions", "sport"]`).
 
-- Whether `sport`'s enum stays closed (`basketball`/`soccer`/`handball`/
-  `hockey`/`futsal`) or needs a `custom`/`other` escape hatch for a sport not
-  yet in the registry (relevant now that RFC 0010 makes the `sports/*.json`
-  registry load-bearing, not just descriptive).
-- Migration guidance for existing v1.x documents/tooling (every consumer
-  that currently omits `sport` and relies on the basketball default must be
-  updated — this needs an explicit checklist, not just a schema diff).
-- Whether this lands in the same schema-version bump as RFC 0006, or as its
-  own commit within the v2.0.0 program window (the program's release
-  discipline allows either, per RFC 0010).
+**Enum stays closed** (decision, 2026-09-10): `sport`'s enum remains
+exactly `basketball`/`soccer`/`handball`/`hockey`/`futsal` — no `custom`/
+`other` escape hatch. A sport not yet in the registry must be added as a
+proper `sports/<sport>/` bundle (RFC 0010) before it can be declared;
+there is no silent/implicit path around the registry. The enum is
+maintained by hand (a plain array in the schema), not generated from the
+`sports/` directory at build time — a dynamic, registry-driven enum was
+considered and explicitly rejected for this RFC's scope: JSON Schema has
+no native mechanism to read an enum from external files at validation
+time, so "dynamic" would mean introducing a build step that generates
+`schema/v1.json`'s enum from `sports/<sport>/sport.json`'s presence. That
+is a real capability the project could add later (e.g. backed by a
+convention test asserting the two stay in sync, similar to existing
+convention tests), but it is a separate, larger change to the build
+pipeline that this RFC does not need in order to make `sport` required.
 
-This RFC is filed now, ahead of its detailed design, specifically so its
-number and scope are visible alongside the rest of the v2.0.0 program (see
-the v2.0.0 program overview) rather than living only in an internal memory
-note.
+**Cleanup of existing `allOf` back-compat branches**: every one of the
+six existing `allOf` blocks in `schema/v1.json` that gate on `sport`
+today has an explicit `anyOf: [{ not: { required: ["sport"] } }, { sport
+const X }]` shape, added specifically to treat "sport absent" and "sport
+is basketball" as the same case for v1.x back-compat. Once `sport` is
+required, "absent" can no longer occur, so every one of these six blocks
+simplifies to a plain `{ properties: { sport: { const: X } } }` check.
+This is mechanical but touches every existing sport-gated `allOf` block,
+not just one.
+
+**Migration**: exactly one example document in this repo currently omits
+`sport` — `examples/quick-mode.ocf.json` (confirmed basketball content:
+`court.ruleset: "fiba"`, actions `cut`/`pass`/`shoot`). It needs
+`"sport": "basketball"` added. No other valid example or conformance
+fixture omits `sport`; several `examples/invalid/*.json` fixtures also
+omit it, but they're intentionally invalid for other reasons and don't
+need updating unless their expected error code would change (it
+wouldn't — `SCHEMA_INVALID` still applies once other required fields
+mismatch, and the fixtures aren't testing sport-presence specifically).
+
+External consumers (outside this repo) that omit `sport` and relied on
+the basketball default will need to add it explicitly — this is the same
+migration burden every other v2.0.0 breaking change already imposes
+(RFC 0006 alone requires every v1.x document to be restructured), so no
+separate migration tooling is planned beyond the existing v2.0.0
+migration guidance.
+
+**Sequencing** (decision, 2026-09-10): RFC 0007 lands first as its own
+commit — required-field change plus the six-block `allOf` cleanup above
+— directly followed by RFC 0012 (rename `ruleset` to `court_profile`)
+and then RFC 0010 (sport-scoped court) in the same implementation
+session. See the v2.0.0 program overview's Ordering rationale.
 
 ---
 
 ## Drawbacks
 
-*Not yet assessed — pending Detailed Design.*
+- Breaks any external document that omits `sport` and relied on the
+  basketball default — but every v1.x document already breaks against
+  v2.0.0 via RFC 0006, so this adds no new migration burden beyond what
+  the release already requires.
+- Touches all six existing `sport`-gated `allOf` blocks in
+  `schema/v1.json` for the back-compat-branch cleanup — mechanical, but
+  not a single-line change.
 
 ---
 
 ## Alternatives Considered
 
-*Not yet assessed — pending Detailed Design.*
+- **`custom`/`other` escape hatch in the enum**: considered, rejected —
+  see Detailed Design. Would let a document declare a sport with no
+  corresponding `sports/<sport>/` bundle, undermining the registry as
+  the single source of truth RFC 0010 builds on.
+- **Dynamically generate the enum from the `sports/` directory at build
+  time**: considered, rejected for this RFC's scope — real capability,
+  but a separate, larger build-pipeline change (see Detailed Design).
+  Left as a possible future improvement, not blocking this RFC.
 
 ---
 
@@ -98,10 +144,12 @@ note.
 
 ## Open Questions
 
-1. Closed enum vs. escape hatch for sports outside the current registry.
-2. Exact migration checklist for existing tooling/documents.
-3. Timing relative to RFC 0006/0008/0009/0010 within the v2.0.0 program
-   window.
+All three of this RFC's original open questions were resolved during the
+2026-09-10 design session (see Detailed Design): enum stays closed,
+migration checklist is the single `quick-mode.ocf.json` fixture plus
+standard v2.0.0 external-consumer migration guidance, and sequencing is
+RFC 0007 → RFC 0012 → RFC 0010 within the same implementation session.
+No open questions remain.
 
 ---
 
@@ -111,6 +159,8 @@ note.
   makes required.
 - `docs/superpowers/specs/2026-09-07-v2-program-overview.md` — the umbrella
   v2.0.0 program this RFC is item 1 of.
-- RFC 0010 (Sport-Scoped Court & Ruleset) — depends on `sport` being
-  reliably present for its sport→ruleset whitelist to be meaningful.
+- RFC 0012 (Rename `ruleset` to `court_profile`) — lands directly after
+  this RFC in the same implementation session.
+- RFC 0010 (Sport-Scoped Court & `court_profile`) — depends on `sport`
+  being reliably present for its whitelist to be meaningful.
 - `v2-program-strategy` memory — original decision record.

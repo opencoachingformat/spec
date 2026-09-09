@@ -8,7 +8,7 @@
 | Created     | 2026-09-07                                        |
 | Status      | Draft — decision recorded, not yet implemented    |
 | Affects     | Schema + Spec + Validator (TS + Python)           |
-| Version     | Targets OCF v2.0.0 (program item 6 of 6 — see the [v2.0.0 program overview](../docs/superpowers/specs/2026-09-07-v2-program-overview.md)) |
+| Version     | Targets OCF v2.0.0 (program item 7 of 7 — see the [v2.0.0 program overview](../docs/superpowers/specs/2026-09-07-v2-program-overview.md)) |
 
 ---
 

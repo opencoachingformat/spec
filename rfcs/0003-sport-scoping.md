@@ -339,7 +339,10 @@ Because validity now depends on `sport`, add fixtures:
 
 - Related RFC: #0002 (External References — precedent for externalizing
   sport content like formations/positions).
-- RFC 0010 (Sport-Scoped Court & Ruleset) — delivers the ruleset/named-position
-  sport-scoping this RFC's Detailed Design table specified but did not
-  implement; see Amendments above.
+- RFC 0010 (Sport-Scoped Court & `court_profile`) — delivers the
+  court-profile/named-position sport-scoping this RFC's Detailed Design
+  table specified but did not implement (RFC 0010 renames "ruleset" to
+  "court_profile" per RFC 0012 — see Amendments above for this RFC's own
+  historical use of "ruleset," left as-is since it reflects this RFC's
+  original terminology at the time it was written).
 - Internal analysis (private): sport-neutrality architecture decision.

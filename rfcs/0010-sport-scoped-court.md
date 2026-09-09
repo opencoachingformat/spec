@@ -1,33 +1,60 @@
-# RFC 0010 — Sport-Scoped Court & Ruleset
+# RFC 0010 — Sport-Scoped Court & `court_profile`
 
 | Field       | Value                                             |
 |-------------|----------------------------------------------------|
 | RFC Number  | 0010                                              |
-| Title       | Sport-scoped `court.ruleset` and `custom_dimensions`; named-position exclusion |
+| Title       | Sport-scoped `court.court_profile` and `custom_dimensions`; named-position exclusion; `sports/<sport>/` registry bundle |
 | Author(s)   | opencoachingformat maintainers                    |
-| Created     | 2026-09-07                                        |
+| Created     | 2026-09-07 (revised 2026-09-10 — see Amendments)  |
 | Status      | Draft — brainstormed and recorded, not yet approved for implementation |
-| Affects     | Schema + Spec + Validator (TS + Python) + registry data (`sports/*.json`, `positions/*.json`) |
-| Version     | Targets OCF v2.0.0 (program item 5 of 5 — see the v2.0.0 program overview) |
+| Affects     | Schema + Spec + Validator (TS + Python) + registry data (replaces `sports/*.json` and `positions/*.json` with `sports/<sport>/` bundles) |
+| Version     | Targets OCF v2.0.0 (program item 6 of 7 — see the [v2.0.0 program overview](../docs/superpowers/specs/2026-09-07-v2-program-overview.md)) |
 
-This RFC delivers the sport→ruleset/named-position coupling RFC 0003's own
+This RFC delivers the sport→court/named-position coupling RFC 0003's own
 Detailed Design table specified but never implemented (see RFC 0003
-Amendments, 2026-09-07).
+Amendments, 2026-09-07). It depends on RFC 0012 (rename `ruleset` to
+`court_profile`) and is written entirely in the post-rename terminology.
+
+---
+
+## Amendments (2026-09-10)
+
+The original 2026-09-07 design used `ruleset` throughout and proposed
+flat `sports/<sport>-v*.json` + `positions/<ruleset>-v1.json` registry
+files. A same-day follow-up design session (2026-09-10) revised both:
+
+1. **Terminology**: `ruleset` → `court_profile` everywhere (see RFC
+   0012 — the old name promised game rules the field never held; it was
+   always pure court geometry).
+2. **Registry structure**: flat files replaced with a per-sport bundle
+   directory, `sports/<sport>/`, containing `sport.json` (the manifest)
+   plus one file per court profile under `court_profiles/<name>.json`.
+   A sport-level `positions.json` was considered and explicitly
+   rejected — see "Registry Structure" below for why.
+3. Two extension points were added to the sport manifest — `equipment`
+   and `coordinate_system` — as placeholders for future work (e.g.
+   puck-based sports, non-Cartesian court layouts for a sport like
+   American football), deliberately unimplemented beyond declaring the
+   field exists. See "Explicitly Out of Scope."
+
+The rest of this document reflects the revised design.
 
 ---
 
 ## Summary
 
-Today, `court.ruleset` is a pure-basketball enum (`fiba`/`nba`/`ncaa`/`nfhs`/
-`custom`) and `court.custom_dimensions` has only basketball-named required
-fields, with no mechanism anywhere (schema, either validator, or the
-renderer) cross-checking `sport` against `court.ruleset`. A document
-declaring `sport: "soccer"` with `court.ruleset: "fiba"` is schema-valid
-today. This RFC makes `sport` gate `court.ruleset` (via the already-existing
-but currently-dead `sports/*.json` registry `rulesets` array), makes
-`custom_dimensions` sport-scoped instead of basketball-only, and adds a
-mechanism for a ruleset to explicitly exclude named positions that don't
-apply to it.
+Today, `court.ruleset` (soon `court.court_profile`, see RFC 0012) is a
+pure-basketball enum (`fiba`/`nba`/`ncaa`/`nfhs`/`custom`) and
+`court.custom_dimensions` has only basketball-named required fields, with
+no mechanism anywhere (schema, either validator, or the renderer)
+cross-checking `sport` against the court profile. A document declaring
+`sport: "soccer"` with `court.court_profile: "fiba"` is schema-valid
+today. This RFC makes `sport` gate `court.court_profile`, makes
+`custom_dimensions` sport-scoped instead of basketball-only, adds a
+mechanism for a court profile to explicitly exclude named positions that
+don't apply to it, and restructures the registry data these mechanisms
+read from a flat file-per-ruleset layout into a `sports/<sport>/` bundle
+per sport.
 
 ---
 
@@ -48,66 +75,143 @@ A `sports/<sport>-v*.json` registry already exists and already declares a
 `["fiba","nba","ncaa","nfhs"]`; every provisional sport → `[]`) — confirmed
 via research to be read only by a convention test and the site build,
 never consulted by `schema/v1.json` or either validator runtime. This RFC
-activates that dead data rather than inventing a new mechanism.
+activates that dead data rather than inventing a new mechanism, and — per
+the 2026-09-10 design session — restructures it into a proper bundle
+while doing so, rather than growing the existing flat-file layout further.
 
-Sequenced last (item 5) among the v2.0.0 program's five items because it
-depends on `sport` reliably being present (RFC 0007) to be meaningful as a
-gating mechanism — a `sport`-less document defaulting silently to
-basketball would undermine a whitelist keyed on `sport`.
+Sequenced last among the v2.0.0 program's items (after RFC 0007 and RFC
+0012) because it depends on `sport` reliably being present (RFC 0007) to
+be meaningful as a gating mechanism, and is written in terms of
+`court_profile` (RFC 0012), not the field's current name.
 
 ---
 
 ## Detailed Design
 
-### 1. `sport` gates `court.ruleset` (whitelist, additive)
+### 1. Registry structure: `sports/<sport>/` bundle
+
+Replaces today's flat `sports/<sport>-v*.json` + `positions/<ruleset>-v1.json`
+files with one directory per sport:
+
+```
+sports/
+  basketball/
+    sport.json                    # manifest — see below
+    actions.json                  # optional extraction of sport.json's
+                                   # "actions" field, if it grows large
+                                   # enough to warrant its own file
+    court_profiles/
+      fiba.json
+      nba.json
+      ncaa.json
+      nfhs.json
+  soccer/
+    sport.json
+    court_profiles/                # empty today — soccer has no
+                                    # promoted court profiles yet
+```
+
+**Naming rule**: a field extracted out of `sport.json` into its own file
+is named after its JSON path within the manifest, not an arbitrary
+label — `court_profiles.fiba` extracted becomes
+`court_profiles/fiba.json`; `actions` extracted becomes `actions.json`.
+This keeps the bundle self-documenting: the directory listing mirrors
+the manifest's own shape.
+
+`sport.json` manifest shape:
+
+```jsonc
+{
+  "sport": "basketball",
+  "version": "2.0.0",
+  "status": "defined",
+
+  // Extension points for future work (RFC 0013/0014 territory, and
+  // beyond) — declared now, not yet given any behavior beyond their
+  // default. See "Explicitly Out of Scope."
+  "equipment": { "type": "ball" },
+  "coordinate_system": { "type": "cartesian_2d" },
+
+  "actions": {
+    "types": ["move", "cut", "screen", "..."],
+    "variants": { "cut": ["backdoor", "..."], "...": ["..."] },
+    "outcomes": ["make", "miss", "..."]
+  },
+
+  "court_contract": { "required_dimensions": ["length", "width"] },
+
+  "court_profiles": {
+    "fiba": {},   // presence-only if extracted to court_profiles/fiba.json;
+    "nba": {},    // inline object here if not extracted
+    "ncaa": {},
+    "nfhs": {}
+  }
+}
+```
+
+**Why no sport-level `positions.json`**: considered and rejected.
+RFC 0003/0010's original design already established that a sport's
+named-position *vocabulary* is deliberately implicit — "whatever any
+court profile of this sport happens to define," not a separately
+enumerated list, because closing that list adds rigidity without a
+clear benefit. Given that, there is no sport-wide *data* to hold in a
+`positions.json`: coordinates belong to a specific court profile (item 4
+below), and `not_applicable` exclusion (item 5 below) is a statement one
+court profile makes about itself, not something the sport as a whole
+asserts. A file with no content of its own has no reason to exist.
+
+### 2. `sport` gates `court.court_profile` (whitelist, additive)
 
 A new `allOf` block, parallel to the existing `actions[].type` gating
-(`schema/v1.json:822-914`), sourced from each `sports/<sport>-v*.json`'s
-`rulesets` array:
+(`schema/v1.json:822-914`), sourced from each sport bundle's
+`court_profiles` keys:
 
 ```jsonc
 // sport absent or "basketball" (unchanged from today):
 { "if": { /* sport absent or basketball */ },
-  "then": { "properties": { "court": { "properties": { "ruleset": {
+  "then": { "properties": { "court": { "properties": { "court_profile": {
     "enum": ["fiba","nba","ncaa","nfhs","custom"] } } } } } }
 
 // sport: "soccer" (and every other currently-provisional sport, whose
-// registry rulesets array is []):
+// bundle has no court_profiles yet):
 { "if": { "properties": { "sport": { "const": "soccer" } } },
-  "then": { "properties": { "court": { "properties": { "ruleset": {
+  "then": { "properties": { "court": { "properties": { "court_profile": {
     "const": "custom" } } } } } }
 ```
 
-This already validates `sport-soccer.ocf.json` correctly as-is (it already
-uses `"custom"`). Adding a real ruleset for soccer later is purely additive:
-append to the registry array, add the matching `allOf` case, add a
-`positions/<name>-v1.json`.
+This already validates `sport-soccer.ocf.json` correctly as-is (it
+already uses `"custom"`, and only needs the field renamed per RFC 0012).
+Adding a real court profile for soccer later is purely additive: add a
+key under `sports/soccer/court_profiles`, add the matching `allOf` case.
 
-### 2. Ruleset = one member of a sport's family
+### 3. Court profile = one member of a sport's family
 
-A ruleset always belongs to exactly one sport. A new *variant* within an
-existing sport (e.g. a hypothetical alternate-scoring basketball ruleset) is
-just another entry in that sport's `rulesets` array plus its own
-`positions/<name>-v1.json` — no new schema construct. This deliberately
-keeps rule-level sport variants inside the existing
-sport→ruleset→positions layering rather than inventing a fourth concept.
+A court profile always belongs to exactly one sport. A new *variant*
+within an existing sport (e.g. a hypothetical alternate-scoring
+basketball court profile) is just another entry in that sport's
+`court_profiles` — no new schema construct. This deliberately keeps
+sport-court-profile variants inside the existing sport→court_profile
+layering rather than inventing a fourth concept.
 
-### 3. `court_contract`: sport defines a minimal dimension vocabulary
+### 4. `court_contract`: sport defines a minimal dimension vocabulary
 
-New field on `sports/<sport>-v*.json`:
+On `sports/<sport>/sport.json`:
 
 ```json
 "court_contract": { "required_dimensions": ["length", "width"] }
 ```
 
 Deliberately minimal — only what's geometrically load-bearing for the
-existing `ENTITY_OFFCOURT` bounding-box check and for a renderer to draw
-*something*. Not a mandate that every ruleset must define
-`basket_from_baseline`/`three_point_distance`/etc.; those stay
-basketball-specific fields on `custom_dimensions` (point 4). A future sport
-can declare additional `required_dimensions` its own rulesets must supply.
+existing `ENTITY_OFFCOURT` bounding-box check. Not a mandate that every
+court profile must define `basket_from_baseline`/`three_point_distance`/
+etc.; those stay basketball-specific fields on `custom_dimensions`
+(point 5). A future sport can declare additional `required_dimensions`
+its own court profiles must supply. Confirmed schema/validator-only
+(2026-09-10 decision) — does not gate any renderer capability check,
+consistent with RFC 0011's separation of spec/validator concerns from
+rendering.
 
-### 4. `custom_dimensions` becomes sport-scoped
+### 5. `custom_dimensions` becomes sport-scoped
 
 Mirrors the `actions[].type` `allOf` pattern:
 
@@ -126,29 +230,36 @@ Mirrors the `actions[].type` `allOf` pattern:
   scaled-down youth basketball court, still structurally a basketball
   court), never a sport-agnostic free-form object.
 
-### 5. Named positions: sport-vocabulary / ruleset-fill / ruleset-exclude
+### 6. Named positions: sport-vocabulary / court-profile-fill / court-profile-exclude
 
-Three distinct states, replacing today's flat per-ruleset-file-only model:
+Three distinct states, replacing today's flat per-file-only model:
 
 1. **Sport vocabulary** — the open set of names meaningful for a sport
    (basketball's ~35 names today). Stays implicit (not enumerated
    separately) — closing this list adds rigidity without a clear benefit
    for the problem at hand.
-2. **Ruleset fill** — a `positions/<ruleset>-v1.json` file supplies
-   coordinates for a subset, exactly as today.
-3. **Ruleset exclusion** — NEW: a ruleset can list names it deliberately
-   does not support, distinguishing "not applicable here" from "typo /
-   genuinely unknown":
+2. **Court-profile fill** — a `sports/<sport>/court_profiles/<name>.json`
+   file supplies coordinates for a subset, exactly as today's
+   `positions/<ruleset>-v1.json` did.
+3. **Court-profile exclusion** — NEW: a court profile can list names it
+   deliberately does not support, distinguishing "not applicable here"
+   from "typo / genuinely unknown":
    ```json
-   { "ruleset": "minibasketball",
-     "positions": { "basket": {...}, "paint_center": {...} },
+   { "court_profile": "minibasketball",
+     "positions": { "basket": {}, "paint_center": {} },
      "not_applicable": ["left_wing", "right_wing", "left_corner", "right_corner"] }
    ```
-   A document under a ruleset referencing an excluded name gets a distinct
-   error, not the generic "unknown named position" a real typo would also
-   produce. `resolve-position.mjs` (and the validator's equivalent in both
-   languages) needs to check `not_applicable` before falling through to
-   "unknown."
+   A document under a court profile referencing an excluded name gets a
+   distinct error, not the generic "unknown named position" a real typo
+   would also produce. `resolve-position.mjs` (and the validator's
+   equivalent in both languages) needs to check `not_applicable` before
+   falling through to "unknown."
+
+   `not_applicable` itself stays unchecked against the sport's own
+   vocabulary (decision, 2026-09-10) — these files are
+   maintainer-authored, not end-user content, so a typo surfaces quickly
+   through normal use/testing rather than needing its own validation
+   layer (YAGNI).
 
 ---
 
@@ -159,10 +270,20 @@ Three distinct states, replacing today's flat per-ruleset-file-only model:
   confirmed exactly one such document exists in this codebase
   (`sport-soccer.ocf.json`) and it needs migrating either way, since it's
   currently modeling penalty-box dimensions as basketball paint dimensions.
-- Adds a second `allOf` gating axis (ruleset, alongside the existing
+- Adds a second `allOf` gating axis (court profile, alongside the existing
   action-type one) — more conditional-schema surface area to keep in sync
   as sports are added, though the pattern is already established and
   proven for actions.
+- The registry bundle restructure touches every consumer that reads
+  `sports/*.json`/`positions/*.json` by path or by naming convention —
+  confirmed via a full cross-repo audit (2026-09-10) to be entirely
+  contained within the spec repo itself (`positions/resolve-position.mjs`,
+  `package.json`'s `files`/`exports` maps, `test/sport-branches.test.mjs`,
+  `site/scripts/build-sports.mjs`). Neither the validator nor the
+  renderer repo reads these files directly — both maintain independent,
+  hand-authored copies of the same data (a separate, pre-existing drift
+  risk, out of scope for this RFC; see the `cross-repo-position-data-drift`
+  memory note).
 
 ---
 
@@ -180,6 +301,22 @@ Three distinct states, replacing today's flat per-ruleset-file-only model:
   of scope" below) — over-designing for hypothetical future requirements
   this RFC doesn't need to solve now, per this project's own
   scope-decision heuristic.
+- **Keep the flat `sports/<sport>-v*.json` + `positions/<ruleset>-v1.json`
+  file layout, only add the whitelist/exclusion mechanisms**: considered
+  during the 2026-09-10 revision, rejected in favor of the bundle
+  restructure — the user's stated goal was a single, self-documenting
+  location containing everything needed to add a new sport, which a
+  scattered flat-file layout across two top-level directories does not
+  achieve as clearly as a per-sport bundle directory.
+- **Full physical nesting** (court profile coordinates embedded directly
+  inside `sport.json` rather than extracted to
+  `court_profiles/<name>.json`): considered, rejected — would make
+  `sport.json` grow to hundreds of lines per sport (each court profile
+  carries ~35-40 coordinate entries), hurting git-diff readability and
+  coupling a single coordinate correction to the whole sport manifest's
+  version history. The bundle directory with a naming-convention rule
+  (item 1) achieves the same "one place, self-documenting" goal without
+  this cost.
 
 ---
 
@@ -187,9 +324,11 @@ Three distinct states, replacing today's flat per-ruleset-file-only model:
 
 - [ ] No breaking changes (additive only)
 - [x] Breaking change — requires major version bump (the `custom_dimensions`
-      field-set change for non-basketball sports; the basketball path is
-      unchanged, and no other non-basketball document currently validates
-      meaningfully anyway)
+      field-set change for non-basketball sports; the `court.ruleset` →
+      `court.court_profile` rename per RFC 0012; the registry file-layout
+      restructure, which is an internal-consumer-facing break, not an
+      OCF-document-facing one — no OCF document references registry file
+      paths directly)
 - [ ] Deprecates existing fields (list them)
 
 ---
@@ -202,11 +341,28 @@ Three distinct states, replacing today's flat per-ruleset-file-only model:
   today. Needs its own design pass.
 - **Rule-driven scoring changes** (e.g. minibasketball: all shots outside
   the paint count as 3 points) — a scoring/rules concept, not court
-  geometry.
-- **The renderer's existing ruleset-blindness bug** (always draws FIBA
-  dimensions unless `custom_dimensions` is explicitly set, ignoring
+  geometry. This is exactly the kind of concept RFC 0012 frees the
+  `ruleset` name for, but designing it is not this RFC's job.
+- **The renderer's existing court-profile-blindness bug** (always draws
+  FIBA dimensions unless `custom_dimensions` is explicitly set, ignoring
   nba/ncaa/nfhs distinctions) — a real, pre-existing, separate bug,
   independent of this RFC.
+- **`equipment` and `coordinate_system` beyond their declared default** —
+  both fields are added to the `sport.json` manifest shape as forward-
+  looking extension points (e.g. a future puck-based sport, or a
+  non-Cartesian court layout for something like American football), but
+  this RFC does not implement any behavior beyond `equipment.type: "ball"`
+  and `coordinate_system.type: "cartesian_2d"` as the only currently-valid
+  values. Actually supporting a different equipment type or coordinate
+  system is future work; if it turns out too large to fit inside the
+  still-open v2.0.0 window when attempted, it becomes its own numbered
+  program item at that point.
+- **Sport-specific entity roles** (e.g. goalkeeper) and **sport-bound
+  start templates/formations** — raised during this RFC's design session,
+  filed separately as RFC 0013 and RFC 0014 (Draft, no detailed design,
+  not yet assigned to a program window). Both would naturally live in the
+  `sports/<sport>/sport.json` bundle this RFC introduces, but neither is
+  part of this RFC's scope.
 
 ---
 
@@ -215,26 +371,35 @@ Three distinct states, replacing today's flat per-ruleset-file-only model:
 1. Exact `court_contract`/`custom_dimensions` field list for soccer and
    other provisional sports — deferred until a sport is actually promoted
    past "provisional" status.
-2. Whether `court_contract.required_dimensions` should also gate a
-   renderer's rendering-capability check, or stay a schema/validator-only
-   concern.
-3. Whether `not_applicable` on `positions/*.json` should itself be
-   validated against the sport's vocabulary (catch a typo in the exclusion
-   list), or left unchecked since these are maintainer-authored files.
-4. Whether this lands inside the still-open v2.0.0 program window or
+2. Whether this lands inside the still-open v2.0.0 program window or
    deserves its own v2.x follow-up — needs a breaking-change audit once the
    exact schema diff is drafted.
+3. Exact threshold for when a sport's `actions` field should be extracted
+   to its own `actions.json` per the naming rule in item 1 — basketball's
+   `action_types`/`variants`/`outcomes` are sizeable today; whether that
+   alone justifies extraction, or whether it stays inline until a second
+   sport reaches similar size, is not decided.
 
 ---
 
 ## References
 
-- RFC 0003 (Sport Scoping) — this RFC delivers the ruleset/named-position
-  sport-scoping RFC 0003's own design table specified but never
+- RFC 0003 (Sport Scoping) — this RFC delivers the court-profile/named-
+  position sport-scoping RFC 0003's own design table specified but never
   implemented; see RFC 0003 Amendments.
 - RFC 0007 (`sport` Required) — this RFC's whitelist mechanism depends on
   `sport` reliably being present.
+- RFC 0012 (Rename `ruleset` to `court_profile`) — this RFC is written
+  entirely in terms of `court_profile`; RFC 0012 must land first.
+- RFC 0013 (Sport-Specific Entity Roles), RFC 0014 (Sport Start
+  Templates) — related ideas raised during this RFC's design session,
+  filed separately, not part of this RFC's scope.
 - Design doc: `docs/superpowers/specs/2026-09-07-sport-scoped-court-design.md`
-  (full research evidence and design rationale).
+  (full research evidence and original design rationale — predates the
+  2026-09-10 revision recorded in this RFC's Amendments).
 - `v2-program-strategy` memory — "Custom-court is a v2 multisport topic,"
   the original decision to fold this into v2 sport-scoping work.
+- `cross-repo-position-data-drift` memory — the pre-existing, separate
+  data-drift risk this RFC's bundle restructure does not fix (validator
+  and renderer each hand-maintain their own copy of position/dimension
+  data rather than reading these registry files).
