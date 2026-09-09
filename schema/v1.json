@@ -10,10 +10,10 @@
 
   "definitions": {
 
-    "ruleset": {
+    "court_profile": {
       "type": "string",
       "enum": ["fiba", "nba", "ncaa", "nfhs", "custom"],
-      "description": "Basketball ruleset. Determines unit, field dimensions and named position coordinates."
+      "description": "Named court-geometry variant for the document's sport. Determines unit, field dimensions and named position coordinates. Not a rules concept — carries no game rules, only court geometry."
     },
 
     "unit": {
@@ -745,9 +745,9 @@
 
     "court": {
       "type": "object",
-      "required": ["ruleset", "type"],
+      "required": ["court_profile", "type"],
       "properties": {
-        "ruleset": { "$ref": "#/definitions/ruleset" },
+        "court_profile": { "$ref": "#/definitions/court_profile" },
         "type": { "type": "string", "enum": ["half_court", "full_court"] },
         "drill_focus": { "type": "string", "enum": ["offense", "defense", "transition", "neutral"], "default": "offense" },
         "wheelchair": { "type": "boolean", "default": false },
@@ -822,7 +822,7 @@
     {
       "if": {
         "type": "object",
-        "properties": { "court": { "type": "object", "properties": { "ruleset": { "const": "custom" } } } }
+        "properties": { "court": { "type": "object", "properties": { "court_profile": { "const": "custom" } } } }
       },
       "then": {
         "type": "object",
