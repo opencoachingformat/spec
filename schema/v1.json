@@ -751,21 +751,7 @@
         "type": { "type": "string", "enum": ["half_court", "full_court"] },
         "drill_focus": { "type": "string", "enum": ["offense", "defense", "transition", "neutral"], "default": "offense" },
         "wheelchair": { "type": "boolean", "default": false },
-        "custom_dimensions": {
-          "type": "object",
-          "required": ["unit", "length", "width", "basket_from_baseline", "three_point_distance", "paint_width", "paint_depth", "free_throw_distance"],
-          "properties": {
-            "unit": { "$ref": "#/definitions/unit" },
-            "length": { "type": "number" },
-            "width": { "type": "number" },
-            "basket_from_baseline": { "type": "number" },
-            "three_point_distance": { "type": "number" },
-            "paint_width": { "type": "number" },
-            "paint_depth": { "type": "number" },
-            "free_throw_distance": { "type": "number" }
-          },
-          "additionalProperties": false
-        }
+        "custom_dimensions": { "type": "object" }
       },
       "additionalProperties": false
     },
@@ -908,7 +894,29 @@
       "if": { "required": ["sport"], "properties": { "sport": { "const": "basketball" } } },
       "then": {
         "type": "object",
-        "properties": { "court": { "type": "object", "properties": { "court_profile": { "enum": ["fiba", "nba", "ncaa", "nfhs", "custom"] } } } }
+        "properties": {
+          "court": {
+            "type": "object",
+            "properties": {
+              "court_profile": { "enum": ["fiba", "nba", "ncaa", "nfhs", "custom"] },
+              "custom_dimensions": {
+                "type": "object",
+                "required": ["unit", "length", "width", "basket_from_baseline", "three_point_distance", "paint_width", "paint_depth", "free_throw_distance"],
+                "properties": {
+                  "unit": { "$ref": "#/definitions/unit" },
+                  "length": { "type": "number" },
+                  "width": { "type": "number" },
+                  "basket_from_baseline": { "type": "number" },
+                  "three_point_distance": { "type": "number" },
+                  "paint_width": { "type": "number" },
+                  "paint_depth": { "type": "number" },
+                  "free_throw_distance": { "type": "number" }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        }
       }
     },
     {
@@ -918,7 +926,28 @@
       },
       "then": {
         "type": "object",
-        "properties": { "court": { "type": "object", "properties": { "court_profile": { "const": "custom" } } } }
+        "properties": {
+          "court": {
+            "type": "object",
+            "properties": {
+              "court_profile": { "const": "custom" },
+              "custom_dimensions": {
+                "type": "object",
+                "required": ["unit", "length", "width", "goal_width", "penalty_box_width", "penalty_box_depth", "penalty_spot_distance"],
+                "properties": {
+                  "unit": { "$ref": "#/definitions/unit" },
+                  "length": { "type": "number" },
+                  "width": { "type": "number" },
+                  "goal_width": { "type": "number" },
+                  "penalty_box_width": { "type": "number" },
+                  "penalty_box_depth": { "type": "number" },
+                  "penalty_spot_distance": { "type": "number" }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        }
       }
     }
   ]
