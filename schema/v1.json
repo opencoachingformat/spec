@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://opencoachingformat.org/schema/v1.json",
-  "$comment": "Schema version 2.0.0-alpha.1. Breaking change (frame-less action model) — part of the v2.0.0 program, not yet a final release (sport-required, affects-roles, and multi-ball are still pending before v2.0.0 ships). The $id keeps the 'v1.json' filename by design even though the content is v2: file naming and x-ocf-version are independent, so a consumer must read x-ocf-version to determine the actual major, not the URL. Version-pinned copies live at /<version>/ocf-action-v1.json.",
+  "$comment": "Schema version 2.0.0-alpha.1. Breaking change (frame-less action model, sport required, court.ruleset renamed to court.court_profile, sport-scoped court profiles) — part of the v2.0.0 program, not yet a final release (affects-roles and remove-rendering-concerns are still pending before v2.0.0 ships; multi-ball's broader generalization beyond two-ball dribbling remains open). The $id keeps the 'v1.json' filename by design even though the content is v2: file naming and x-ocf-version are independent, so a consumer must read x-ocf-version to determine the actual major, not the URL. Version-pinned copies live at /<version>/ocf-action-v1.json.",
   "x-ocf-version": "2.0.0-alpha.1",
   "title": "Open Coaching Format",
   "description": "Open standard for team-sport coaching diagrams and animations (invasion team sports; basketball first). Semantic action model.",
