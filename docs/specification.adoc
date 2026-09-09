@@ -22,8 +22,8 @@
 [abstract]
 == Abstract
 
-*{ocf} v{version}* is an open, ruleset-aware JSON schema for representing team-sport coaching diagrams and multi-step animations — targeting invasion team sports, with basketball fully defined first.
-It defines a court coordinate system based on real-world units (meters or feet), a registry of named court positions per ruleset,
+*{ocf} v{version}* is an open, court-profile-aware JSON schema for representing team-sport coaching diagrams and multi-step animations — targeting invasion team sports, with basketball fully defined first.
+It defines a court coordinate system based on real-world units (meters or feet), a registry of named court positions per court profile,
 a semantic entity model, and a flat, ordered action-sequence structure for
 multi-step animations.
 
@@ -32,7 +32,7 @@ The format is designed to be:
 * *Human-readable* — coaching terminology maps directly to named positions
 * *LLM-friendly* — structured enough for text-to-diagram generation
 * *Renderer-agnostic* — SVG, Canvas, PDF, mobile
-* *Ruleset-aware* — FIBA, NBA, NCAA, NFHS, custom
+* *Court-profile-aware* — FIBA, NBA, NCAA, NFHS, custom
 * *FIBA-compatible* — import/export path for existing FIBA Europe diagrams
 
 ---
@@ -49,7 +49,7 @@ This prevents programmatic drill creation, LLM-assisted coaching tools, and cros
 
 . A well-defined JSON Schema (Draft-7)
 . A coordinate system grounded in real-world units
-. A named position registry aligned with official ruleset geometry
+. A named position registry aligned with official court-profile geometry
 . A flat action-sequence model for multi-step animated drills
 . A clear import path from the FIBA Europe internal format
 
@@ -122,11 +122,11 @@ The {ocf} coordinate system places the origin at the center of the court (midcou
 | Vertical. `0` = midline. Positive = toward offense basket (frontcourt). Negative = toward defense basket (backcourt).
 |===
 
-=== Coordinate Ranges per Ruleset
+=== Coordinate Ranges per Court Profile
 
 [cols="1,1,2,2", options="header"]
 |===
-| Ruleset | Unit | x range | y range (half / full)
+| Court Profile | Unit | x range | y range (half / full)
 
 | `fiba`  | m  | −7.5 … +7.5 | 0 … +14.0 / −14.0 … +14.0
 | `nba`   | ft | −25.0 … +25.0 | 0 … +47.0 / −47.0 … +47.0
@@ -188,7 +188,7 @@ A fixed point in court units. Always valid.
 { "named": "left_elbow" }
 ----
 
-References a standard named position. Resolved to absolute coordinates at render time using the document's `ruleset`.
+References a standard named position. Resolved to absolute coordinates at render time using the document's `court_profile`.
 Custom positions use the `custom.` prefix:
 
 [source,json]
@@ -219,12 +219,12 @@ Positive `dx` = viewer's right. Positive `dy` = toward offense basket.
 
 All coordinates in meters (m). Backcourt positions are the exact y-negation of their frontcourt counterparts.
 
-NOTE: The machine-readable source of truth for every ruleset's named-position
-coordinates is `positions/{fiba,nba,ncaa,nfhs}-v1.json`, exported from
-`@opencoachingformat/spec` via `resolveNamedPosition(name, ruleset)`. The tables
+NOTE: The machine-readable source of truth for every court profile's named-position
+coordinates is `sports/basketball/court_profiles/{fiba,nba,ncaa,nfhs}.json`, exported from
+`@opencoachingformat/spec` via `resolveNamedPosition(name, courtProfile)`. The tables
 below are the human-readable FIBA reference; tools MUST read the JSON, not parse
 these tables. A test (`test/positions-anchors.test.mjs`) guards the JSON against
-the cross-ruleset anchor values in the difference table.
+the cross-court-profile anchor values in the difference table.
 
 [cols="2,1,1,3", options="header"]
 |===
@@ -288,10 +288,10 @@ the cross-ruleset anchor values in the difference table.
 | `inbound.sideline_right_bc`|  7.500 | -8.200 | Sideline inbound, backcourt right
 |===
 
-=== Ruleset Differences
+=== Court Profile Differences
 
-Key position differences across rulesets, as centered coordinates (origin at
-court center), matching the values in `positions/{ruleset}-v1.json`:
+Key position differences across court profiles, as centered coordinates (origin at
+court center), matching the values in `sports/basketball/court_profiles/{name}.json`:
 
 [cols="2,1,1,1,1", options="header"]
 |===
@@ -347,7 +347,7 @@ Reference them in coordinates with the `custom.` prefix:
 { "named": "custom.dunker_spot" }
 ----
 
-TIP: Custom positions use the same unit as the document ruleset.
+TIP: Custom positions use the same unit as the document's court profile.
 No separate unit declaration is needed.
 
 ---
@@ -387,7 +387,7 @@ each player remains individually identifiable:
 
 [cols="1,1", options="header"]
 |===
-| Ruleset | Minimum separation
+| Court Profile | Minimum separation
 
 | `fiba`  | 0.5 m
 | `nba` / `ncaa` / `nfhs` | 1.6 ft
@@ -917,11 +917,11 @@ Only fields that differ from the FIBA defaults need to be included.
 
 == Court Configuration
 
-=== Supported Rulesets
+=== Supported Court Profiles
 
 [cols="1,1,2,2", options="header"]
 |===
-| `ruleset` | `unit` | Court (L × W) | Notes
+| `court_profile` | `unit` | Court (L × W) | Notes
 
 | `fiba`  | `m`  | 28.0 × 15.0 | International standard
 | `nba`   | `ft` | 94.0 × 50.0 | NBA-specific 3-point geometry (straight corners)
@@ -952,12 +952,12 @@ Only fields that differ from the FIBA defaults need to be included.
 | `neutral`    | No directional focus (e.g. conditioning drill, station circuit).
 |===
 
-=== Custom Ruleset
+=== Custom Court Profile
 
 [source,json]
 ----
 "court": {
-  "ruleset": "custom",
+  "court_profile": "custom",
   "type": "half_court",
   "drill_focus": "offense",
   "custom_dimensions": {
@@ -975,14 +975,14 @@ Only fields that differ from the FIBA defaults need to be included.
 
 ---
 
-== Ruleset Conversion
+== Court Profile Conversion
 
-Converting a drill between rulesets is an explicit, lossless operation for *named positions*
+Converting a drill between court profiles is an explicit, lossless operation for *named positions*
 and a best-effort proportional mapping for *free coordinates*.
 
 === Named Position Conversion
 
-Named positions are looked up independently in each ruleset's coordinate table.
+Named positions are looked up independently in each court profile's coordinate table.
 The semantic meaning is preserved exactly.
 
 [source]
@@ -1005,10 +1005,10 @@ y_target = y_source / (source.half_depth)  * target.half_depth
 ====
 Proportional conversion of free coordinates may place entities
 at positions that are semantically incorrect (e.g. inside or outside the 3-point line)
-relative to the target ruleset's geometry.
+relative to the target court profile's geometry.
 
 Editors should surface a warning: _"X free coordinates were proportionally scaled.
-Please verify their positions against the target ruleset."_
+Please verify their positions against the target court profile."_
 ====
 
 === FIBA Legacy Import
@@ -1046,7 +1046,7 @@ The y-axis is inverted (y increases downward in FIBA, upward in {ocf}).
     "created": "2025-02-27T10:00:00Z",
     "source_format": "open"
   },
-  "court": { "ruleset": "fiba", "type": "half_court", "drill_focus": "offense" },
+  "court": { "court_profile": "fiba", "type": "half_court", "drill_focus": "offense" },
   "entities": [
     { "type": "offense", "nr": 1, "x": 0.0, "y": 5.68 },
     { "type": "offense", "nr": 4, "x": -2.45, "y": 8.20 },
@@ -1242,7 +1242,7 @@ class Meta {
 }
 
 class Court {
-  +ruleset: enum
+  +court_profile: enum
   +type: enum
   --
   +drill_focus: enum
@@ -1319,7 +1319,7 @@ Action *-- Trigger
 | Field | Required | Description
 
 | `meta`            | yes | Drill metadata (id, title, author, tags, etc.).
-| `court`           | yes | Ruleset, court type, drill focus.
+| `court`           | yes | Court profile, court type, drill focus.
 | `entities`        | yes | Non-ball entities: offense, defense, coach, cones, stations.
 | `balls`           | yes | Array of balls; each ball has `id` + one of `carried_by`, `at`, or `dead`.
 | `actions`         | yes | Flat, ordered sequence of actions and branch containers.
@@ -1367,7 +1367,7 @@ Coordinate <|-- RelativeCoordinate
 |===
 | Enum | Values
 
-| `ruleset`       | `fiba`, `nba`, `ncaa`, `nfhs`, `custom`
+| `court_profile` | `fiba`, `nba`, `ncaa`, `nfhs`, `custom`
 | `court.type`    | `half_court`, `full_court`
 | `drill_focus`   | `offense`, `defense`, `transition`, `neutral`
 | `difficulty`    | `beginner`, `intermediate`, `advanced`
@@ -1408,7 +1408,7 @@ Example prompt structure:
 ----
 Generate an Open Coaching Format v1 JSON for the following drill:
 
-Ruleset: FIBA, Half Court, Offense
+Court Profile: FIBA, Half Court, Offense
 Title: "3-Man Weave"
 
 Description:
