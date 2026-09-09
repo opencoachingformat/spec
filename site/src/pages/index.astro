@@ -82,6 +82,34 @@ const jsonLd = {
   </section>
 
   <section>
+    <h2>Even digital tools kept the whiteboard</h2>
+    <p>
+      Coaches have sketched plays on a whiteboard or a printed sheet for
+      decades — one static picture at a time. Some coaching apps have moved
+      past that and can already animate a sequence. But most still organize
+      a drill around the same idea underneath: discrete frames, each one its
+      own still image to build.
+    </p>
+    <p>
+      OCF started there too. Early versions grouped a drill into frames, and
+      while positions were meant to carry forward from one to the next,
+      nothing actually enforced that continuity. In practice, the frame
+      boundary itself got in the way: sketching out a whole sequence meant
+      constantly working around it, and it was easy to end up with actions
+      that never showed up animated at all — because they'd landed in the
+      wrong frame.
+    </p>
+    <p>
+      Today OCF has no frames. A play is an ordered sequence of actions,
+      each one following from what came before — and it can branch:
+      outcomes like a make or a miss lead into different continuations, and
+      a drill can even be marked to loop back to where it started. All of
+      that is optional — but when you use it, the validator checks it's
+      both semantically and technically sound, not just schema-valid.
+    </p>
+  </section>
+
+  <section>
     <h2>What OCF is</h2>
     <p>
       The Open Coaching Format is an open standard that stores a coaching
@@ -95,6 +123,14 @@ const jsonLd = {
       frame-by-frame animation on screen. Nothing is locked to one vendor: the
       format is public, and anyone can build a reader, an editor, or a renderer
       on top of it.
+    </p>
+    <p>
+      OCF is really two things developed together: the JSON format itself,
+      and a validator that enforces its rules — schema shape, action
+      references, ball possession, branch/continuum coherence, and more. The
+      renderer, the LLM-assisted authoring tools, and other projects in the
+      ecosystem are reference implementations, built to show what's possible
+      on top of OCF — not the standard itself.
     </p>
   </section>
 
