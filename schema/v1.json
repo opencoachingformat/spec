@@ -830,13 +830,7 @@
       }
     },
     {
-      "$comment": "sport absent OR basketball -> basketball action whitelist (default is a non-validating annotation, so absence must be handled explicitly for back-compat)",
-      "if": {
-        "anyOf": [
-          { "not": { "required": ["sport"] } },
-          { "properties": { "sport": { "const": "basketball" } } }
-        ]
-      },
+      "if": { "required": ["sport"], "properties": { "sport": { "const": "basketball" } } },
       "then": {
         "type": "object",
         "properties": {
