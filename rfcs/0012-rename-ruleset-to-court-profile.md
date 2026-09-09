@@ -6,7 +6,7 @@
 | Title       | Rename `court.ruleset`/`#/definitions/ruleset` to `court.court_profile`/`#/definitions/court_profile` |
 | Author(s)   | opencoachingformat maintainers                    |
 | Created     | 2026-09-10                                        |
-| Status      | Draft — decision recorded, detailed design not yet written |
+| Status      | Accepted (implemented)                            |
 | Affects     | Schema + Spec + Validator (TS + Python) + registry data + every existing OCF document |
 | Version     | Targets OCF v2.0.0 (program item 5 of 7 — see the [v2.0.0 program overview](../docs/superpowers/specs/2026-09-07-v2-program-overview.md)) |
 
@@ -117,17 +117,23 @@ Detailed Design is drafted:
 
 ## Open Questions
 
-1. Exact grep-and-audit checklist for every "ruleset" mention across
-   `docs/specification.adoc` that needs updating vs. staying as
-   general prose about rule-making bodies.
-2. Whether `positions/resolve-position.mjs`'s public function signature
-   (`resolveNamedPosition(name, ruleset)`) should rename its `ruleset`
-   parameter too, and whether that's itself a breaking API change for
-   any consumer importing it directly.
-3. Timing relative to RFC 0010 within the same implementation session —
-   recorded decision (2026-09-10): RFC 0012 lands first, RFC 0010 is
-   designed and implemented in terms of `court_profile` from the start,
-   not `ruleset`.
+Questions 1 and 3 were resolved during implementation (2026-09-10): the
+`docs/specification.adoc` audit found every occurrence was either
+field-specific (updated) or historical Changelog prose (left as-is, per
+the RFC's own guidance); RFC 0012 landed first, directly followed by
+RFC 0010 implemented in terms of `court_profile` from the start.
+
+1. ~~Exact grep-and-audit checklist for every "ruleset" mention...~~ Resolved.
+2. **Still open**: whether `positions/resolve-position.mjs`'s public
+   function signature (`resolveNamedPosition(name, ruleset)`) should
+   rename its `ruleset` parameter too, and whether that's itself a
+   breaking API change for any consumer importing it directly.
+   Deliberately left unresolved during implementation — the parameter
+   name stayed `ruleset` (only the internal, non-exported
+   implementation detail was renamed), since changing a published
+   function's parameter name is a separate API-surface decision this
+   RFC didn't need to make in order to ship.
+3. ~~Timing relative to RFC 0010...~~ Resolved: RFC 0012 landed first.
 
 ---
 

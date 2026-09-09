@@ -28,13 +28,19 @@ truth + validatability; validator = correctness; renderer = display only.
 
 | # | RFC | Title | Status |
 |---|-----|-------|--------|
-| 1 | [RFC 0007](../../../rfcs/0007-sport-required.md) | `sport` becomes required | Draft — decision recorded, design not written |
+| 1 | [RFC 0007](../../../rfcs/0007-sport-required.md) | `sport` becomes required | Accepted, implemented |
 | 2 | [RFC 0008](../../../rfcs/0008-affects-roles.md) | `affects` roles field | Draft — decision recorded, design not written |
 | 3 | [RFC 0009](../../../rfcs/0009-multi-ball.md) | Multi-ball | Partially Accepted — two-ball dribbling implemented; broader generalization open |
 | 4 | [RFC 0006](../../../rfcs/0006-frameless-action-model.md) | Frame-less action model | Accepted, implemented |
-| 5 | [RFC 0012](../../../rfcs/0012-rename-ruleset-to-court-profile.md) | Rename `court.ruleset` to `court.court_profile` | Draft — decision recorded, design not written |
-| 6 | [RFC 0010](../../../rfcs/0010-sport-scoped-court.md) | Sport-scoped court & court_profile (incl. `sports/<sport>/` bundle restructure) | Draft — brainstormed, not yet approved for implementation |
+| 5 | [RFC 0012](../../../rfcs/0012-rename-ruleset-to-court-profile.md) | Rename `court.ruleset` to `court.court_profile` | Accepted, implemented |
+| 6 | [RFC 0010](../../../rfcs/0010-sport-scoped-court.md) | Sport-scoped court & court_profile (incl. `sports/<sport>/` bundle restructure) | Accepted, implemented |
 | 7 | [RFC 0011](../../../rfcs/0011-remove-rendering-concerns.md) | Remove rendering concerns (`color_scheme`, `color`, `CONTRAST_LOW`) | Draft — decision recorded, not yet implemented |
+
+**Remaining before v2.0.0 can ship**: RFC 0008 (`affects` roles) and
+RFC 0011 (remove rendering concerns) still need their Detailed Design
+written and implemented. RFC 0009's broader multi-ball generalization
+beyond two-ball dribbling remains an open question but does not block
+the release (see RFC 0009 itself).
 
 **Related but not yet in the program**: RFC 0013 (sport-specific entity
 roles, e.g. goalkeeper), RFC 0014 (sport-bound start templates /
@@ -100,9 +106,9 @@ Not part of the v2.0.0 program scope:
 - Funino/multi-goal topology and rule-driven scoring changes (e.g.
   minibasketball scoring) — explicitly out of scope for RFC 0010; would
   need their own design pass if ever pursued.
-- The renderer's pre-existing ruleset-blindness bug (ignores `court.ruleset`
-  for dimensions, always draws FIBA defaults) — a real, separate bug,
-  independent of this program.
+- The renderer's pre-existing court-profile-blindness bug (ignores
+  `court.court_profile` for dimensions, always draws FIBA defaults) — a
+  real, separate bug, independent of this program.
 - Whether `area`/`label` should gain a semantic `role`/`kind` field (e.g. a
   referenceable "target zone" an action could point at) — open public
   discussion, opencoachingformat/spec#53; confirmed additive/non-breaking

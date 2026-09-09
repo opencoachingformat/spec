@@ -6,7 +6,7 @@
 | Title       | Sport-scoped `court.court_profile` and `custom_dimensions`; named-position exclusion; `sports/<sport>/` registry bundle |
 | Author(s)   | opencoachingformat maintainers                    |
 | Created     | 2026-09-07 (revised 2026-09-10 — see Amendments)  |
-| Status      | Draft — brainstormed and recorded, not yet approved for implementation |
+| Status      | Accepted (implemented)                            |
 | Affects     | Schema + Spec + Validator (TS + Python) + registry data (replaces `sports/*.json` and `positions/*.json` with `sports/<sport>/` bundles) |
 | Version     | Targets OCF v2.0.0 (program item 6 of 7 — see the [v2.0.0 program overview](../docs/superpowers/specs/2026-09-07-v2-program-overview.md)) |
 
@@ -391,17 +391,22 @@ Three distinct states, replacing today's flat per-file-only model:
 
 ## Open Questions
 
-1. Exact `court_contract`/`custom_dimensions` field list for soccer and
-   other provisional sports — deferred until a sport is actually promoted
-   past "provisional" status.
-2. Whether this lands inside the still-open v2.0.0 program window or
-   deserves its own v2.x follow-up — needs a breaking-change audit once the
-   exact schema diff is drafted.
-3. Exact threshold for when a sport's `actions` field should be extracted
-   to its own `actions.json` per the naming rule in item 1 — basketball's
-   `action_types`/`variants`/`outcomes` are sizeable today; whether that
-   alone justifies extraction, or whether it stays inline until a second
-   sport reaches similar size, is not decided.
+1. **Partially resolved during implementation** (2026-09-10): a concrete
+   `custom_dimensions` field set was needed to migrate the checked-in
+   `sport-soccer.ocf.json` fixture and make the implementation's own test
+   suite pass — `unit`/`length`/`width`/`goal_width`/`penalty_box_width`/
+   `penalty_box_depth`/`penalty_spot_distance`, shared across soccer/
+   handball/hockey/futsal (all currently restricted to
+   `court_profile: "custom"`, none has a promoted court profile yet).
+   This is treated as a placeholder shape, not expert-reviewed —
+   revisit once any of these sports is actually promoted past
+   "provisional" status.
+2. Resolved: this RFC lands inside the still-open v2.0.0 program window
+   (implemented 2026-09-10; the program itself has not shipped a final
+   v2.0.0 release yet — RFC 0008 and RFC 0011 remain pending).
+3. Resolved: a sport's `actions` field stays inline in `sport.json` for
+   now (see Detailed Design item 1) — no sport's `actions` block has yet
+   grown large enough to justify extraction to its own `actions.json`.
 
 ---
 

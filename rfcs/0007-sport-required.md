@@ -6,7 +6,7 @@
 | Title       | `sport` becomes a required top-level field         |
 | Author(s)   | opencoachingformat maintainers                    |
 | Created     | 2026-09-07                                        |
-| Status      | Draft — detailed design complete, not yet implemented |
+| Status      | Accepted (implemented)                            |
 | Affects     | Schema + Spec                                     |
 | Version     | Targets OCF v2.0.0 (program item 1 of 7 — see the [v2.0.0 program overview](../docs/superpowers/specs/2026-09-07-v2-program-overview.md)) |
 
