@@ -11,7 +11,7 @@
     "created": "2025-02-27T10:00:00Z",
     "source_format": "open"
   },
-  "court": { "ruleset": "fiba", "type": "full_court", "drill_focus": "transition" },
+  "court": { "court_profile": "fiba", "type": "full_court", "drill_focus": "transition" },
   "entities": [
     { "type": "offense", "nr": 1, "x": 0, "y": -12 },
     { "type": "offense", "nr": 2, "x": -4, "y": -10 },

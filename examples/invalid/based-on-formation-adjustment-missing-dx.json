@@ -7,7 +7,7 @@
       "adjustments": [ { "entity": "offense_5", "dy": 0.0 } ]
     }
   },
-  "court": { "ruleset": "fiba", "type": "half_court" },
+  "court": { "court_profile": "fiba", "type": "half_court" },
   "entities": [],
   "actions": []
 }

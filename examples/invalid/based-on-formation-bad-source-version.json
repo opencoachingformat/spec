@@ -4,7 +4,7 @@
     "title": "Bad source_version",
     "based_on_formation": { "id": "4_out_1_in", "source_version": "2024-08" }
   },
-  "court": { "ruleset": "fiba", "type": "half_court" },
+  "court": { "court_profile": "fiba", "type": "half_court" },
   "entities": [],
   "actions": []
 }

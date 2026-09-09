@@ -1,7 +1,7 @@
 {
   "sport": "basketball",
   "meta": { "id": "d4e5f6a7-4444-4a6e-8f0c-2d5e9a1b3c7f", "title": "Tackle under basketball" },
-  "court": { "ruleset": "fiba", "type": "half_court" },
+  "court": { "court_profile": "fiba", "type": "half_court" },
   "entities": [ { "type": "defense", "nr": 4, "x": 0, "y": 8 } ],
   "actions": [
     { "id": "a1", "player": "defense_4", "type": "tackle" }

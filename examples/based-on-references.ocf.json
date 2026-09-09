@@ -26,7 +26,7 @@
       "relationship": "variant"
     }
   },
-  "court": { "ruleset": "fiba", "type": "half_court", "drill_focus": "offense" },
+  "court": { "court_profile": "fiba", "type": "half_court", "drill_focus": "offense" },
   "entities": [
     { "type": "offense", "nr": 1, "x": 0, "y": 5.68 },
     { "type": "offense", "nr": 2, "x": -6.75, "y": 8.6 },

@@ -6,7 +6,7 @@
     "title": "Declares a minimum schema version",
     "min_schema_version": "1.4.0"
   },
-  "court": { "ruleset": "fiba", "type": "half_court" },
+  "court": { "court_profile": "fiba", "type": "half_court" },
   "entities": [
     { "type": "offense", "nr": 2, "x": -6.75, "y": 13.98 }
   ],

@@ -9,7 +9,7 @@
     "tags": ["offense", "half-court", "ball-screen", "continuous", "pick-and-roll"],
     "difficulty": "advanced"
   },
-  "court": { "ruleset": "fiba", "type": "half_court" },
+  "court": { "court_profile": "fiba", "type": "half_court" },
   "continuum": true,
   "entities": [
     { "type": "offense", "nr": 1, "x": 0, "y": 7 },
