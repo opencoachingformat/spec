@@ -126,6 +126,13 @@ the manifest's own shape.
   "version": "2.0.0",
   "status": "defined",
 
+  // Attribution/provenance metadata — new in this RFC. Purely
+  // descriptive, no validator behavior depends on these fields.
+  "source": "https://www.fiba.basketball/documents/official-basketball-rules.pdf",
+  "maintainers": ["opencoachingformat maintainers"],
+  "reviewed_by": null,
+  "review_date": null,
+
   // Extension points for future work (RFC 0013/0014 territory, and
   // beyond) — declared now, not yet given any behavior beyond their
   // default. See "Explicitly Out of Scope."
@@ -148,6 +155,21 @@ the manifest's own shape.
   }
 }
 ```
+
+**Attribution fields** (`source`, `maintainers`, `reviewed_by`,
+`review_date`): new in this RFC, purely descriptive metadata with no
+validator behavior attached. `source` points at whatever official
+reference the sport/court-profile data was derived from (a rulebook PDF,
+a federation's published dimensions page, etc.) — optional, since a
+provisional sport may not have one yet. `maintainers` lists who
+authored/maintains this bundle in this repo (attribution for community
+contributions, not a governance mechanism). `reviewed_by`/`review_date`
+are `null` until someone with relevant standing has reviewed the data;
+this RFC does not define who qualifies as a reviewer or what "reviewed"
+means beyond the field's presence — see RFC 0015 (Sport/Court-Profile
+Verification Tiers) for the larger trust-hierarchy concept these fields
+are a simpler precursor to, deliberately kept separate and out of this
+RFC's scope.
 
 **Why no sport-level `positions.json`**: considered and rejected.
 RFC 0003/0010's original design already established that a sport's
@@ -357,12 +379,13 @@ Three distinct states, replacing today's flat per-file-only model:
   system is future work; if it turns out too large to fit inside the
   still-open v2.0.0 window when attempted, it becomes its own numbered
   program item at that point.
-- **Sport-specific entity roles** (e.g. goalkeeper) and **sport-bound
-  start templates/formations** — raised during this RFC's design session,
-  filed separately as RFC 0013 and RFC 0014 (Draft, no detailed design,
-  not yet assigned to a program window). Both would naturally live in the
-  `sports/<sport>/sport.json` bundle this RFC introduces, but neither is
-  part of this RFC's scope.
+- **Sport-specific entity roles** (e.g. goalkeeper), **sport-bound start
+  templates/formations**, and **verification tiers for sport/court-profile
+  data** — raised during this RFC's design session, filed separately as
+  RFC 0013, RFC 0014, and RFC 0015 respectively (all Draft, no detailed
+  design, not yet assigned to a program window). All three would
+  naturally live in the `sports/<sport>/sport.json` bundle this RFC
+  introduces, but none are part of this RFC's scope.
 
 ---
 
@@ -392,8 +415,9 @@ Three distinct states, replacing today's flat per-file-only model:
 - RFC 0012 (Rename `ruleset` to `court_profile`) — this RFC is written
   entirely in terms of `court_profile`; RFC 0012 must land first.
 - RFC 0013 (Sport-Specific Entity Roles), RFC 0014 (Sport Start
-  Templates) — related ideas raised during this RFC's design session,
-  filed separately, not part of this RFC's scope.
+  Templates), RFC 0015 (Sport/Court-Profile Verification Tiers) —
+  related ideas raised during this RFC's design session, filed
+  separately, not part of this RFC's scope.
 - Design doc: `docs/superpowers/specs/2026-09-07-sport-scoped-court-design.md`
   (full research evidence and original design rationale — predates the
   2026-09-10 revision recorded in this RFC's Amendments).

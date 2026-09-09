@@ -37,11 +37,12 @@ truth + validatability; validator = correctness; renderer = display only.
 | 7 | [RFC 0011](../../../rfcs/0011-remove-rendering-concerns.md) | Remove rendering concerns (`color_scheme`, `color`, `CONTRAST_LOW`) | Draft — decision recorded, not yet implemented |
 
 **Related but not yet in the program**: RFC 0013 (sport-specific entity
-roles, e.g. goalkeeper) and RFC 0014 (sport-bound start templates /
-formations) were raised during RFC 0007/0010/0012 design work
-(2026-09-10) and filed as Draft RFCs with no detailed design and no
-program-window assignment yet. Both would naturally live in the
-`sports/<sport>/sport.json` bundle RFC 0010 introduces, but neither is
+roles, e.g. goalkeeper), RFC 0014 (sport-bound start templates /
+formations), and RFC 0015 (verification tiers for sport/court-profile
+data) were raised during RFC 0007/0010/0012 design work (2026-09-10) and
+filed as Draft RFCs with no detailed design and no program-window
+assignment yet. All three would naturally live in the
+`sports/<sport>/sport.json` bundle RFC 0010 introduces, but none are
 confirmed as part of v2.0.0 — they may land later, independently.
 
 ## Ordering rationale
