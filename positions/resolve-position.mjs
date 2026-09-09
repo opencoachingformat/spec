@@ -11,15 +11,18 @@ function loadCourtProfile(courtProfile) {
     throw new Error(`Unknown court profile '${courtProfile}'. Known: ${COURT_PROFILES.join(", ")}`);
   }
   if (!cache.has(courtProfile)) {
-    const path = resolve(__dirname, `${courtProfile}-v1.json`);
+    const path = resolve(__dirname, "..", "sports", "basketball", "court_profiles", `${courtProfile}.json`);
     cache.set(courtProfile, JSON.parse(readFileSync(path, "utf-8")));
   }
   return cache.get(courtProfile);
 }
 
-/** Returns { x, y } for a named position under a court profile, or throws if unknown. */
+/** Returns { x, y } for a named position under a court profile, or throws if unknown or excluded. */
 export function resolveNamedPosition(name, ruleset = "fiba") {
   const data = loadCourtProfile(ruleset);
+  if (data.not_applicable?.includes(name)) {
+    throw new Error(`Position '${name}' is not applicable under court profile '${ruleset}'.`);
+  }
   if (!Object.hasOwn(data.positions, name)) {
     throw new Error(`Unknown named position '${name}' for court profile '${ruleset}'.`);
   }
