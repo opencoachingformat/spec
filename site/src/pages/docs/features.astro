@@ -9,9 +9,9 @@ import Base from '../../layouts/Base.astro';
 
   <h2 id="basketball-first">Basketball-first, sport-agnostic by design</h2>
   <p>
-    OCF covers basketball across the FIBA, NBA, NCAA, and NFHS rulesets, but
+    OCF covers basketball across the FIBA, NBA, NCAA, and NFHS court profiles, but
     the underlying architecture — entities, actions, and named positions
-    resolved per ruleset — is not basketball-specific. Future versions can
+    resolved per court profile — is not basketball-specific. Future versions can
     extend the same model to other sports without breaking existing
     documents.
   </p>
@@ -30,7 +30,7 @@ import Base from '../../layouts/Base.astro';
     Rather than forcing every position to be a raw coordinate pair, OCF
     defines a registry of named positions — <code>top_of_the_key</code>,
     <code>left_elbow</code>, <code>inbound.baseline_left</code>, and more —
-    grounded in official ruleset geometry. Coaches can author drills by
+    grounded in official court-profile geometry. Coaches can author drills by
     naming positions instead of guessing coordinates.
   </p>
 

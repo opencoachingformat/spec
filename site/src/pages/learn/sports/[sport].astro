@@ -17,7 +17,7 @@ const variantEntries = Object.entries(sport.variants ?? {});
   title={`${sport.label} — Sports`}
   description={sport.reserved
     ? `${sport.label} is a reserved sport in OCF: the shared structure applies and a provisional action list is stubbed, open for contribution.`
-    : `${sport.label} is fully specified in OCF: action types, variants, outcomes, and supported rulesets.`}
+    : `${sport.label} is fully specified in OCF: action types, variants, outcomes, and supported court profiles.`}
 >
   <section class="hero">
     <div class="title-row">
@@ -29,7 +29,7 @@ const variantEntries = Object.entries(sport.variants ?? {});
     <p class="tagline">
       {sport.reserved
         ? 'The shared OCF structure — court, entities, frames — already fits this sport. Its action vocabulary is provisional and open for contribution.'
-        : 'This sport is fully specified: the action vocabulary, outcomes, and supported rulesets below are stable.'}
+        : 'This sport is fully specified: the action vocabulary, outcomes, and supported court profiles below are stable.'}
     </p>
   </section>
 
@@ -78,13 +78,13 @@ const variantEntries = Object.entries(sport.variants ?? {});
       </section>
 
       <section>
-        <h2>Rulesets</h2>
+        <h2>Court Profiles</h2>
         {sport.rulesets.length > 0 ? (
           <ul class="chip-list">
             {sport.rulesets.map((r) => <li class="chip">{r}</li>)}
           </ul>
         ) : (
-          <p class="empty">No rulesets defined.</p>
+          <p class="empty">No court profiles defined.</p>
         )}
       </section>
     </Fragment>
@@ -97,7 +97,7 @@ const variantEntries = Object.entries(sport.variants ?? {});
         {sport.label} is reserved: the format is ready, but its action
         vocabulary needs the people who know the game. If you coach or play
         {` ${sport.label.toLowerCase()}`}, you can help define the actions,
-        variants, outcomes, and rulesets that make an OCF {sport.label.toLowerCase()}
+        variants, outcomes, and court profiles that make an OCF {sport.label.toLowerCase()}
         play precise.
       </p>
       <ul class="contribute-list">
