@@ -6,7 +6,7 @@
   "title": "Open Coaching Format",
   "description": "Open standard for team-sport coaching diagrams and animations (invasion team sports; basketball first). Semantic action model.",
   "type": "object",
-  "required": ["meta", "court", "entities", "actions"],
+  "required": ["meta", "court", "entities", "actions", "sport"],
 
   "definitions": {
 
@@ -715,8 +715,7 @@
     "sport": {
       "type": "string",
       "enum": ["basketball", "soccer", "handball", "hockey", "futsal"],
-      "default": "basketball",
-      "$comment": "Optional, default basketball (back-compat). Intended to become required in v2.0.0. basketball is fully defined; soccer/handball/hockey/futsal carry provisional minimal action whitelists pending sport-expert review."
+      "$comment": "Required as of v2.0.0 (RFC 0007) — no default, no back-compat absence handling. Enum is closed and hand-maintained; a sport not yet in the registry must be added as a sports/<sport>/ bundle (RFC 0010) before it can be declared. basketball is fully defined; soccer/handball/hockey/futsal carry provisional minimal action whitelists pending sport-expert review."
     },
 
     "meta": {
