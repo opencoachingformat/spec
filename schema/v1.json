@@ -903,6 +903,23 @@
           }
         }
       }
+    },
+    {
+      "if": { "required": ["sport"], "properties": { "sport": { "const": "basketball" } } },
+      "then": {
+        "type": "object",
+        "properties": { "court": { "type": "object", "properties": { "court_profile": { "enum": ["fiba", "nba", "ncaa", "nfhs", "custom"] } } } }
+      }
+    },
+    {
+      "if": {
+        "required": ["sport"],
+        "properties": { "sport": { "enum": ["soccer", "handball", "hockey", "futsal"] } }
+      },
+      "then": {
+        "type": "object",
+        "properties": { "court": { "type": "object", "properties": { "court_profile": { "const": "custom" } } } }
+      }
     }
   ]
 }
