@@ -33,7 +33,7 @@ The Open Coaching Format is a JSON-based standard for encoding team-sport coachi
 
 ```json
 {
-  "court": { "ruleset": "fiba", "type": "half_court" },
+  "court": { "court_profile": "fiba", "type": "half_court" },
   "entities": [
     { "type": "offense", "nr": 1, "x": -3.0, "y": 6.0 },
     { "type": "offense", "nr": 2, "x": 3.0, "y": 6.0 }

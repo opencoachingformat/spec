@@ -116,14 +116,14 @@ Version-pinned copies are never removed — implementations can pin to a specifi
 
 ---
 
-## Adding a New Ruleset
+## Adding a New Court Profile
 
-To add a new sport or league ruleset (e.g. EuroLeague, WNBA, 3x3, Wheelchair):
+To add a new sport or league court profile (e.g. EuroLeague, WNBA, 3x3, Wheelchair):
 
-1. Open an RFC describing the ruleset's court dimensions and geometry
+1. Open an RFC describing the court profile's court dimensions and geometry
 2. Define named positions in the spec (following the FIBA table format)
-3. Add the ruleset to the schema enum
-4. Add at least two example files using the new ruleset
+3. Add the court profile to the schema enum
+4. Add at least two example files using the new court profile
 5. Document WCAG contrast for any new default colors
 
 ---
