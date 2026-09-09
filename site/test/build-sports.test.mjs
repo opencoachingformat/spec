@@ -3,27 +3,27 @@ import assert from "node:assert/strict";
 import { buildSportsIndex } from "../scripts/build-sports.mjs";
 
 const basketball = {
-  filename: "basketball-v1.json",
+  dirName: "basketball",
   data: {
     sport: "basketball",
-    version: "1.0.0",
+    version: "2.0.0",
     status: "defined",
-    action_types: ["move", "pass", "shoot"],
-    variants: { pass: ["chest", "bounce"] },
-    outcomes: ["make", "miss"],
-    rulesets: ["fiba", "nba"],
+    actions: {
+      types: ["move", "pass", "shoot"],
+      variants: { pass: ["chest", "bounce"] },
+      outcomes: ["make", "miss"],
+    },
+    court_profiles: { fiba: {}, nba: {} },
   },
 };
 const soccer = {
-  filename: "soccer-v0.0.1.json",
+  dirName: "soccer",
   data: {
     sport: "soccer",
     version: "0.0.1",
     status: "provisional",
-    action_types: ["move", "pass", "shoot"],
-    variants: {},
-    outcomes: [],
-    rulesets: [],
+    actions: { types: ["move", "pass", "shoot"], variants: {}, outcomes: [] },
+    court_profiles: {},
   },
 };
 
@@ -56,15 +56,15 @@ test("buildSportsIndex: basketball is sorted first, then the rest alphabetically
 
 test("buildSportsIndex: sorts non-basketball sports alphabetically", () => {
   const mk = (sport) => ({
-    filename: `${sport}-v0.0.1.json`,
-    data: { sport, version: "0.0.1", status: "provisional", action_types: [], variants: {}, outcomes: [], rulesets: [] },
+    dirName: sport,
+    data: { sport, version: "0.0.1", status: "provisional", actions: { types: [], variants: {}, outcomes: [] }, court_profiles: {} },
   });
   const idx = buildSportsIndex([mk("hockey"), mk("futsal"), mk("handball")]);
   assert.deepEqual(idx.map((s) => s.sport), ["futsal", "handball", "hockey"]);
 });
 
-test("buildSportsIndex: defaults missing arrays to empty and objects to {}", () => {
-  const [x] = buildSportsIndex([{ filename: "x-v1.json", data: { sport: "x", version: "1", status: "defined" } }]);
+test("buildSportsIndex: defaults missing actions/court_profiles to empty", () => {
+  const [x] = buildSportsIndex([{ dirName: "x", data: { sport: "x", version: "1", status: "defined" } }]);
   assert.deepEqual(x.action_types, []);
   assert.deepEqual(x.outcomes, []);
   assert.deepEqual(x.rulesets, []);

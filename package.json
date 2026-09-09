@@ -22,15 +22,15 @@
   "exports": {
     "./schema/v1.json": "./schema/v1.json",
     "./positions/resolve-position.mjs": "./positions/resolve-position.mjs",
-    "./positions/fiba-v1.json": "./positions/fiba-v1.json",
-    "./positions/nba-v1.json": "./positions/nba-v1.json",
-    "./positions/ncaa-v1.json": "./positions/ncaa-v1.json",
-    "./positions/nfhs-v1.json": "./positions/nfhs-v1.json",
-    "./sports/basketball-v1.json": "./sports/basketball-v1.json",
-    "./sports/soccer-v0.0.1.json": "./sports/soccer-v0.0.1.json",
-    "./sports/handball-v0.0.1.json": "./sports/handball-v0.0.1.json",
-    "./sports/hockey-v0.0.1.json": "./sports/hockey-v0.0.1.json",
-    "./sports/futsal-v0.0.1.json": "./sports/futsal-v0.0.1.json"
+    "./sports/basketball/sport.json": "./sports/basketball/sport.json",
+    "./sports/basketball/court_profiles/fiba.json": "./sports/basketball/court_profiles/fiba.json",
+    "./sports/basketball/court_profiles/nba.json": "./sports/basketball/court_profiles/nba.json",
+    "./sports/basketball/court_profiles/ncaa.json": "./sports/basketball/court_profiles/ncaa.json",
+    "./sports/basketball/court_profiles/nfhs.json": "./sports/basketball/court_profiles/nfhs.json",
+    "./sports/soccer/sport.json": "./sports/soccer/sport.json",
+    "./sports/handball/sport.json": "./sports/handball/sport.json",
+    "./sports/hockey/sport.json": "./sports/hockey/sport.json",
+    "./sports/futsal/sport.json": "./sports/futsal/sport.json"
   },
   "publishConfig": {
     "access": "public"
@@ -39,11 +39,12 @@
     "validate": "ajv validate --spec=draft7 --strict-schema=false -s schema/v1.json -d \"examples/*.ocf.json\" --all-errors --verbose -c ajv-formats",
     "test:invalid": "node scripts/check-invalid.mjs",
     "test:positions": "node --test test/positions-anchors.test.mjs",
-    "test:sport": "node --test test/sport-branches.test.mjs",
+    "test:sport": "node --test test/sport-branches.test.mjs test/sport-court-profile-whitelist.test.mjs",
     "test:version": "node --test test/schema-version.test.mjs",
     "test:manifest": "node --test test/versions-manifest.test.mjs",
     "test:frameless": "node --test test/frameless-*.test.mjs",
-    "test": "npm run validate && npm run test:invalid && npm run test:positions && npm run test:sport && npm run test:version && npm run test:manifest && npm run test:frameless"
+    "test:registry": "node --test test/court-contract.test.mjs test/not-applicable-positions.test.mjs",
+    "test": "npm run validate && npm run test:invalid && npm run test:positions && npm run test:sport && npm run test:version && npm run test:manifest && npm run test:frameless && npm run test:registry"
   },
   "devDependencies": {
     "ajv": "^8.20.0",

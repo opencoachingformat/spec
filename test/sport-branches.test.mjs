@@ -4,12 +4,13 @@ import { readFileSync, readdirSync } from "node:fs";
 
 const schema = JSON.parse(readFileSync(new URL("../schema/v1.json", import.meta.url), "utf-8"));
 
-// Collect the sports each allOf branch handles (via if.properties.sport.const).
 function branchSports(allOf) {
   const handled = new Set();
   for (const b of allOf) {
     const c = b.if?.properties?.sport?.const;
     if (c) handled.add(c);
+    const e = b.if?.properties?.sport?.enum;
+    if (Array.isArray(e)) for (const s of e) handled.add(s);
   }
   return handled;
 }
@@ -23,22 +24,33 @@ test("every sport enum value has a whitelist branch", () => {
   }
 });
 
-test("each sport skeleton's action_types matches its schema whitelist branch", () => {
-  const dir = new URL("../sports/", import.meta.url);
-  const files = readdirSync(dir).filter((f) => f.endsWith(".json"));
+test("each sport bundle's actions.types matches its schema whitelist branch", () => {
+  const sportsDir = new URL("../sports/", import.meta.url);
+  const sportDirs = readdirSync(sportsDir, { withFileTypes: true })
+    .filter((d) => d.isDirectory())
+    .map((d) => d.name);
+
   const branchWhitelist = (sport) => {
     for (const b of schema.allOf) {
-      if (b.if?.properties?.sport?.const === sport) {
-        return b.then.properties.actions.items.properties.type.enum;
+      const c = b.if?.properties?.sport?.const;
+      const e = b.if?.properties?.sport?.enum;
+      if (c === sport || (Array.isArray(e) && e.includes(sport))) {
+        return b.then?.properties?.actions?.items?.properties?.type?.enum;
       }
     }
     return null;
   };
-  for (const f of files) {
-    const data = JSON.parse(readFileSync(new URL(f, dir), "utf-8"));
-    const wl = branchWhitelist(data.sport);
-    assert.ok(wl, `no schema branch for sport ${data.sport}`);
-    assert.deepEqual([...data.action_types].sort(), [...wl].sort(),
-      `${f} action_types must match the schema whitelist for ${data.sport}`);
+
+  for (const dirName of sportDirs) {
+    const manifest = JSON.parse(
+      readFileSync(new URL(`${dirName}/sport.json`, sportsDir), "utf-8")
+    );
+    const wl = branchWhitelist(manifest.sport);
+    assert.ok(wl, `no schema branch for sport ${manifest.sport}`);
+    assert.deepEqual(
+      [...manifest.actions.types].sort(),
+      [...wl].sort(),
+      `${dirName}/sport.json actions.types must match the schema whitelist for ${manifest.sport}`
+    );
   }
 });

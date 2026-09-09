@@ -1,0 +1,19 @@
+{
+  "$schema": "https://opencoachingformat.org/registry/sports/sport-schema-v1.json",
+  "sport": "hockey",
+  "version": "0.0.1",
+  "status": "provisional",
+  "source": null,
+  "maintainers": ["opencoachingformat maintainers"],
+  "reviewed_by": null,
+  "review_date": null,
+  "equipment": { "type": "puck" },
+  "coordinate_system": { "type": "cartesian_2d" },
+  "actions": {
+    "types": ["move", "pass", "shoot", "defend", "dribble", "clear", "faceoff", "check"],
+    "variants": {},
+    "outcomes": []
+  },
+  "court_contract": { "required_dimensions": ["length", "width"] },
+  "court_profiles": {}
+}
