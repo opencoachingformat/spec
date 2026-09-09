@@ -3,17 +3,17 @@ import Base from '../../layouts/Base.astro';
 ---
 <Base
   title="Features"
-  description="Key features of the Open Coaching Format: semantic actions, automatic ball possession, hybrid frames, and more."
+  description="Key features of the Open Coaching Format: semantic actions, automatic ball possession, triggers and branching, and more."
 >
   <h1>Features</h1>
 
   <h2 id="basketball-first">Basketball-first, sport-agnostic by design</h2>
   <p>
-    OCF v1 covers basketball across the FIBA, NBA, NCAA, and NFHS rulesets,
-    but the underlying architecture — entities, actions, frames, and named
-    positions resolved per ruleset — is not basketball-specific. Future
-    versions can extend the same model to other sports without breaking
-    existing documents.
+    OCF covers basketball across the FIBA, NBA, NCAA, and NFHS rulesets, but
+    the underlying architecture — entities, actions, and named positions
+    resolved per ruleset — is not basketball-specific. Future versions can
+    extend the same model to other sports without breaking existing
+    documents.
   </p>
 
   <h2 id="real-world-coordinates">Real-world coordinates</h2>
@@ -36,12 +36,16 @@ import Base from '../../layouts/Base.astro';
 
   <h2 id="semantic-actions">Semantic actions</h2>
   <p>
-    Frames describe what players <em>do</em> — <code>move</code>,
-    <code>cut</code>, <code>screen</code>, <code>defend</code>,
-    <code>dribble</code>, <code>pass</code>, <code>shoot</code>,
-    <code>rebound</code>, <code>pickup</code> — rather than raw geometric
-    lines. This makes drills legible to both humans and machines, and is a
-    prerequisite for the LLM-driven generation OCF is designed toward.
+    A play is a flat, ordered <code>actions[]</code> array describing what
+    players <em>do</em> — <code>move</code>, <code>cut</code>,
+    <code>screen</code>, <code>defend</code>, <code>dribble</code>,
+    <code>pass</code>, <code>shoot</code>, <code>rebound</code>,
+    <code>pickup</code> — rather than raw geometric lines or per-frame
+    position snapshots. Every entity's position at any point is derived
+    purely from its setup state plus the actions it has had so far, so
+    there's nothing to keep in sync by hand. This makes drills legible to
+    both humans and machines, and is a prerequisite for the LLM-driven
+    generation OCF is designed toward.
   </p>
 
   <h2 id="ball-possession">Automatic ball possession</h2>
@@ -53,13 +57,16 @@ import Base from '../../layouts/Base.astro';
     track and restate who's holding the ball in every frame.
   </p>
 
-  <h2 id="hybrid-frames">Hybrid frames</h2>
+  <h2 id="triggers-and-branching">Triggers, branching, and continuum drills</h2>
   <p>
-    Frames combine explicit <code>start_state</code> /
-    <code>end_state</code> anchors with action sequences, and support
-    outcome branches (<code>make</code> / <code>miss</code> / …) to model
-    continuum drills where the next step depends on what happened in the
-    last one.
+    An action's <code>trigger</code> ties its start to something else in the
+    play — another action's end, a reception, or a fixed delay — instead of
+    an implicit frame boundary. A <code>branch</code> lets the play split on
+    an outcome (<code>make</code> / <code>miss</code> / <code>turnover</code> /
+    …), each case carrying its own self-contained action sub-sequence. A
+    document-level <code>continuum</code> flag marks drills designed to
+    repeat, so a validator can check the play's terminal state loops back to
+    its setup state (or an explicit loop anchor).
   </p>
 
   <h2 id="progressive-detail">Progressive detail</h2>

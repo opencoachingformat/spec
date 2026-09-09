@@ -140,9 +140,12 @@ const jsonLd = {
         actions, drawn from a sport's vocabulary.
       </li>
       <li>
-        <strong>Frames and animation.</strong> A play is a sequence of frames.
-        Each frame lists the actions that happen and where everything ends up,
-        which is what turns a static diagram into a replayable animation.
+        <strong>Triggers and branching.</strong> Each action's position follows
+        from the actions before it — no manual per-step coordinates. A
+        <code>trigger</code> ties an action's start to another action or event,
+        and a <code>branch</code> lets a play split on an outcome like a made or
+        missed shot, which is what turns a static diagram into a replayable
+        sequence.
       </li>
     </ul>
   </section>
