@@ -537,18 +537,17 @@ possession, and off-ball movement (basketball, soccer, handball, hockey,
 futsal). Basketball is fully defined; the others are reserved with provisional
 action vocabularies.
 
-The optional `sport` field declares the sport:
+The required `sport` field declares the sport:
 
 [source,json]
 ----
 "sport": "basketball"
 ----
 
-`sport` is optional and defaults to `basketball` for backwards compatibility;
-it is planned to become required in v2. The declared sport determines which
-action types (and variants) are valid — e.g. `screen`/`rebound` are valid under
-`basketball`, `tackle`/`clear` under `soccer`. Documents with no `sport` field
-are treated as basketball.
+`sport` is required. Every document must declare it explicitly — there is no
+default and no back-compat handling for an absent value. The declared sport
+determines which action types (and variants) are valid — e.g. `screen`/`rebound`
+are valid under `basketball`, `tackle`/`clear` under `soccer`.
 
 ---
 
