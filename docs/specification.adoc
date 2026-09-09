@@ -1537,6 +1537,24 @@ actions, e.g. a dribble hand-off's screen side effect) and `ball_ids[]`
 `docs/superpowers/specs/2026-09-05-frameless-action-model-design.md` for
 the full design rationale.
 
+**Breaking.** `sport` becomes a required top-level field — no default, no
+back-compat handling for an absent value (RFC 0007).
+
+**Breaking.** `court.ruleset` is renamed to `court.court_profile`
+throughout the schema, spec, and registry data — the old name promised
+game rules the field never held; it was always pure court geometry
+(RFC 0012).
+
+**Breaking.** `sport` now gates `court.court_profile` via a whitelist,
+and `court.custom_dimensions` becomes sport-scoped (a soccer document's
+`custom_dimensions` now offers soccer-shaped fields like `goal_width`,
+never basketball's `paint_width`/`basket_from_baseline`). Named positions
+gain a `not_applicable` exclusion mechanism, distinguishing "not
+applicable under this court profile" from "unknown / typo." The registry
+data moves from flat `sports/<sport>-v*.json` + `positions/<ruleset>-
+v1.json` files to a `sports/<sport>/` bundle (a `sport.json` manifest
+plus `court_profiles/<name>.json` per court profile) (RFC 0010).
+
 === v1.4.0
 
 Adds schema version signals (RFC 0005): optional `min_schema_version` in `meta`,
