@@ -8,6 +8,7 @@
     "tags": ["quick-mode", "give-and-go"],
     "source_format": "open"
   },
+  "sport": "basketball",
   "court": { "ruleset": "fiba", "type": "half_court" },
   "entities": [
     { "type": "offense", "nr": 1, "x": -3.0, "y": 6.0 },
