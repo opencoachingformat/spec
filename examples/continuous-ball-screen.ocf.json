@@ -7,7 +7,8 @@
     "description": "Multi-frame offensive set with consecutive ball screens. PG passes to wing and cuts, center screens and rolls, with options to kick out or reset.",
     "author": "OCF Examples",
     "tags": ["offense", "half-court", "ball-screen", "continuous", "pick-and-roll"],
-    "difficulty": "advanced"
+    "difficulty": "advanced",
+    "min_schema_version": "2.0.0-alpha.1"
   },
   "court": { "court_profile": "fiba", "type": "half_court" },
   "continuum": true,

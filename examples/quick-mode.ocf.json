@@ -6,7 +6,8 @@
     "description": "Minimal example: a coach sketches a give-and-go without any detail annotations.",
     "author": "OCF Examples",
     "tags": ["quick-mode", "give-and-go"],
-    "source_format": "open"
+    "source_format": "open",
+    "min_schema_version": "2.0.0-alpha.1"
   },
   "sport": "basketball",
   "court": { "court_profile": "fiba", "type": "half_court" },

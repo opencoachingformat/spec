@@ -10,6 +10,7 @@
     "difficulty": "intermediate",
     "created": "2026-08-26T10:00:00Z",
     "source_format": "open",
+    "min_schema_version": "2.0.0-alpha.1",
     "based_on_formation": {
       "id": "4_out_1_in",
       "title": "4 Out 1 In",

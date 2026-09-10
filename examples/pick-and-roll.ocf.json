@@ -9,7 +9,8 @@
     "tags": ["pick-and-roll", "offense", "half-court", "2-player", "beginner"],
     "difficulty": "beginner",
     "created": "2025-02-27T10:00:00Z",
-    "source_format": "open"
+    "source_format": "open",
+    "min_schema_version": "2.0.0-alpha.1"
   },
   "court": { "court_profile": "fiba", "type": "half_court", "drill_focus": "offense" },
   "entities": [
