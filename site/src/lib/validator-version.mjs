@@ -14,13 +14,19 @@
 // This is a plain .mjs (not .ts) so it can be imported both by Astro pages
 // (via Vite) and directly by scripts/build-adoc.mjs, which runs under plain
 // `node` with no TypeScript loader configured.
-export const OCF_VALIDATOR_VERSION = '0.2.0';
+// Pinned to the "next" npm dist-tag's version while OCF v2.0.0 is still a
+// draft (see ocf-validator's release-ts.yml: a pre-release version like
+// this one publishes under "next", never "latest", so this pin is the only
+// place that actually points the site at it). Once schema/v2.json and this
+// validator both leave alpha, this moves to a real (non-pre-release)
+// version again.
+export const OCF_VALIDATOR_VERSION = '1.0.0-alpha.1';
 
 const JSDELIVR_NPM_BASE = `https://cdn.jsdelivr.net/npm/@opencoachingformat/validator@${OCF_VALIDATOR_VERSION}`;
 
 export const OCF_VALIDATOR_BROWSER_URL = `${JSDELIVR_NPM_BASE}/dist/browser/browser.js`;
 
-export const OCF_VALIDATOR_COMMIT = '07361d99f2433f2c715486e0894da5594160a218';
+export const OCF_VALIDATOR_COMMIT = 'da9d58247139723e5e6e7622bdba983c5f9c1715';
 
 const JSDELIVR_GH_BASE = `https://cdn.jsdelivr.net/gh/opencoachingformat/ocf-validator@${OCF_VALIDATOR_COMMIT}`;
 
@@ -31,6 +37,6 @@ export const OCF_ERROR_CODES_URL = `${JSDELIVR_GH_BASE}/shared/error-codes.json`
 // be re-pinned independently of the validator bundle — so they get their own
 // commit pin (identical value today, deliberately separate). build-arc42.mjs
 // fetches each section file from this base via jsDelivr's GitHub-file CDN.
-export const OCF_ARC42_COMMIT = '07361d99f2433f2c715486e0894da5594160a218';
+export const OCF_ARC42_COMMIT = 'da9d58247139723e5e6e7622bdba983c5f9c1715';
 
 export const OCF_ARC42_BASE_URL = `https://cdn.jsdelivr.net/gh/opencoachingformat/ocf-validator@${OCF_ARC42_COMMIT}/docs/arc42`;
