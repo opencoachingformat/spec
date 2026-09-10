@@ -13,6 +13,15 @@ test("manifest lists sorted versions with latest + major + schema_url", () => {
   assert.equal(m.latest, "1.10.0");
 });
 
+test("schema_url tracks the major derived from the version, not a fixed value", () => {
+  const m = buildVersionsManifest({
+    existing: ["v2.0.0-alpha.1"],
+    current: "v2.0.0-alpha.1",
+  });
+  assert.equal(m.major, "v2");
+  assert.equal(m.schema_url, "https://opencoachingformat.org/schema/v2.json");
+});
+
 test("current version is included even if not in existing", () => {
   const m = buildVersionsManifest({ existing: ["v1.0.0"], current: "v1.4.0" });
   assert.ok(m.versions.includes("1.4.0"));
