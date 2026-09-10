@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
-const schema = JSON.parse(readFileSync(new URL("../schema/v1.json", import.meta.url)));
+const schema = JSON.parse(readFileSync(new URL("../schema/v2.json", import.meta.url)));
 const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url)));
 
 test("schema carries a machine-readable x-ocf-version", () => {

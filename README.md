@@ -3,7 +3,7 @@
 **An open standard for representing team-sport coaching diagrams, drill animations, and playbooks as structured data — for invasion team sports, basketball first.**
 
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
-[![Schema Version](https://img.shields.io/badge/schema-v1.4.0-blue)](schema/v1.json)
+[![Schema Version](https://img.shields.io/badge/schema-v2.0.0--alpha.1-blue)](schema/v2.json)
 [![Status: Draft](https://img.shields.io/badge/status-draft-yellow)]()
 
 ---
@@ -62,7 +62,7 @@ The Open Coaching Format is a JSON-based standard for encoding team-sport coachi
 ```
 opencoachingformat/
 ├── schema/
-│   └── v1.json                  # JSON Schema Draft-7 (canonical)
+│   └── v2.json                  # JSON Schema Draft-7 (canonical)
 ├── docs/
 │   └── specification.adoc      # Full specification (AsciiDoc)
 ├── examples/
@@ -86,7 +86,7 @@ opencoachingformat/
 ## Specification
 
 → [Full Specification (AsciiDoc)](docs/specification.adoc)
-→ [JSON Schema v1](schema/v1.json)
+→ [JSON Schema v2](schema/v2.json)
 
 ### Using the schema from npm
 
@@ -95,10 +95,10 @@ npm install @opencoachingformat/spec
 ```
 
 ```js
-import schema from "@opencoachingformat/spec/schema/v1.json" with { type: "json" };
+import schema from "@opencoachingformat/spec/schema/v2.json" with { type: "json" };
 ```
 
-The package ships only `schema/v1.json` — no runtime code, no dependencies.
+The package ships only `schema/v2.json` — no runtime code, no dependencies.
 
 ### Coordinate System
 

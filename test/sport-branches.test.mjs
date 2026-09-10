@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 
-const schema = JSON.parse(readFileSync(new URL("../schema/v1.json", import.meta.url), "utf-8"));
+const schema = JSON.parse(readFileSync(new URL("../schema/v2.json", import.meta.url), "utf-8"));
 
 function branchSports(allOf) {
   const handled = new Set();

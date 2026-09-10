@@ -47,15 +47,15 @@ test("fetchLatestSchemaVersion: returns the latest field from versions.json", as
       ok: true,
       status: 200,
       json: async () => ({
-        latest: "1.4.0",
-        major: "v1",
-        versions: ["1.0.0", "1.4.0"],
-        schema_url: "https://opencoachingformat.org/schema/v1.json",
+        latest: "2.0.0-alpha.1",
+        major: "v2",
+        versions: ["2.0.0-alpha.1"],
+        schema_url: "https://opencoachingformat.org/schema/v2.json",
       }),
     };
   };
   const latest = await fetchLatestSchemaVersion(fakeFetch);
-  assert.equal(latest, "1.4.0");
+  assert.equal(latest, "2.0.0-alpha.1");
   assert.match(calls[0], /\/schema\/versions\.json$/);
 });
 

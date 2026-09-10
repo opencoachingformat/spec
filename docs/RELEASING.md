@@ -31,15 +31,20 @@ whenever a `vX.Y.Z` tag is pushed (see `.github/workflows/release-spec.yml`).
 ## Cutting a release
 
 ```bash
-git tag v1.1.0
-git push origin v1.1.0
+git tag v2.0.0-alpha.1
+git push origin v2.0.0-alpha.1
 ```
 
 This triggers the workflow, which:
 1. Builds the Astro docs site (specification + schema pages).
-2. Publishes `schema/v1.json` to `https://opencoachingformat.org/v1.1.0/ocf-action-v1.json`
+2. Publishes the current major's schema file (`schema/v2.json`, determined
+   automatically from the schema's own `x-ocf-version`) to
+   `https://opencoachingformat.org/v2.0.0-alpha.1/ocf-action-v2.json`
    (this URL is permanent — never delete or overwrite a version folder).
+   A prior major's own version-pinned copies (e.g.
+   `.../v1.4.0/ocf-action-v1.json`) remain published as-is, unaffected.
 3. Deploys the docs site + versioned schema to the `gh-pages` branch.
 4. Sends a `repository_dispatch` (`spec_released`) to `opencoachingformat/ocf-validator`
-   with `{"version": "v1.1.0"}` in the payload (the key must be `version` —
-   `ocf-validator`'s `sync-from-spec.yml` reads `client_payload.version`).
+   with `{"version": "v2.0.0-alpha.1"}` in the payload (the key must be
+   `version` — `ocf-validator`'s `sync-from-spec.yml` reads
+   `client_payload.version`).

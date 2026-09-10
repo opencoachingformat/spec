@@ -67,7 +67,7 @@ For accepted RFCs and non-breaking changes:
 2. Make your changes
 3. Validate example files against the schema:
    ```bash
-   npx ajv-cli validate -s schema/v1.json -d "examples/*.ocf.json"
+   npx ajv-cli validate -s schema/v2.json -d "examples/*.ocf.json"
    ```
 4. Open a Pull Request referencing the relevant issue or RFC
 
@@ -99,18 +99,24 @@ OCF follows [Semantic Versioning](https://semver.org/):
 - **Minor** (v1.x.0): Additive changes (new optional fields, new named positions, new rulesets)
 - **Major** (vX.0.0): Breaking changes to the schema
 
-The schema file keeps a **stable name across the whole v1 line**: `schema/v1.json`
-is the canonical file (its `$id` is `https://opencoachingformat.org/schema/v1.json`)
-and it tracks the latest backwards-compatible `1.x` release. The filename only
-changes for a breaking major (`schema/v2.json`). The current release version is
-recorded inside the schema (`$comment`) and in `package.json`.
+The schema file keeps a **stable name across the whole line of a given major**:
+`schema/v2.json` is the current canonical file (its `$id` is
+`https://opencoachingformat.org/schema/v2.json`) and it tracks the latest
+backwards-compatible `2.x` release. The filename only changes for the next
+breaking major (`schema/v3.json`, whenever that lands) — `schema/v1.json`
+remains published as-is for existing `1.x` consumers; it does not get
+deleted or overwritten. The current release version is recorded inside the
+schema (`$comment`) and in `package.json`.
 
 Each release is also published to an immutable, version-pinned URL so
 implementations can pin exactly:
 ```
-https://opencoachingformat.org/schema/v1.json          ← canonical, latest v1.x
-https://opencoachingformat.org/<version>/ocf-action-v1.json  ← e.g. /v1.1.0/, immutable
+https://opencoachingformat.org/schema/v2.json          ← canonical, latest v2.x
+https://opencoachingformat.org/<version>/ocf-action-v2.json  ← e.g. /v2.0.0/, immutable
 ```
+(Prior majors keep their own canonical + version-pinned URLs, e.g.
+`https://opencoachingformat.org/schema/v1.json` and
+`.../v1.4.0/ocf-action-v1.json`, unaffected by a new major shipping.)
 
 Version-pinned copies are never removed — implementations can pin to a specific version.
 
@@ -122,7 +128,7 @@ To add a new sport or league court profile (e.g. EuroLeague, WNBA, 3x3, Wheelcha
 
 1. Open an RFC describing the court profile's court dimensions and geometry
 2. Create `sports/<sport>/court_profiles/<name>.json` with the court dimensions and named-position coordinates (following an existing file, e.g. `sports/basketball/court_profiles/fiba.json`, as a template)
-3. Add the court profile's key to that sport's `sports/<sport>/sport.json` under `court_profiles`, and add the matching `allOf` branch in `schema/v1.json`
+3. Add the court profile's key to that sport's `sports/<sport>/sport.json` under `court_profiles`, and add the matching `allOf` branch in `schema/v2.json`
 4. Add at least two example files using the new court profile
 5. Document WCAG contrast for any new default colors
 

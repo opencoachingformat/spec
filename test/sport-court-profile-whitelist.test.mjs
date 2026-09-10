@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
 
-const schema = JSON.parse(readFileSync(new URL("../schema/v1.json", import.meta.url), "utf-8"));
+const schema = JSON.parse(readFileSync(new URL("../schema/v2.json", import.meta.url), "utf-8"));
 const ajv = new Ajv({ strict: false, allErrors: true });
 addFormats(ajv);
 const validate = ajv.compile(schema);

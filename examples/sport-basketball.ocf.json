@@ -1,5 +1,5 @@
 {
-  "$schema": "https://opencoachingformat.org/schema/v1.json",
+  "$schema": "https://opencoachingformat.org/schema/v2.json",
   "sport": "basketball",
   "meta": { "id": "a1b2c3d4-1111-4a6e-8f0c-2d5e9a1b3c7f", "title": "Sport-tagged basketball", "created": "2026-08-27T10:00:00Z", "source_format": "open", "min_schema_version": "2.0.0-alpha.1" },
   "court": { "court_profile": "fiba", "type": "half_court", "drill_focus": "offense" },

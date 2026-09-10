@@ -1,5 +1,5 @@
 {
-  "$schema": "https://opencoachingformat.org/schema/v1.json",
+  "$schema": "https://opencoachingformat.org/schema/v2.json",
   "sport": "soccer",
   "meta": { "id": "b2c3d4e5-2222-4a6e-8f0c-2d5e9a1b3c7f", "title": "Sport-tagged soccer (provisional)", "created": "2026-08-27T10:00:00Z", "source_format": "open", "min_schema_version": "2.0.0-alpha.1" },
   "court": { "court_profile": "custom", "type": "full_court", "custom_dimensions": { "unit": "m", "length": 105, "width": 68, "goal_width": 7.32, "penalty_box_width": 40.3, "penalty_box_depth": 16.5, "penalty_spot_distance": 11 } },

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://opencoachingformat.org/schema/v1.json",
+  "$schema": "https://opencoachingformat.org/schema/v2.json",
   "meta": {
     "id": "b1e2d3c4-5f6a-4b7c-8d9e-0f1a2b3c4d5e",
     "title": "Quick Sketch — Give and Go",

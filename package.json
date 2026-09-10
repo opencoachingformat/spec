@@ -20,7 +20,7 @@
     "LICENSE"
   ],
   "exports": {
-    "./schema/v1.json": "./schema/v1.json",
+    "./schema/v2.json": "./schema/v2.json",
     "./positions/resolve-position.mjs": "./positions/resolve-position.mjs",
     "./sports/basketball/sport.json": "./sports/basketball/sport.json",
     "./sports/basketball/court_profiles/fiba.json": "./sports/basketball/court_profiles/fiba.json",
@@ -36,7 +36,7 @@
     "access": "public"
   },
   "scripts": {
-    "validate": "ajv validate --spec=draft7 --strict-schema=false -s schema/v1.json -d \"examples/*.ocf.json\" --all-errors --verbose -c ajv-formats",
+    "validate": "ajv validate --spec=draft7 --strict-schema=false -s schema/v2.json -d \"examples/*.ocf.json\" --all-errors --verbose -c ajv-formats",
     "test:invalid": "node scripts/check-invalid.mjs",
     "test:positions": "node --test test/positions-anchors.test.mjs",
     "test:sport": "node --test test/sport-branches.test.mjs test/sport-court-profile-whitelist.test.mjs",

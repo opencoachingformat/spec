@@ -57,7 +57,7 @@ writeFileSync(path.join(outDir, 'spec.html'), specHtml, 'utf-8');
 writeFileSync(path.join(outDir, 'toc.json'), JSON.stringify(toc, null, 2), 'utf-8');
 
 copyFileSync(
-  path.join(repoRoot, 'schema', 'v1.json'),
+  path.join(repoRoot, 'schema', 'v2.json'),
   path.join(outDir, 'schema.json')
 );
 

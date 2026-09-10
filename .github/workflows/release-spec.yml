@@ -101,42 +101,64 @@ jobs:
           cp -r site/dist/. dist/
           echo "opencoachingformat.org" > dist/CNAME
 
+      # Current schema major (e.g. "v2"), read from the schema's own
+      # x-ocf-version so this workflow never needs manual updating when the
+      # schema's filename changes for the next breaking major (per this
+      # project's own filename policy in CONTRIBUTING.md).
+      - name: Determine current schema major
+        id: schema-major
+        run: |
+          MAJOR="v$(node -p "require('./schema/v2.json')['x-ocf-version'].split('.')[0]")"
+          echo "major=$MAJOR" >> "$GITHUB_OUTPUT"
+          echo "Current schema major: $MAJOR"
+
       # Version-pinned, immutable copy — only on a real tag push (a manual run
       # has no release version to pin under).
       - name: Publish versioned schema (Step A)
         if: github.event_name == 'push'
         env:
           VERSION: ${{ github.ref_name }}
+          MAJOR: ${{ steps.schema-major.outputs.major }}
         run: |
           mkdir -p "dist/${VERSION}"
-          cp schema/v1.json "dist/${VERSION}/ocf-action-v1.json"
-          echo "Published schema/v1.json -> dist/${VERSION}/ocf-action-v1.json"
+          cp "schema/${MAJOR}.json" "dist/${VERSION}/ocf-action-${MAJOR}.json"
+          echo "Published schema/${MAJOR}.json -> dist/${VERSION}/ocf-action-${MAJOR}.json"
 
       # Canonical copy at the schema's own $id URL
-      # (https://opencoachingformat.org/schema/v1.json). This is the URL every
+      # (https://opencoachingformat.org/schema/vN.json). This is the URL every
       # document's "$schema" points at, so it MUST resolve; it always tracks the
-      # latest v1.x. Deployed on both tag pushes and manual runs so it can be
-      # (re)published without cutting a version. Previously missing -> $id 404'd.
+      # latest vN.x for the current major. Deployed on both tag pushes and
+      # manual runs so it can be (re)published without cutting a version.
+      # Previously missing -> $id 404'd.
       - name: Publish canonical schema (Step A2)
+        env:
+          MAJOR: ${{ steps.schema-major.outputs.major }}
         run: |
           mkdir -p dist/schema
-          cp schema/v1.json dist/schema/v1.json
-          echo "Published schema/v1.json -> dist/schema/v1.json (canonical \$id)"
+          cp "schema/${MAJOR}.json" "dist/schema/${MAJOR}.json"
+          echo "Published schema/${MAJOR}.json -> dist/schema/${MAJOR}.json (canonical \$id)"
 
-      # Assemble /schema/versions.json from the v* schema dirs already on gh-pages
-      # plus the current tag. gh-pages deploys with keep_files:true, so prior
-      # versions persist; we read them back to build the full list. On a manual
+      # Assemble /schema/versions.json from the CURRENT major's schema dirs
+      # already on gh-pages plus the current tag. gh-pages deploys with
+      # keep_files:true, so prior versions persist; we read them back to
+      # build the full list for this major line. A prior major's own
+      # version-pinned copies (e.g. /v1.4.0/ocf-action-v1.json) stay
+      # reachable on gh-pages regardless — they are simply no longer listed
+      # in versions.json once a new major supersedes them, since this
+      # manifest is a freshness signal for the CURRENT major's playground
+      # validator, not a cross-major compatibility directory. On a manual
       # run (no tag) VERSION is a branch name and gets filtered out by the
       # generator's semver check, leaving the manifest built from existing dirs.
       - name: Publish versions manifest (Step A3)
         env:
           VERSION: ${{ github.ref_name }}
+          MAJOR: ${{ steps.schema-major.outputs.major }}
         run: |
           mkdir -p dist/schema
           git fetch origin gh-pages --depth=1 || true
           EXISTING=$(git ls-tree -r origin/gh-pages --name-only 2>/dev/null \
-            | grep -oE '^v[0-9]+\.[0-9]+\.[0-9]+/ocf-action-v1.json' \
-            | sed 's#/ocf-action-v1.json##' | sort -u | tr '\n' ' ')
+            | grep -oE "^${MAJOR}\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?/ocf-action-${MAJOR}.json" \
+            | sed "s#/ocf-action-${MAJOR}.json##" | sort -u | tr '\n' ' ')
           node scripts/build-versions-manifest.mjs "$EXISTING" "$VERSION" > dist/schema/versions.json
           echo "Published versions.json:"; cat dist/schema/versions.json
 

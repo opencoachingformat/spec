@@ -1,5 +1,5 @@
 {
-  "$schema": "https://opencoachingformat.org/schema/v1.json",
+  "$schema": "https://opencoachingformat.org/schema/v2.json",
   "sport": "basketball",
   "meta": {
     "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
